@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+
+const GA_ID = "G-59D2THYMTM";
 
 // widmind sitesinin fontu — Inter Tight (tek yerden değiştirilir)
 const heading = Inter_Tight({
@@ -45,7 +48,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${heading.variable} ${body.variable} h-full antialiased`}>
+      <head>
+        {/* Google Tag Manager */}
+        <Script id="gtm" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NKKQN688');`}
+        </Script>
+        {/* Google Analytics (gtag.js) */}
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}');`}
+        </Script>
+      </head>
       <body className="flex min-h-full flex-col">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-NKKQN688"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
