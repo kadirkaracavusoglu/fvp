@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.sanity.io" },
     ],
   },
+  async rewrites() {
+    return [
+      { source: "/quiz", destination: "/quiz.html" },
+    ];
+  },
 };
 
 export default nextConfig;

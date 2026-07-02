@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Koçluk Anatomisi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --text: #1d1d1f;
+    --text-muted: #86868b;
+    --text-faint: #c7c7cc;
+    --line: #e5e5ea;
+    --line-soft: #f0f0f3;
+    --bg: #ffffff;
+    --bg-soft: #f5f5f7;
+    --accent: #0d204d;
+    --accent-soft: #f2f4fa;
+    --warn: #ff3b30;
+    --warn-soft: #fff0ef;
+    --success: #34c759;
+    --warning: #ff9500;
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.5; min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* TOP META BAR */
+  .topmeta { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 18px 32px; background: rgba(255,255,255,0.85); backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid var(--line-soft); }
+  .topmeta-left { display: flex; align-items: center; gap: 14px; }
+  .topmeta-brand { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
+  .topmeta-back { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--text-muted); padding: 4px 0; display: none; align-items: center; gap: 4px; transition: color 0.2s; }
+  .topmeta-back:hover { color: var(--text); }
+  .topmeta-back.visible { display: flex; }
+  .topmeta-page { font-size: 13px; font-weight: 500; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .topmeta-page .em { color: var(--text); font-weight: 600; }
+  .progress-segments { position: fixed; top: 60px; left: 0; right: 0; z-index: 49; display: flex; gap: 3px; height: 3px; padding: 0 1px; }
+  .progress-seg { flex: 1; background: var(--line-soft); border-radius: 2px; overflow: hidden; }
+  .progress-seg-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 2px; transition: width 0.5s var(--ease-out); }
+
+  /* STAGE */
+  .stage { max-width: 640px; margin: 0 auto; padding: 140px 32px 160px; min-height: 100vh; }
+  .screen { display: none; }
+  .screen.active { display: block; animation: rise 0.6s var(--ease-out); }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* WELCOME */
+  .welcome { text-align: center; }
+  .welcome-portrait { width: 300px; height: 300px; margin: 0 auto 48px; border-radius: 50%; background: var(--accent); overflow: hidden; opacity: 0; transform: scale(0.85); animation: heroIn 1s var(--spring) 0.1s forwards; box-shadow: 0 16px 56px rgba(13,32,77,0.24); }
+  .welcome-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block; }
+  @keyframes heroIn { to { opacity: 1; transform: scale(1); } }
+  .welcome-social { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; margin-bottom: 24px; background: var(--bg-soft); border-radius: 980px; font-size: 13px; font-weight: 500; color: var(--text-muted); letter-spacing: -0.01em; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.78s forwards; }
+  .welcome-social-dot { width: 6px; height: 6px; border-radius: 50%; background: #34c759; flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .welcome-overline { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 24px; letter-spacing: -0.01em; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.3s forwards; }
+  .welcome-title { font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 32px; margin-left: -70px; margin-right: -70px; opacity: 0; animation: fadeUp 0.8s var(--ease-out) 0.45s forwards; }
+  .welcome-sub { font-size: 21px; font-weight: 400; line-height: 1.4; color: var(--text-muted); margin-bottom: 18px; max-width: 540px; margin-left: auto; margin-right: auto; letter-spacing: -0.01em; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.6s forwards; }
+  .welcome-curiosity { font-size: 14px; font-style: italic; line-height: 1.55; color: var(--accent); max-width: 480px; margin: 0 auto 28px; letter-spacing: -0.01em; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.66s forwards; }
+  @media (max-width: 640px) { .welcome-curiosity { font-size: 13px; } }
+  .welcome-authority { display: inline-flex; align-items: center; padding: 8px 16px; margin-bottom: 32px; background: var(--accent-soft); border-radius: 980px; font-size: 13px; font-weight: 500; color: var(--accent); letter-spacing: -0.01em; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.72s forwards; }
+
+  /* SOSYAL KANIT — Yatay kayan ticker (marquee) */
+  .welcome-marquee-wrap { margin: 40px 0 36px; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 1.2s forwards; }
+  .welcome-marquee-prefix { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; text-align: center; }
+  .welcome-marquee { overflow: hidden; margin: 0 -32px; padding: 4px 0; mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); }
+  .welcome-marquee-track { display: flex; align-items: center; gap: 28px; animation: marqueeScroll 32s linear infinite; white-space: nowrap; width: max-content; }
+  .welcome-marquee-item { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .welcome-marquee-dot { color: var(--text-faint); font-size: 14px; }
+  @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .welcome-cta { margin-bottom: 80px; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.9s forwards; }
+  .welcome-meta { display: flex; justify-content: center; padding-top: 40px; border-top: 1px solid var(--line); max-width: 460px; margin: 0 auto; opacity: 0; animation: fadeUp 0.7s var(--ease-out) 1.05s forwards; }
+  .welcome-meta-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 8px; border-right: 1px solid var(--line); }
+  .welcome-meta-item:last-child { border-right: none; }
+  .welcome-meta-num { font-size: 44px; font-weight: 700; color: var(--accent); letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .welcome-meta-num .unit { font-size: 18px; font-weight: 500; color: var(--text-muted); letter-spacing: -0.02em; margin-left: 2px; }
+  .welcome-meta-label { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1.8px; text-transform: uppercase; }
+  @media (max-width: 640px) {
+    .welcome-title { font-size: 26px; margin-left: 0; margin-right: 0; }
+    .welcome-sub { font-size: 18px; }
+    .welcome-meta { max-width: 360px; }
+    .welcome-meta-num { font-size: 36px; }
+    .welcome-portrait { width: 220px; height: 220px; margin-bottom: 36px; }
+  }
+
+  /* QUESTION */
+  .q-num { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 32px; letter-spacing: -0.01em; }
+  .q-num .em { color: var(--text); font-weight: 600; }
+  .q-section { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+  .q-section-tag { display: inline-block; padding: 4px 10px; background: var(--accent-soft); border-radius: 4px; }
+  .q-title { font-size: 38px; font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .q-sub { font-size: 17px; font-weight: 400; color: var(--text-muted); margin-bottom: 48px; line-height: 1.5; max-width: 520px; letter-spacing: -0.01em; }
+  @media (max-width: 640px) {
+    .q-title { font-size: 28px; }
+    .q-sub { font-size: 16px; margin-bottom: 36px; }
+  }
+
+  /* OPTIONS */
+  .options { margin-bottom: 56px; border-top: 1px solid var(--line); }
+  .opt { display: block; width: 100%; padding: 20px 0; background: transparent; border: none; border-bottom: 1px solid var(--line); cursor: pointer; text-align: left; font-family: inherit; font-size: 19px; font-weight: 400; color: var(--text); letter-spacing: -0.01em; transition: all 0.25s var(--ease-out); position: relative; padding-left: 0; min-height: 56px; }
+  .opt::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 0; height: 24px; background: var(--accent); transition: width 0.25s var(--ease-out); }
+  .opt:hover { padding-left: 8px; color: var(--accent); }
+  .opt.selected { padding-left: 16px; font-weight: 600; color: var(--accent); }
+  .opt.selected::before { width: 3px; }
+  .opt.advancing { pointer-events: none; }
+  .opt.advancing::after { content: ''; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+  /* CTA */
+  .cta { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--accent); color: var(--bg); border: none; border-radius: 980px; font-family: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.2s; letter-spacing: -0.01em; min-height: 48px; }
+  .cta:hover { transform: scale(1.02); background: #081534; }
+  .cta:disabled { background: var(--line); color: var(--text-muted); cursor: not-allowed; transform: none; }
+  .cta::after { content: '→'; }
+  .cta.large { padding: 18px 36px; font-size: 17px; min-height: 56px; }
+  .cta-sticky-wrap { display: contents; }
+  @media (max-width: 640px) {
+    .cta-sticky-wrap[data-sticky] { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px 28px; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.96) 30%, var(--bg) 60%); z-index: 40; display: flex; justify-content: center; }
+    .cta-sticky-wrap[data-sticky] .cta { width: 100%; max-width: 360px; justify-content: center; }
+    .stage { padding-bottom: 200px; }
+  }
+
+  /* LEAD FORM */
+  .form-intro { font-size: 15px; color: var(--text-muted); background: var(--bg-soft); border-radius: 12px; padding: 16px 20px; margin-bottom: 40px; line-height: 1.55; letter-spacing: -0.01em; }
+  .form-intro strong { color: var(--text); font-weight: 600; }
+  .form-intro-bonus { display: block; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--text); }
+  .form-intro-bonus strong { color: var(--accent); }
+  .form-row { margin-bottom: 28px; }
+  .form-row label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .form-input { width: 100%; padding: 14px 0; background: transparent; border: none; border-bottom: 1px solid var(--line); font-size: 21px; font-family: inherit; font-weight: 400; color: var(--text); transition: border 0.2s; min-height: 48px; }
+  .form-input:focus { outline: none; border-bottom-color: var(--accent); }
+  .form-hint { font-size: 13px; color: var(--text-muted); margin-top: 8px; letter-spacing: -0.01em; }
+  .form-hint.error { color: var(--warn); }
+  .kvkk-block { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0 40px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+  .kvkk-block input[type="checkbox"] { margin-top: 3px; width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+  .kvkk-block strong { color: var(--text); font-weight: 600; }
+
+  /* INTERLUDE */
+  .interlude { text-align: center; padding: 40px 0; }
+  .interlude-overline { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 32px; letter-spacing: -0.01em; }
+  .podcast-card { background: var(--accent); color: var(--bg); border-radius: 24px; padding: 32px; margin-bottom: 32px; text-align: left; display: flex; gap: 24px; align-items: center; box-shadow: 0 12px 36px rgba(13,32,77,0.16); }
+  .podcast-cover { width: 140px; height: 140px; flex-shrink: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+  .podcast-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .podcast-info { flex: 1; }
+  .podcast-tag { font-size: 11px; font-weight: 700; color: #8ba6ff; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .podcast-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .podcast-tagline { font-size: 15px; opacity: 0.85; line-height: 1.4; font-style: italic; margin-bottom: 14px; }
+  .podcast-meta { font-size: 12px; font-weight: 500; color: #8ba6ff; letter-spacing: 0.5px; }
+  .podcast-meta span { margin-right: 12px; }
+  @media (max-width: 640px) {
+    .podcast-card { flex-direction: column; text-align: center; padding: 24px; gap: 16px; }
+    .podcast-cover { width: 120px; height: 120px; }
+    .podcast-title { font-size: 19px; }
+  }
+  .pull-quote { font-size: 36px; font-weight: 600; line-height: 1.2; letter-spacing: -0.025em; max-width: 580px; margin: 0 auto 32px; }
+  .pull-attribution { font-size: 14px; font-weight: 400; color: var(--text-muted); margin-bottom: 64px; letter-spacing: -0.01em; }
+  .interlude-progress { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; letter-spacing: -0.01em; }
+  @media (max-width: 640px) { .pull-quote { font-size: 26px; } }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 120px 0; }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin360 0.9s linear infinite; margin: 0 auto 32px; }
+  @keyframes spin360 { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .loading-sub { font-size: 15px; color: var(--text-muted); letter-spacing: -0.01em; }
+
+  /* RESULT — HERO */
+  .result-hero { text-align: center; padding: 0 0 80px; border-bottom: 1px solid var(--line); margin-bottom: 80px; }
+  .result-overline { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 32px; letter-spacing: -0.01em; opacity: 0; }
+  .result-title { font-size: 56px; font-weight: 700; line-height: 1.05; letter-spacing: -0.04em; margin-bottom: 48px; opacity: 0; }
+  .score-mega { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-bottom: 16px; opacity: 0; }
+  .score-mega-num { font-size: 180px; font-weight: 700; line-height: 0.85; letter-spacing: -0.06em; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .score-mega-of { font-size: 56px; font-weight: 300; color: var(--text-muted); letter-spacing: -0.04em; }
+  .score-mega-label { font-size: 14px; font-weight: 500; color: var(--text-muted); letter-spacing: -0.01em; text-transform: lowercase; opacity: 0; }
+  .reveal-in { animation: revealUp 0.6s var(--ease-out) forwards; }
+  @keyframes revealUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 640px) { .result-title { font-size: 36px; } .score-mega-num { font-size: 120px; } .score-mega-of { font-size: 36px; } }
+
+  /* RESULT SECTIONS */
+  .result-section { margin-bottom: 80px; opacity: 0; }
+  .result-section.revealed { opacity: 1; transition: opacity 0.5s; }
+  .result-section-title { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 32px; text-transform: lowercase; letter-spacing: -0.01em; }
+  .result-section-title .em { color: var(--text); }
+
+  /* FITSISTEM 4 KONUM HARITASI */
+  .fitsistem-map { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .fitsistem-cell { padding: 20px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); position: relative; transition: all 0.5s var(--ease-out); opacity: 0; transform: translateY(10px); }
+  .fitsistem-cell.revealed { opacity: 1; transform: translateY(0); }
+  .fitsistem-cell.status-strong { background: rgba(52,199,89,0.08); border-color: rgba(52,199,89,0.3); }
+  .fitsistem-cell.status-medium { background: rgba(255,149,0,0.08); border-color: rgba(255,149,0,0.3); }
+  .fitsistem-cell.status-weak { background: var(--warn-soft); border-color: rgba(255,59,48,0.3); }
+  .fitsistem-cell-num { font-size: 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 8px; }
+  .fitsistem-cell-name { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .fitsistem-cell-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: -0.01em; }
+  .fitsistem-cell-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .fitsistem-cell.status-strong .fitsistem-cell-status { color: var(--success); }
+  .fitsistem-cell.status-strong .fitsistem-cell-status-dot { background: var(--success); }
+  .fitsistem-cell.status-medium .fitsistem-cell-status { color: var(--warning); }
+  .fitsistem-cell.status-medium .fitsistem-cell-status-dot { background: var(--warning); }
+  .fitsistem-cell.status-weak .fitsistem-cell-status { color: var(--warn); }
+  .fitsistem-cell.status-weak .fitsistem-cell-status-dot { background: var(--warn); }
+  .fitsistem-cell-score { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .fitsistem-cell-score .max { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+
+  /* BOYUT ROWS */
+  .boyut-list { border-top: 1px solid var(--line); margin-bottom: 32px; }
+  .boyut-row { padding: 24px 0; border-bottom: 1px solid var(--line); opacity: 0; transform: translateX(-8px); transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
+  .boyut-row.revealed { opacity: 1; transform: translateX(0); }
+  .boyut-row-main { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .boyut-name { flex: 1; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .boyut-bar { flex: 0 0 140px; height: 4px; background: var(--line-soft); border-radius: 2px; overflow: hidden; }
+  .boyut-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width 1s var(--ease-out); }
+  .boyut-bar-fill.weak { background: var(--warn); }
+  .boyut-score { flex: 0 0 60px; text-align: right; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .boyut-score.weak { color: var(--warn); }
+  @media (max-width: 640px) { .boyut-name { font-size: 16px; } .boyut-bar { flex: 0 0 80px; } .boyut-score { font-size: 18px; flex: 0 0 48px; } }
+
+  /* ALT BAŞLIK MINI BARS */
+  .altbaslik-list { display: flex; flex-direction: column; gap: 8px; }
+  .altbaslik-row { display: flex; align-items: center; gap: 12px; padding: 0; }
+  .altbaslik-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+  .altbaslik-bar { flex: 0 0 100px; height: 3px; background: var(--line-soft); border-radius: 2px; overflow: hidden; }
+  .altbaslik-bar-fill { height: 100%; background: var(--text-muted); border-radius: 2px; width: 0%; transition: width 0.9s var(--ease-out); }
+  .altbaslik-bar-fill.weak { background: var(--warn); }
+  .altbaslik-score { flex: 0 0 36px; text-align: right; font-size: 13px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .altbaslik-score.weak { color: var(--warn); }
+  @media (max-width: 640px) { .altbaslik-name { font-size: 13px; } .altbaslik-bar { flex: 0 0 70px; } }
+
+  /* EN ZAYIF 3 */
+  /* CORE FOCUS — Trafik / Dönüşüm / Ekonomi (işin can damarı) */
+  .core-focus-tag { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .core-focus-intro { font-size: 15px; line-height: 1.6; color: var(--text-muted); margin-bottom: 24px; letter-spacing: -0.01em; }
+  .core-focus-intro strong { color: var(--text); font-weight: 600; }
+  .core-focus-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 680px) { .core-focus-list { grid-template-columns: repeat(2, 1fr); } }
+  .core-focus-item { padding: 20px 24px; border-radius: 14px; border: 1px solid var(--line); border-left: 3px solid var(--text-muted); background: var(--bg); }
+  .core-focus-item.status-strong { border-left-color: var(--success); }
+  .core-focus-item.status-medium { border-left-color: var(--warning); }
+  .core-focus-item.status-weak { border-left-color: var(--warn); }
+  .core-focus-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+  .core-focus-name { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  .core-focus-score { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .core-focus-score span { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+  .core-focus-item.status-strong .core-focus-score { color: var(--success); }
+  .core-focus-item.status-medium .core-focus-score { color: var(--warning); }
+  .core-focus-item.status-weak .core-focus-score { color: var(--warn); }
+  .core-focus-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .core-focus-action { font-size: 14px; color: var(--text); letter-spacing: -0.01em; }
+  .core-focus-action-label { font-weight: 600; color: var(--accent); }
+  .core-focus-action-score { color: var(--text-muted); font-weight: 600; }
+
+  /* 12 HAFTALIK YOL HARITASI */
+  .roadmap-intro { background: var(--bg-soft); border-radius: 14px; padding: 24px; margin-bottom: 40px; font-size: 16px; line-height: 1.55; color: var(--text); }
+  .roadmap-intro strong { color: var(--accent); }
+  .roadmap { position: relative; padding-left: 32px; }
+  .roadmap::before { content: ''; position: absolute; left: 12px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+  .roadmap-phase { position: relative; margin-bottom: 40px; opacity: 0; transform: translateY(10px); transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
+  .roadmap-phase.revealed { opacity: 1; transform: translateY(0); }
+  .roadmap-phase::before { content: ''; position: absolute; left: -28px; top: 4px; width: 16px; height: 16px; background: var(--bg); border: 2px solid var(--accent); border-radius: 50%; }
+  .roadmap-phase-weeks { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .roadmap-phase-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .roadmap-phase-actions { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .roadmap-phase-actions li { font-size: 15px; line-height: 1.5; color: var(--text); position: relative; padding-left: 16px; }
+  .roadmap-phase-actions li::before { content: '·'; position: absolute; left: 4px; top: -1px; color: var(--accent); font-weight: 900; font-size: 18px; }
+  .roadmap-phase-outcomes { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .roadmap-phase-outcomes li { font-size: 15px; line-height: 1.5; color: var(--text); position: relative; padding-left: 22px; font-weight: 500; }
+  .roadmap-phase-outcomes li::before { content: '✓'; position: absolute; left: 0; top: -1px; color: var(--success); font-weight: 700; font-size: 14px; }
+  .roadmap-block { margin-top: 16px; }
+  .roadmap-block-label { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; }
+  .roadmap-block-text { font-size: 15px; line-height: 1.55; color: var(--text); letter-spacing: -0.01em; }
+  .roadmap-block-outcome { background: rgba(52,199,89,0.06); border-radius: 10px; padding: 14px 18px; margin-top: 16px; border-left: 3px solid var(--success); }
+  .roadmap-block-outcome .roadmap-block-label { color: var(--success); }
+
+  /* BONUS */
+  .bonus { background: var(--bg-soft); border-radius: 24px; padding: 40px; margin-bottom: 80px; text-align: center; opacity: 0; transform: scale(0.92); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--spring); }
+  .bonus.revealed { opacity: 1; transform: scale(1); }
+  .bonus-tag { font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 16px; }
+  .bonus-title { font-size: 28px; font-weight: 600; line-height: 1.2; margin-bottom: 16px; letter-spacing: -0.025em; }
+  .bonus-body { font-size: 17px; line-height: 1.5; color: var(--text-muted); max-width: 480px; margin: 0 auto; }
+  .bonus-body strong { color: var(--text); }
+
+  /* KADIR MINI KART */
+  .kadir-card { display: flex; flex-direction: column; background: var(--bg-soft); border-radius: 16px; padding: 24px; margin-bottom: 48px; }
+  .kadir-card-top { display: flex; gap: 20px; align-items: center; }
+  .kadir-card-avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); flex-shrink: 0; overflow: hidden; }
+  .kadir-card-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+  .kadir-card-content { flex: 1; }
+  .kadir-card-tag { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .kadir-card-name { font-size: 17px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .kadir-card-body { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
+  .kadir-card-body strong { color: var(--text); font-weight: 600; }
+  .kadir-card-marquee { margin: 22px -24px -4px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .kadir-card-marquee-prefix { font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; color: var(--text-muted); text-align: center; margin-bottom: 12px; padding: 0 24px; }
+  .kadir-card-marquee-wrap { overflow: hidden; mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+  .kadir-card-marquee-track { display: flex; align-items: center; gap: 22px; animation: marqueeScroll 32s linear infinite; white-space: nowrap; width: max-content; }
+  .kadir-card-marquee-item { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .kadir-card-marquee-dot { color: var(--text-faint); font-size: 13px; }
+
+  /* FINAL CTA */
+  .final-cta { text-align: center; padding: 80px 0 40px; opacity: 0; transition: opacity 0.7s var(--ease-out); }
+  .final-cta.revealed { opacity: 1; }
+  .final-cta-overline { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 24px; letter-spacing: -0.01em; }
+  .final-cta-headline { font-size: 42px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; max-width: 560px; margin: 0 auto 24px; }
+  .final-cta-body { font-size: 19px; line-height: 1.45; color: var(--text-muted); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .final-cta-button { margin-bottom: 48px; }
+  .reassure { font-size: 14px; color: var(--text-muted); max-width: 440px; margin: 0 auto; }
+  .reassure-quote { font-style: italic; margin-bottom: 8px; }
+  .reassure-name { font-weight: 500; color: var(--text); }
+  @media (max-width: 640px) { .final-cta-headline { font-size: 28px; } .final-cta-body { font-size: 16px; } }
+
+  .quiz-footer { text-align: center; padding: 40px 0 24px; font-size: 12px; color: var(--text-faint); border-top: 1px solid var(--line); margin-top: 80px; letter-spacing: -0.01em; }
+
+  /* INSIGHT (ara değer ekranı) */
+  .insight { text-align: center; padding: 40px 0; }
+  .insight-overline { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .insight-card { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 24px; padding: 40px 32px; margin-bottom: 28px; }
+  .insight-stat { font-size: 34px; font-weight: 700; letter-spacing: -0.03em; color: var(--accent); line-height: 1.1; margin-bottom: 18px; }
+  .insight-text { font-size: 17px; line-height: 1.65; color: var(--text); letter-spacing: -0.01em; }
+  .insight-text strong { font-weight: 600; color: var(--accent); }
+  .insight-progress { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; letter-spacing: -0.01em; }
+  @media (max-width: 640px) { .insight-card { padding: 32px 22px; } .insight-stat { font-size: 26px; } .insight-text { font-size: 16px; } }
+
+  /* MOMENTUM NOTU (son düzlük) + CEVAP CALLBACK — stage üstünde */
+  .momentum-note { display: none; text-align: center; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 9px 20px; margin: 0 auto 28px; width: max-content; max-width: 90%; letter-spacing: -0.01em; }
+  .momentum-note.show { display: block; }
+  .q-callback { display: none; font-size: 15px; line-height: 1.55; color: var(--accent); background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin: 0 0 28px; letter-spacing: -0.01em; }
+  .q-callback strong { font-weight: 600; }
+
+  /* TANI SENTEZİ (kişiselleştirilmiş yorum) */
+  .result-diagnosis { max-width: 620px; margin: 0 auto 80px; padding: 30px 34px; background: var(--accent-soft); border-radius: 18px; border-left: 3px solid var(--accent); opacity: 0; transform: translateY(10px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+  .result-diagnosis.revealed { opacity: 1; transform: translateY(0); }
+  .result-diagnosis-tag { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .result-diagnosis-text { font-size: 18px; line-height: 1.65; color: var(--text); letter-spacing: -0.01em; }
+  .result-diagnosis-text strong { font-weight: 600; color: var(--accent); }
+  @media (max-width: 640px) { .result-diagnosis { padding: 24px 22px; } .result-diagnosis-text { font-size: 16px; } }
+
+  /* RADAR / HEXAGON GÖRSELLEŞTİRME */
+  .radar-wrap { display: flex; justify-content: center; margin-bottom: 44px; opacity: 0; transform: scale(0.92); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+  .radar-wrap.revealed { opacity: 1; transform: scale(1); }
+  .radar-svg { width: 100%; max-width: 380px; height: auto; display: block; }
+  .radar-label { font-family: 'Inter', sans-serif; }
+
+  /* ALT BAŞLIK İÇGÖRÜSÜ */
+  .altbaslik-item { display: flex; flex-direction: column; gap: 5px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+  .altbaslik-item:last-child { border-bottom: none; }
+  .altbaslik-insight { font-size: 12.5px; line-height: 1.5; color: var(--text-muted); letter-spacing: -0.01em; }
+  .altbaslik-insight strong { color: var(--text); font-weight: 600; }
+
+  /* ===== LANDING INTRO ===== */
+  .lp-guven { font-size: 13px; font-weight: 500; color: var(--text-muted); letter-spacing: -0.01em; margin-top: 14px; }
+  .lp-section { max-width: 680px; margin: 0 auto; padding: 48px 0; border-top: 1px solid var(--line); text-align: center; }
+  .lp-h2 { font-size: 30px; font-weight: 700; line-height: 1.2; letter-spacing: -0.03em; color: var(--text); margin: 0 0 16px; }
+  .lp-sub { font-size: 17px; line-height: 1.55; color: var(--text-muted); max-width: 560px; margin: 0 auto 28px; letter-spacing: -0.01em; }
+  /* mikro vaat */
+  .lp-promise { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; margin-top: 28px; }
+  .lp-promise-item { background: var(--bg-soft); border-radius: 14px; padding: 20px 22px; }
+  .lp-promise-t { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .lp-promise-d { font-size: 14px; line-height: 1.5; color: var(--text-muted); }
+  /* 4 alan */
+  .lp-areas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; margin-top: 28px; }
+  .lp-area { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  .lp-area-num { font-size: 12px; font-weight: 700; color: var(--text-faint); letter-spacing: 1px; }
+  .lp-area-name { font-size: 19px; font-weight: 700; color: var(--text); margin: 6px 0 8px; letter-spacing: -0.02em; }
+  .lp-area-q { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+  .lp-area-d { font-size: 14px; line-height: 1.55; color: var(--text-muted); }
+  /* güven */
+  .lp-trust { background: var(--accent-soft); border-radius: 20px; border-top: none; padding: 40px 32px; }
+  .lp-trust-text { font-size: 16px; line-height: 1.6; color: var(--text); max-width: 560px; margin: 0 auto 20px; }
+  .lp-trust-stats { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: -0.01em; }
+  /* problem */
+  .lp-problem-list { list-style: none; padding: 0; margin: 0 auto 0; max-width: 520px; text-align: left; }
+  .lp-problem-list li { font-size: 16px; line-height: 1.5; color: var(--text); padding: 10px 0 10px 28px; position: relative; border-bottom: 1px solid var(--line-soft); }
+  .lp-problem-list li:before { content: "—"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  /* süreç */
+  .lp-steps { display: flex; flex-direction: column; gap: 14px; text-align: left; max-width: 560px; margin: 28px auto 24px; }
+  .lp-step { display: flex; gap: 16px; align-items: flex-start; background: var(--bg-soft); border-radius: 14px; padding: 20px 22px; }
+  .lp-step-n { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .lp-step-t { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .lp-step-d { font-size: 14px; line-height: 1.5; color: var(--text-muted); }
+  .lp-reassure { font-size: 14px; font-style: italic; line-height: 1.55; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
+  .lp-final { border-top: none; padding-top: 24px; }
+  @media (max-width: 640px) {
+    .lp-h2 { font-size: 24px; }
+    .lp-sub { font-size: 16px; }
+    .lp-promise, .lp-areas { grid-template-columns: 1fr; }
+    .lp-section { padding: 36px 0; }
+  }
+
+  /* ===== SONUÇ SEGMENT BLOĞU ===== */
+  .seg-intro { font-size: 15px; line-height: 1.55; color: var(--text-muted); max-width: 560px; margin: 0 auto 20px; text-align: center; letter-spacing: -0.01em; }
+  .seg-card { max-width: 600px; margin: 0 auto 44px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 18px; padding: 32px; text-align: left; }
+  .seg-tag { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .seg-title { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px; }
+  .seg-desc { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 16px; }
+  .seg-priority { font-size: 14px; line-height: 1.5; color: var(--text); background: var(--bg); border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; }
+  .seg-priority strong { color: var(--accent); }
+  .seg-weak { font-size: 14px; line-height: 1.55; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 14px; margin-bottom: 22px; }
+  .seg-card .cta { width: 100%; }
+  @media (max-width: 640px) { .seg-card { padding: 24px; } .seg-title { font-size: 21px; } }
+  .interlude-note { font-size: 14px; line-height: 1.55; color: var(--text-muted); max-width: 480px; margin: 18px auto 0; font-style: italic; letter-spacing: -0.01em; }
+</style>
+</head>
+<body>
+
+<!-- Meta Pixel Code (FitSistem) -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1334125068260935');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1334125068260935&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+
+
+<div class="topmeta">
+  <div class="topmeta-left">
+    <button class="topmeta-back" id="topmetaBack" onclick="goBack()">← Geri</button>
+    <div class="topmeta-brand">Fitness ve Pazarlama</div>
+  </div>
+  <div class="topmeta-page" id="sectionLabel"></div>
+</div>
+<div class="progress-segments" id="progressSegments">
+  <div class="progress-seg"><div class="progress-seg-fill"></div></div>
+  <div class="progress-seg"><div class="progress-seg-fill"></div></div>
+  <div class="progress-seg"><div class="progress-seg-fill"></div></div>
+  <div class="progress-seg"><div class="progress-seg-fill"></div></div>
+</div>
+
+<div class="stage">
+
+  <div class="momentum-note" id="momentumNote"></div>
+  <div class="q-callback" id="qCallback"></div>
+
+  <!-- WELCOME -->
+  <div class="screen active" data-screen="0" data-page="00" data-progress="0">
+    <div class="welcome">
+      <div class="welcome-portrait">
+        <img src="https://assets.cdn.filesafe.space/ui4C7FNVHfgWeZk9DQpB/media/3eb0ee44-53c2-43c9-bee1-40ad51c2ebe8.png" alt="Kadir Karaçavuşoğlu">
+      </div>
+      <div class="welcome-overline">Ücretsiz Online Koçluk Anatomisi</div>
+      <h1 class="welcome-title">Online koçluk işinizi kurarken ya da büyütürken sizi yavaşlatan darboğazı 5 dakikada bulun.</h1>
+      <p class="welcome-sub">İster online koçluk işinizi yeni kuruyor ister büyütüyor olun — 20 soruluk ücretsiz analiz işinizi 4 büyüme alanında tarar; nerede takıldığınızı ve önümüzdeki 12 haftada neye odaklanmanız gerektiğini gösterir.</p>
+      <p class="welcome-curiosity">Çoğu koç 4 büyüme alanından sadece 1-2'sinde güçlü. Sizin asıl eksik halkanız hangisi?</p>
+      <div class="welcome-marquee-wrap">
+        <div class="welcome-marquee-prefix">FİTNESS VE PAZARLAMA'NIN BÜYÜME PARTNERLERİ</div>
+        <div class="welcome-marquee">
+          <div class="welcome-marquee-track">
+            <span class="welcome-marquee-item">Mert Köksüren</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Şahan Yağcı</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Yankı Tansuğ</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Gülay Gökay</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Duha Duman</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Erdem İnan</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Berkay Kıray</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Özkan Türkoğlu</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Eray Arabacı</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Hande Zeynep Koç</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Bahri Ata</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Mert Köksüren</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Şahan Yağcı</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Yankı Tansuğ</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Gülay Gökay</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Duha Duman</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Erdem İnan</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Berkay Kıray</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Özkan Türkoğlu</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Eray Arabacı</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Hande Zeynep Koç</span><span class="welcome-marquee-dot">·</span>
+            <span class="welcome-marquee-item">Bahri Ata</span>
+          </div>
+        </div>
+      </div>
+      <div class="welcome-cta"><button class="cta large" id="startBtn">Ücretsiz Analize Başla</button></div>
+      <div class="welcome-meta">
+        <div class="welcome-meta-item"><div class="welcome-meta-num">4</div><div class="welcome-meta-label">Boyut</div></div>
+        <div class="welcome-meta-item"><div class="welcome-meta-num">20</div><div class="welcome-meta-label">Soru</div></div>
+        <div class="welcome-meta-item"><div class="welcome-meta-num">12<span class="unit">haftalık</span></div><div class="welcome-meta-label">Yol Haritası</div></div>
+      </div>
+
+    </div>
+  </div>
+
+    <!-- BAĞLAM (skor dışı) -->
+  <div class="screen" data-screen="1" data-page="01" data-progress="4" data-q-key="asama">
+    <div class="q-num">Bölüm <span class="em">I</span> · Durum</div>
+    <h1 class="q-title">Şu anda online koçluk işinizde hangi aşamadasınız?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickAnswer(this, 'asama', 'baslamadi')">Henüz başlamadım / yeni başlıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'asama', 'ilk')">İlk online danışanlarımı kazanmaya çalışıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'asama', 'duzensiz')">Birkaç danışanım var ama düzenli bir sistemim yok</button>
+      <button class="opt" onclick="pickAnswer(this, 'asama', 'buyutmek')">Düzenli danışan alıyorum, artık büyütmek istiyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'asama', 'olcek')">Kapasitem doldu, sistemleştirmek / ölçeklemek istiyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="2" data-page="02" data-progress="8" data-q-key="workMode">
+    <div class="q-num">Bölüm <span class="em">I</span> · Durum</div>
+    <h1 class="q-title">Şu anda danışanlarla nasıl çalışıyorsunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickAnswer(this, 'workMode', 'offline')">Tamamen yüz yüze / spor salonunda çalışıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'workMode', 'karma')">Hem yüz yüze hem online çalışıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'workMode', 'online')">Tamamen online çalışıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'workMode', 'baslamadi')">Henüz aktif danışanla çalışmıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <!-- KİŞİSELLEŞTİRME (skor dışı) -->
+  <div class="screen" data-screen="3" data-page="03" data-progress="12" data-q-key="hedef">
+    <div class="q-num">Bölüm <span class="em">I</span> · Hedef · 1/2</div>
+    <h1 class="q-title">Online koçluk işinizi büyüttüğünüzde en çok neyi istiyorsunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickAnswer(this, 'hedef', 'akis')">Düzenli ve öngörülebilir danışan akışı kurmak</button>
+      <button class="opt" onclick="pickAnswer(this, 'hedef', 'gelir')">Daha fazla gelir elde etmek ve emeğimin karşılığını almak</button>
+      <button class="opt" onclick="pickAnswer(this, 'hedef', 'ozgurluk')">Zamandan ve mekandan bağımsız çalışmak</button>
+      <button class="opt" onclick="pickAnswer(this, 'hedef', 'marka')">Tanınan ve güvenilen bir marka haline gelmek</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="4" data-page="04" data-progress="16" data-q-key="problem">
+    <div class="q-num">Bölüm <span class="em">I</span> · Hedef · 2/2</div>
+    <h1 class="q-title">Size göre şu anda büyümenizi en çok ne durduruyor?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickAnswer(this, 'problem', 'kurus')">Online koçluk işimi nasıl kuracağımı bilmiyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'problem', 'mesaj')">Kime hitap edeceğimi ve mesajımı netleştiremiyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'problem', 'icerik')">Düzenli içerik üretmekte zorlanıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'problem', 'musteri')">Daha fazla potansiyel müşteri kazanmakta zorlanıyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'problem', 'donusum')">Gelen ilgiyi satışa / danışana çeviremiyorum</button>
+      <button class="opt" onclick="pickAnswer(this, 'problem', 'teklif')">Hizmetimi, teklifimi veya fiyatımı net anlatamıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <!-- INTERLUDE — Podcast tanıtımı -->
+  <div class="screen" data-screen="5" data-page="05" data-progress="20" data-noback>
+    <div class="interlude">
+      <div class="interlude-overline">Kısa bir hatırlatma</div>
+      <div class="podcast-card">
+        <div class="podcast-cover">
+          <img src="https://assets.cdn.filesafe.space/ui4C7FNVHfgWeZk9DQpB/media/cdb7f549-52e8-4b18-9b6b-ab904da6a527.png" alt="Fitness Pazarlama Anatomisi Podcast">
+        </div>
+        <div class="podcast-info">
+          <div class="podcast-tag">PODCAST</div>
+          <div class="podcast-title">Fitness Pazarlama Anatomisi</div>
+          <div class="podcast-tagline">"Antrenör gibi değil, fitness girişimcisi gibi düşün."</div>
+          <div class="podcast-meta">
+            <span>📅 Çarşamba 18:00</span>
+            <span>🎧 Spotify · YouTube</span>
+          </div>
+        </div>
+      </div>
+      <p class="interlude-note">Bu analiz, <strong>Fitness Pazarlama Anatomisi</strong>'nde anlattığımız "fitness koçunu sadece antrenör değil, girişimci gibi düşünme" yaklaşımından uyarlanmıştır.</p>
+      <div class="interlude-progress" id="interludeLine">Asıl analiz şimdi başlıyor · 20 soru</div>
+      <button class="cta" onclick="goNext()">Devam et</button>
+    </div>
+  </div>
+
+  <!-- BÖLÜM 1: KONUMLANDIRMA (5 soru) -->
+  <div class="screen" data-screen="6" data-page="06" data-progress="22" data-q-key="q1_1" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 1 · KONUMUN NE KADAR NET? (Konumlandırma)</span></div>
+    <div class="q-num">1 / 5 — Hedef Kitle Netliği</div>
+    <h1 class="q-title">Kime yardım ettiğiniz net mi?</h1>
+    <p class="q-sub">Bu bölüm, insanların sizi gördüğünde "Bu kişi benim için doğru koç" deyip demediğini ölçer.</p>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q1_1', 100)">Evet, kime yardım ettiğimi çok net biliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_1', 66)">Genel olarak biliyorum ama çok spesifik değil</button>
+      <button class="opt" onclick="pickScore(this, 'q1_1', 33)">Pek net değil, farklı kişilere hizmet veriyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_1', 0)">Hayır, kim gelirse onunla çalışıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="7" data-page="07" data-progress="26" data-q-key="q1_2" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 1 · KONUMUN NE KADAR NET? (Konumlandırma)</span></div>
+    <div class="q-num">2 / 5 — Problem Netliği</div>
+    <h1 class="q-title">Çalışmak istediğiniz kişinin ana problemini net biliyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q1_2', 100)">Evet, en büyük problemini ve neden çözmek istediğini net biliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_2', 66)">Genel olarak biliyorum ama detayları çok net değil</button>
+      <button class="opt" onclick="pickScore(this, 'q1_2', 33)">Tahmin ediyorum ama emin değilim</button>
+      <button class="opt" onclick="pickScore(this, 'q1_2', 0)">Hayır, hedef kitlemin ana problemini net bilmiyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="8" data-page="08" data-progress="30" data-q-key="q1_3" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 1 · KONUMUN NE KADAR NET? (Konumlandırma)</span></div>
+    <div class="q-num">3 / 5 — Süreç Vaadi</div>
+    <h1 class="q-title">İnsanları hedeflerine nasıl götüreceğiniz net mi?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q1_3', 100)">Evet, kime hangi hedefte, nasıl bir süreçle yardımcı olacağımı net anlatabiliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_3', 66)">Genel olarak anlatabiliyorum ama süreç çok detaylı değil</button>
+      <button class="opt" onclick="pickScore(this, 'q1_3', 33)">Daha çok hizmetin içinde neler olduğunu anlatıyorum, süreci netleştirmiyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_3', 0)">Hayır, insanları hedeflerine nasıl götüreceğimi net anlatamıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="9" data-page="09" data-progress="34" data-q-key="q1_4" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 1 · KONUMUN NE KADAR NET? (Konumlandırma)</span></div>
+    <div class="q-num">4 / 5 — Profil Mesajı</div>
+    <h1 class="q-title">Instagram profilinize ilk kez bakan biri, kime nasıl yardım ettiğinizi hemen anlar mı?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q1_4', 100)">Evet, kime hangi konuda yardım ettiğim net yazıyor</button>
+      <button class="opt" onclick="pickScore(this, 'q1_4', 66)">Kime yardım ettiğim yazıyor ama süreç / hedef çok net değil</button>
+      <button class="opt" onclick="pickScore(this, 'q1_4', 33)">Ne yaptığım yazıyor ama kime olduğu belirsiz</button>
+      <button class="opt" onclick="pickScore(this, 'q1_4', 0)">Sadece adım / fitness koçu yazıyor</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="10" data-page="10" data-progress="38" data-q-key="q1_5" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 1 · KONUMUN NE KADAR NET? (Konumlandırma)</span></div>
+    <div class="q-num">5 / 5 — Seçilme Sebebi</div>
+    <h1 class="q-title">İnsanlar neden sizi seçmeli, net anlatabiliyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q1_5', 100)">Evet, bunu net bir cümleyle anlatabiliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_5', 66)">Beni farklı kılan birkaç şeyi söyleyebiliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_5', 33)">Genelde "daha ilgiliyim / daha çok destek olurum" gibi şeyler söylüyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q1_5', 0)">Hayır, bu soruya net bir cevabım yok</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <!-- BÖLÜM 1 SONU İÇGÖRÜ -->
+  <div class="screen" data-progress="40" data-noback data-after-boyut="1">
+    <div class="insight">
+      <div class="insight-overline">Bölüm sonu</div>
+      <div class="insight-card">
+        <div class="insight-stat">Net konumlandırma</div>
+        <div class="insight-text">Net kitle + net problem + net süreç = güçlü konumlandırma. Bunlardan biri belirsizse içerik üretmek zorlaşır ve insanlar sizi neden takip etmesi gerektiğini hemen anlayamaz.</div>
+      </div>
+      <div class="insight-progress">İlk bölüm tamam · 3 bölüm kaldı</div>
+      <button class="cta" onclick="goNext()">Devam et</button>
+    </div>
+  </div>
+
+  <!-- BÖLÜM 2: TRAFİK (6 soru) -->
+  <div class="screen" data-screen="11" data-page="11" data-progress="43" data-q-key="q2_1" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 2 · YENİ İNSANLAR SANA NASIL ULAŞIYOR? (Trafik)</span></div>
+    <div class="q-num">1 / 6 — Paylaşım Ritmi</div>
+    <h1 class="q-title">Ne kadar düzenli içerik paylaşıyorsunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q2_1', 100)">Her gün veya haftada 7+ içerik paylaşıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_1', 66)">Haftada 4-6 içerik paylaşıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_1', 33)">Haftada 1-3 içerik paylaşıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_1', 0)">Son 1 ayda neredeyse hiç paylaşmadım</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="12" data-page="12" data-progress="46" data-q-key="q2_2" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 2 · YENİ İNSANLAR SANA NASIL ULAŞIYOR? (Trafik)</span></div>
+    <div class="q-num">2 / 6 — İçerik Planı</div>
+    <h1 class="q-title">İçerikleriniz belli konulara dayanıyor mu?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q2_2', 100)">Evet, net içerik konularım var</button>
+      <button class="opt" onclick="pickScore(this, 'q2_2', 66)">Birkaç ana konum var</button>
+      <button class="opt" onclick="pickScore(this, 'q2_2', 33)">Aklımda var ama çok net değil</button>
+      <button class="opt" onclick="pickScore(this, 'q2_2', 0)">Hayır, genelde aklıma geleni paylaşıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="13" data-page="13" data-progress="49" data-q-key="q2_3" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 2 · YENİ İNSANLAR SANA NASIL ULAŞIYOR? (Trafik)</span></div>
+    <div class="q-num">3 / 6 — Yeni Kitleye Erişim</div>
+    <h1 class="q-title">Sizi tanımayan insanların sizi keşfetmesini sağlayan düzenli bir sisteminiz var mı?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q2_3', 100)">Evet, içerik ve/veya reklamlarla düzenli yeni kitlelere ulaşıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_3', 66)">Bazen yeni insanlara ulaşacak içerik, reklam veya iş birlikleri yapıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_3', 33)">Nadiren yapıyorum, genelde mevcut takipçilerime konuşuyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_3', 0)">Hayır, çoğunlukla beni zaten tanıyan kişilerden dönüş alıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="14" data-page="14" data-progress="52" data-q-key="q2_4" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 2 · YENİ İNSANLAR SANA NASIL ULAŞIYOR? (Trafik)</span></div>
+    <div class="q-num">4 / 6 — Satışa Hazırlık</div>
+    <h1 class="q-title">İçerikleriniz sadece bilgi mi veriyor, yoksa satışa da hazırlıyor mu?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q2_4', 100)">İçeriklerim hem dikkat çeker, hem güven oluşturur, hem de satışa hazırlar</button>
+      <button class="opt" onclick="pickScore(this, 'q2_4', 66)">Genelde bilgi veriyorum ama bazen satışa da bağlarım</button>
+      <button class="opt" onclick="pickScore(this, 'q2_4', 33)">Çoğunlukla sadece bilgi / fayda içerikleri paylaşıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_4', 0)">İçeriklerimin satışla bağlantısını pek düşünmüyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="15" data-page="15" data-progress="55" data-q-key="q2_5" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 2 · YENİ İNSANLAR SANA NASIL ULAŞIYOR? (Trafik)</span></div>
+    <div class="q-num">5 / 6 — Reklam Kullanımı</div>
+    <h1 class="q-title">Reklam veriyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q2_5', 100)">Evet, düzenli reklam veriyor ve farklı şeyler test ediyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_5', 66)">Evet, düzenli reklam veriyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_5', 33)">Daha önce denedim ama devam etmedim</button>
+      <button class="opt" onclick="pickScore(this, 'q2_5', 0)">Hayır, hiç reklam vermedim</button>
+      <button class="opt opt-na" onclick="pickNA(this, 'q2_5')">Henüz benim için erken</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="16" data-page="16" data-progress="58" data-q-key="q2_6" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 2 · YENİ İNSANLAR SANA NASIL ULAŞIYOR? (Trafik)</span></div>
+    <div class="q-num">6 / 6 — Reklam Ölçümü</div>
+    <h1 class="q-title">Reklam sonuçlarını takip ediyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q2_6', 100)">Evet, bir danışanın bana kaça mal olduğunu biliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_6', 66)">Kaç kişi yazdı / tıkladı gibi temel sonuçlara bakıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_6', 33)">Sadece beğeni ve yorumlara bakıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q2_6', 0)">Hayır, takip etmiyorum</button>
+      <button class="opt opt-na" onclick="pickNA(this, 'q2_6')">Reklam vermiyorum / henüz benim için erken</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <!-- BÖLÜM 3: DÖNÜŞÜM (5 soru) -->
+  <div class="screen" data-screen="17" data-page="17" data-progress="63" data-q-key="q3_1" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 3 · İLGİ NASIL DANIŞANA DÖNÜŞÜYOR? (Dönüşüm)</span></div>
+    <div class="q-num">1 / 5 — Lead Kaynağı</div>
+    <h1 class="q-title">İnsanların iletişim bilgisi karşılığında aldığı ücretsiz bir kaynağınız var mı?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q3_1', 100)">Evet, var ve alan kişilere otomatik mesaj / e-posta gidiyor</button>
+      <button class="opt" onclick="pickScore(this, 'q3_1', 66)">Evet, bir ücretsiz kaynağım var</button>
+      <button class="opt" onclick="pickScore(this, 'q3_1', 33)">Bazen bir şeyler paylaşıyorum ama iletişim bilgisi toplamıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q3_1', 0)">Hayır, ücretsiz bir kaynağım yok</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="18" data-page="18" data-progress="67" data-q-key="q3_2" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 3 · İLGİ NASIL DANIŞANA DÖNÜŞÜYOR? (Dönüşüm)</span></div>
+    <div class="q-num">2 / 5 — Satışa Yönlendirme</div>
+    <h1 class="q-title">İnsanları satışa veya başvuruya götüren bir sayfanız var mı?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q3_2', 100)">Evet, satış / başvuru için özel hazırlanmış bir sayfam var</button>
+      <button class="opt" onclick="pickScore(this, 'q3_2', 66)">Evet, hizmetimi anlatan bir sayfam var</button>
+      <button class="opt" onclick="pickScore(this, 'q3_2', 33)">Basit bir bio link veya kısa tanıtım sayfam var</button>
+      <button class="opt" onclick="pickScore(this, 'q3_2', 0)">Hayır, sadece DM / WhatsApp üzerinden ilerliyorum</button>
+      <button class="opt opt-na" onclick="pickNA(this, 'q3_2')">Henüz benim için erken</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="19" data-page="19" data-progress="71" data-q-key="q3_3" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 3 · İLGİ NASIL DANIŞANA DÖNÜŞÜYOR? (Dönüşüm)</span></div>
+    <div class="q-num">3 / 5 — Sayfa Gücü</div>
+    <h1 class="q-title">Sayfanız insanları karar vermeye ve aksiyon almaya hazırlıyor mu?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q3_3', 100)">Evet, süreç, güven kanıtları, fiyat / başvuru ve sonraki adım çok net</button>
+      <button class="opt" onclick="pickScore(this, 'q3_3', 66)">Temel bilgiler var ama güven veya aksiyon adımı eksik kalıyor</button>
+      <button class="opt" onclick="pickScore(this, 'q3_3', 33)">Sayfam var ama daha çok kısa bir tanıtım gibi duruyor</button>
+      <button class="opt" onclick="pickScore(this, 'q3_3', 0)">Hayır, sayfam insanları karar vermeye hazırlamıyor</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="20" data-page="20" data-progress="75" data-q-key="q3_4" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 3 · İLGİ NASIL DANIŞANA DÖNÜŞÜYOR? (Dönüşüm)</span></div>
+    <div class="q-num">4 / 5 — Satış Akışı</div>
+    <h1 class="q-title">Size yazan veya başvuran biriyle süreciniz nasıl ilerliyor?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q3_4', 100)">Herkes için net ve aynı ilerleyen bir görüşme / satış sürecim var</button>
+      <button class="opt" onclick="pickScore(this, 'q3_4', 66)">Genelde insanları bir görüşmeye alıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q3_4', 33)">Her seferinde farklı ilerliyor</button>
+      <button class="opt" onclick="pickScore(this, 'q3_4', 0)">Mesajlaşıyoruz ama çoğu kişi kayboluyor</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="21" data-page="21" data-progress="79" data-q-key="q3_5" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 3 · İLGİ NASIL DANIŞANA DÖNÜŞÜYOR? (Dönüşüm)</span></div>
+    <div class="q-num">5 / 5 — Takip Sistemi</div>
+    <h1 class="q-title">"Düşüneyim" diyen kişileri takip ediyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q3_5', 100)">Evet, düzenli bir takip sistemim var</button>
+      <button class="opt" onclick="pickScore(this, 'q3_5', 66)">Çoğunu takip ediyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q3_5', 33)">Bazen, aklıma geldikçe yazıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q3_5', 0)">Hayır, genelde tekrar yazmıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <!-- BÖLÜM 4: TEKLİF / SATIŞA HAZIRLIK (4 soru) -->
+  <div class="screen" data-screen="22" data-page="22" data-progress="84" data-q-key="q4_1" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 4 · HİZMETİN SATIN ALMAYA NE KADAR HAZIR? (Ekonomi)</span></div>
+    <div class="q-num">1 / 4 — Teklif Netliği</div>
+    <h1 class="q-title">Hizmet paketiniz ve kapsamı net mi?</h1>
+    <p class="q-sub">Bu bölüm, insanların hizmetinizi gördüğünde "Bu bana uygun, güvenilir ve almaya değer" deyip demediğini ölçer.</p>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q4_1', 100)">Evet, paketim, sürecim, süresi, destek şekli ve kapsamı çok net</button>
+      <button class="opt" onclick="pickScore(this, 'q4_1', 66)">Genel olarak net ama bazı detaylar belirsiz</button>
+      <button class="opt" onclick="pickScore(this, 'q4_1', 33)">Paketim var ama sonucu / süreci / kapsamı çok net değil</button>
+      <button class="opt" onclick="pickScore(this, 'q4_1', 0)">Hayır, her kişiyle sıfırdan konuşuyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="23" data-page="23" data-progress="88" data-q-key="q4_2" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 4 · HİZMETİN SATIN ALMAYA NE KADAR HAZIR? (Ekonomi)</span></div>
+    <div class="q-num">2 / 4 — Fiyat Güveni</div>
+    <h1 class="q-title">Hizmetinizin fiyatını rahatça söyleyebiliyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q4_2', 100)">Evet, fiyatımı net ve özgüvenli şekilde söylüyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q4_2', 66)">Genelde söylüyorum ama bazen açıklama yapma ihtiyacı hissediyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q4_2', 33)">Fiyat söylerken zorlanıyorum veya sık sık indirim yapıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q4_2', 0)">Hayır, fiyatım net değil / kişiye göre değişiyor</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="24" data-page="24" data-progress="92" data-q-key="q4_3" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 4 · HİZMETİN SATIN ALMAYA NE KADAR HAZIR? (Ekonomi)</span></div>
+    <div class="q-num">3 / 4 — Güven Kanıtları</div>
+    <h1 class="q-title">İnsanların hizmetinizi satın almasını kolaylaştıran güven unsurlarınız var mı?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q4_3', 100)">Evet, referanslarım, süreç anlatımım ve güven veren içeriklerim var</button>
+      <button class="opt" onclick="pickScore(this, 'q4_3', 66)">Bazı referanslarım veya güven veren içeriklerim var</button>
+      <button class="opt" onclick="pickScore(this, 'q4_3', 33)">Birkaç şey var ama düzenli kullanmıyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q4_3', 0)">Hayır, insanları ikna edecek net güven unsurlarım yok</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <div class="screen" data-screen="25" data-page="25" data-progress="96" data-q-key="q4_4" data-q-score>
+    <div class="q-section"><span class="q-section-tag">Bölüm 4 · HİZMETİN SATIN ALMAYA NE KADAR HAZIR? (Ekonomi)</span></div>
+    <div class="q-num">4 / 4 — Kısa Anlatım</div>
+    <h1 class="q-title">Hizmetinizi 10 saniyede anlatabiliyor musunuz?</h1>
+    <div class="options">
+      <button class="opt" onclick="pickScore(this, 'q4_4', 100)">Evet, tek cümlede net anlatabiliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q4_4', 66)">Kısaca anlatabiliyorum</button>
+      <button class="opt" onclick="pickScore(this, 'q4_4', 33)">Anlatıyorum ama biraz uzun sürüyor</button>
+      <button class="opt" onclick="pickScore(this, 'q4_4', 0)">Hayır, net ve kısa anlatamıyorum</button>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" data-continue disabled>Devam et</button></div>
+  </div>
+
+  <!-- BÖLÜM 4 SONU İÇGÖRÜ -->
+  <div class="screen" data-progress="98" data-noback data-after-boyut="4">
+    <div class="insight">
+      <div class="insight-overline">Bölüm sonu</div>
+      <div class="insight-card">
+        <div class="insight-stat">Satılabilir hizmet</div>
+        <div class="insight-text">Net teklif + güven + fiyat özgüveni + kısa anlatım = satılabilir hizmet. Hizmet iyi olsa bile insanlar ne aldığını, neden değerli olduğunu ve nasıl başlayacağını net görmezse karar vermeyi erteler.</div>
+      </div>
+      <div class="insight-progress">Tüm bölümler tamam · raporun hazırlanıyor</div>
+      <button class="cta" onclick="goNext()">Raporumu hazırla</button>
+    </div>
+  </div>
+
+  <!-- LEAD CAPTURE (sonda — rapor gate) -->
+  <div class="screen" data-screen="26" data-page="26" data-progress="99" data-noback data-after-boyut="4">
+    <div class="q-num">Son adım · Rapor</div>
+    <h1 class="q-title">Raporunuz hazır. Nereye gönderelim?</h1>
+    <p class="q-sub">İletişim bilgilerinizi bırakın, kişisel analiz raporunuzu hemen açalım.</p>
+    <div class="form-intro">
+      <strong>Raporunuzda:</strong> 4 alandaki güçlü ve zayıf yönleriniz · 12 haftalık adım adım yol haritası · ilk müdahale etmeniz gereken alanlar.
+      <span class="form-intro-bonus">Ayrıca dilerseniz, raporunuzu birlikte yorumlayacağımız <strong>30 dakikalık ücretsiz strateji görüşmesi</strong> — hiçbir taahhüt yok.</span>
+    </div>
+    <div class="form-row"><label for="firstName">Adınız</label><input type="text" class="form-input" id="firstName" placeholder="Adınız" oninput="checkLead()" autocomplete="given-name"></div>
+    <div class="form-row">
+      <label for="emailInput">E-mail</label>
+      <input type="email" class="form-input" id="emailInput" placeholder="ornek@mail.com" oninput="checkLead()" autocomplete="email">
+      <div class="form-hint" id="emailHint">Raporunuzu bu adrese göndereceğiz</div>
+    </div>
+    <div class="form-row">
+      <label for="phoneInput">WhatsApp / Telefon</label>
+      <input type="tel" class="form-input" id="phoneInput" placeholder="05XX XXX XX XX" oninput="checkLead()" autocomplete="tel" inputmode="numeric">
+      <div class="form-hint" id="phoneHint">Türkiye cep telefonu</div>
+    </div>
+    <div class="form-row">
+      <label for="instagramInput">Instagram <span style="color: var(--text-faint); font-weight: 400;">(opsiyonel)</span></label>
+      <input type="text" class="form-input" id="instagramInput" placeholder="@kullaniciadi" oninput="checkLead()">
+      <div class="form-hint" id="instagramHint">Profilinizi tanıyıp daha kişisel önerilerde bulunmamız için</div>
+    </div>
+    <div class="kvkk-block">
+      <input type="checkbox" id="kvkkCheck" oninput="checkLead()">
+      <label for="kvkkCheck">Fitness ve Pazarlama'dan e-posta ve WhatsApp mesajları almayı ve kişisel verilerimin <strong>KVKK</strong> kapsamında işlenmesini kabul ediyorum.</label>
+    </div>
+    <div class="cta-sticky-wrap" data-sticky><button class="cta" id="leadBtn" onclick="submitLeadAndNext()" disabled>Raporumu göster</button></div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="screen" id="screenLoading" data-screen="47" data-page="44" data-progress="100">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Anatominiz hazırlanıyor</div>
+      <div class="loading-sub">4 boyutta 20 soru değerlendiriliyor · Kişisel yol haritanız hazırlanıyor</div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screenResult" data-screen="48" data-page="44" data-progress="100">
+    <div class="result-hero">
+      <div class="result-overline" id="resultOverline">Online Koçluk Anatomisi</div>
+      <h1 class="result-title" id="resultTitle">Anatominiz hazır.</h1>
+      <div class="score-mega" id="scoreMega">
+        <span class="score-mega-num" id="scoreValue">0</span>
+        <span class="score-mega-of">/ 100</span>
+      </div>
+      <div class="score-mega-label" id="scoreMegaLabel">toplam skor</div>
+    </div>
+
+    <div class="result-diagnosis" id="resultDiagnosis"></div>
+    <div id="segmentBlock"></div>
+
+    <div class="result-section" id="sectionMap">
+      <div class="result-section-title"><span class="em">01</span> · <span style="text-transform:none">Fitsistem Haritası</span></div>
+      <div class="radar-wrap" id="radarWrap"><div id="radarChart"></div></div>
+      <div class="fitsistem-map" id="fitsistemMap"></div>
+    </div>
+
+    <div class="result-section" id="sectionBoyut">
+      <div class="result-section-title"><span class="em">02</span> · güçlü ve zayıf yönleriniz</div>
+      <div class="boyut-list" id="boyutList"></div>
+    </div>
+
+    <div class="result-section" id="sectionWeak">
+      <div class="result-section-title"><span class="em">03</span> · ilk müdahale edeceğiniz 4 alan</div>
+      <div id="weakSummary"></div>
+    </div>
+
+    <div class="result-section" id="sectionRoadmap">
+      <div class="result-section-title"><span class="em">04</span> · sonraki 12 hafta</div>
+      <div class="roadmap-intro" id="roadmapIntro"></div>
+      <div class="roadmap" id="roadmap"></div>
+    </div>
+
+<div class="kadir-card">
+      <div class="kadir-card-top">
+        <div class="kadir-card-avatar"><img src="https://assets.cdn.filesafe.space/ui4C7FNVHfgWeZk9DQpB/media/3eb0ee44-53c2-43c9-bee1-40ad51c2ebe8.png" alt="Kadir"></div>
+        <div class="kadir-card-content">
+          <div class="kadir-card-tag">Bu analizi hazırlayan</div>
+          <div class="kadir-card-name">Kadir Karaçavuşoğlu</div>
+          <div class="kadir-card-body">Fitness sektörünü tümüyle pazarlama merceğinden süzen bir isim. Sadece fitness sektörü için iş büyütme sistemi <strong>Fitsistem</strong>'in kurucusu — dünyanın önde gelen pazarlama uzmanlarının yöntemlerini fitness sektörüne özelleştirir. <strong>30M TL+</strong> pazarlama bütçesi yönetti; aralarında <strong>Mert Köksüren</strong> olmak üzere <strong>30+ fitness koçunun</strong> büyüme sistemini birlikte kurdu. Haftalık <strong>Fitness Pazarlama Anatomisi</strong> podcast'ini ve bültenini yayınlıyor.</div>
+        </div>
+      </div>
+      <div class="kadir-card-marquee">
+        <div class="kadir-card-marquee-prefix">FİTNESS VE PAZARLAMA'NIN BÜYÜME PARTNERLERİ</div>
+        <div class="kadir-card-marquee-wrap">
+          <div class="kadir-card-marquee-track">
+            <span class="kadir-card-marquee-item">Mert Köksüren</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Şahan Yağcı</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Yankı Tansuğ</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Gülay Gökay</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Duha Duman</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Erdem İnan</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Berkay Kıray</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Özkan Türkoğlu</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Eray Arabacı</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Hande Zeynep Koç</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Bahri Ata</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Mert Köksüren</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Şahan Yağcı</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Yankı Tansuğ</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Gülay Gökay</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Duha Duman</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Erdem İnan</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Berkay Kıray</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Özkan Türkoğlu</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Eray Arabacı</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Hande Zeynep Koç</span><span class="kadir-card-marquee-dot">·</span>
+            <span class="kadir-card-marquee-item">Bahri Ata</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="final-cta" id="finalCtaBlock">
+      <div class="final-cta-overline">sonraki adım</div>
+      <h2 class="final-cta-headline">Yol haritasını birlikte konuşalım.</h2>
+      <div id="ctaReflect" style="display:none; max-width:560px; margin:0 auto 18px; padding:14px 18px; background:rgba(13,32,77,0.05); border-left:3px solid var(--accent); border-radius:8px; font-size:15px; line-height:1.5; color:var(--text-muted); text-align:left;"></div>
+      <p class="final-cta-body">Bu yol haritası size yön gösterir, ama herkesin durumu farklı. Kadir Karaçavuşoğlu ile 30 dakikalık ücretsiz <strong>Online Koçluk Strateji Görüşmesi</strong>'nde anatomi raporunuzu birlikte yorumlar, size özel yolu netleştiririz.</p>
+      <div class="final-cta-button" id="ctaButtonWrap"><button class="cta large" onclick="showCalendar()">Yol haritasını konuşmak için randevu al</button></div>
+      <div class="reassure" id="ctaReassure">
+        <div class="reassure-quote">"Görüşme tamamen ücretsiz. Hiçbir taahhüt yok. Karar tamamen size ait."</div>
+        <div class="reassure-name">— Kadir Karaçavuşoğlu</div>
+      </div>
+      <div id="calendarEmbed" style="display:none; margin-top:32px;">
+        <iframe src="https://link.fitsistem.co/widget/bookings/analizongorusmesi"
+                style="width:100%; min-height:750px; border:none; border-radius:16px; overflow:hidden;"
+                scrolling="no" id="analiz_booking_iframe"></iframe>
+      </div>
+    </div>
+
+    <div class="quiz-footer">Detaylı PDF raporunuz <span id="emailEcho">e-postanıza</span> birazdan gelecek.</div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/ui4C7FNVHfgWeZk9DQpB/webhook-trigger/58d9ee4e-3545-42fe-8282-a00532da031c';
+const RANDEVU_URL = 'https://link.fitsistem.co/widget/bookings/analizongorusmesi';
+const BONUS_THRESHOLD = 70;
+const AUTOADVANCE_MS = 600;
+
+function getBucket(score) {
+  if (score <= 35) return 'kurulum';
+  if (score <= 60) return 'darbogaz';
+  if (score <= 80) return 'buyume';
+  return 'olcekleme';
+}
+
+// ============================================================
+// 6 BOYUT × 6 ALT BAŞLIK
+// ============================================================
+const BOYUTLAR = {
+  konumlandirma: {
+    num: '01', name: 'Konumlandırma', bigQ: 'KONUMUN NE KADAR NET?',
+    qKeys: ['q1_1','q1_2','q1_3','q1_4','q1_5'],
+    altBasliklar: [
+      { key: 'q1_1', name: 'Hedef Kitle Netliği', insight: 'Kime yardım ettiğin net değilse içeriğin de teklifin de kime seslendiği belirsiz kalır.' },
+      { key: 'q1_2', name: 'Problem Netliği', insight: 'Danışanının en büyük problemini onun diliyle bilirsen, tüm mesajın yerine oturur.' },
+      { key: 'q1_3', name: 'Süreç Vaadi', insight: 'İnsanlar hizmetin içinde ne olduğunu değil, kendilerini nereye götürdüğünü merak eder. Süreci net anlat.' },
+      { key: 'q1_4', name: 'Profil Mesajı', insight: 'Bio, seni hiç tanımayanın gördüğü ilk şey. İlk bakışta kime ne sağladığın anlaşılmalı.' },
+      { key: 'q1_5', name: 'Seçilme Sebebi', insight: '"Neden sen?" sorusuna net cevabın yoksa tek ayırt edici kalan fiyat olur.' },
+    ],
+  },
+  trafik: {
+    num: '02', name: 'Trafik', bigQ: 'YENİ İNSANLAR SANA NASIL ULAŞIYOR?',
+    qKeys: ['q2_1','q2_2','q2_3','q2_4','q2_5','q2_6'],
+    altBasliklar: [
+      { key: 'q2_1', name: 'Paylaşım Ritmi', insight: 'Düzenli ritim, ara sıra çıkan mükemmel içerikten daha çok kazandırır. Süreklilik > mükemmellik.' },
+      { key: 'q2_2', name: 'İçerik Planı', insight: 'Belirli konulara dayanan içerik akılda kalır; rastgele paylaşım dağıtır.' },
+      { key: 'q2_3', name: 'Yeni Kitleye Erişim', insight: 'Sadece seni tanıyanlara konuşuyorsan büyüme tıkanır. Yeni insanlara ulaşan bir sistem şart.' },
+      { key: 'q2_4', name: 'Satışa Hazırlık', insight: 'Sadece bilgi veren içerik sevilir ama satmaz. İçerik dikkat çekmeli, güven kurmalı ve satışa hazırlamalı.' },
+      { key: 'q2_5', name: 'Reklam Kullanımı', insight: 'Reklam, danışan akışını tesadüften çıkarıp kontrol edilebilir hale getirir.' },
+      { key: 'q2_6', name: 'Reklam Ölçümü', insight: 'Bir danışanın sana kaça mal olduğunu bilmeden reklam vermek, gözü kapalı para harcamaktır.' },
+    ],
+  },
+  satis: {
+    num: '03', name: 'Dönüşüm', bigQ: 'İLGİ NASIL DANIŞANA DÖNÜŞÜYOR?',
+    qKeys: ['q3_1','q3_2','q3_3','q3_4','q3_5'],
+    altBasliklar: [
+      { key: 'q3_1', name: 'Lead Kaynağı', insight: 'Ücretsiz bir kaynak, hazır olmayanı listene alıp ısıtmanın kapısıdır.' },
+      { key: 'q3_2', name: 'Satışa Yönlendirme', insight: 'İlgiyi aksiyona götüren bir sayfan yoksa satış DM kaosuna kalır.' },
+      { key: 'q3_3', name: 'Sayfa Gücü', insight: 'Sayfan sadece tanıtım değil; süreç, güven kanıtı ve net sonraki adımla karar verdirmeli.' },
+      { key: 'q3_4', name: 'Satış Akışı', insight: 'Herkesin aynı düzende ilerlediği bir süreç, satışı şanstan çıkarır.' },
+      { key: 'q3_5', name: 'Takip Sistemi', insight: 'Satışların çoğu ilk konuşmada değil takipte kapanır — takip yoksa para masada kalır.' },
+    ],
+  },
+  ekonomi: {
+    num: '04', name: 'Ekonomi', bigQ: 'HİZMETİN SATIN ALMAYA NE KADAR HAZIR?',
+    qKeys: ['q4_1','q4_2','q4_3','q4_4'],
+    altBasliklar: [
+      { key: 'q4_1', name: 'Teklif Netliği', insight: 'Net paket + kapsam + süre, "düşüneyim" cevabını azaltır; belirsiz teklif satışı öldürür.' },
+      { key: 'q4_2', name: 'Fiyat Güveni', insight: 'Fiyatını rahat söyleyemiyorsan, değerini sen de tam anlatamıyorsun demektir.' },
+      { key: 'q4_3', name: 'Güven Kanıtları', insight: 'Referans ve sonuç kanıtları, kararı kolaylaştıran en güçlü unsurlardır.' },
+      { key: 'q4_4', name: 'Kısa Anlatım', insight: 'Hizmetini 10 saniyede anlatamıyorsan, danışan da başkasına anlatamaz.' },
+    ],
+  },
+};
+
+// ============================================================
+// 12 HAFTALIK YOL HARİTASI (6 konum × 2 hafta) — 3 katmanlı (Neden + Yapacaklar + Sonuç)
+// Antrenör diline sadeleştirilmiş — jargon yok
+// ============================================================
+const ROADMAP = [
+  {
+    weeks: 'Hafta 1-3', boyut: 'konumlandirma', title: 'Kime ve Neden Siz Olduğunuzu Netleştirin',
+    why: 'Kime yardım ettiğiniz ve sizi neden seçecekleri net değilse, içerikleriniz de teklifiniz de kime seslendiği belirsiz kalır. Önce bu netliği kurun.',
+    actions: [
+      'Kime yardım ettiğinizi yaş, meslek ve ana problemiyle yazın',
+      'Bu kişiyi hedefine nasıl götürdüğünüzü (sürecinizi) adım adım anlatın',
+      '"Neden sizi seçmeli?" sorusuna net bir cümle hazırlayın',
+      'Bio\'nuzu "kime + hangi sonuç" netliğiyle güncelleyin',
+    ],
+    outcomes: [
+      'Net hedef kitle (yaş + meslek + problem)',
+      'Net süreç anlatımı',
+      '"Neden ben" cümlesi + güncel bio',
+    ],
+  },
+  {
+    weeks: 'Hafta 4-6', boyut: 'trafik', title: 'Yeni İnsanların Sizi Bulmasını Sağlayın',
+    why: 'Sizi sadece tanıyanlar görüyorsa büyüme durur. Hem düzenli içerikle hem de yeni insanlara ulaşarak, sizi tanımayanların sizi bulmasını sağlayın.',
+    actions: [
+      '2-4 ana içerik konusu belirleyip haftalık plan yapın',
+      'İçeriklerinizi bilgi + güven + satışa hazırlık olacak şekilde kurun',
+      'Yeni insanlara ulaşmak için bir yol seçin (reklam, iş birliği, aktif tanışma)',
+      'Reklam veriyorsanız bir danışanın size kaça mal olduğunu takip edin',
+    ],
+    outcomes: [
+      'Ana konular + haftalık içerik planı',
+      'Yeni kitleye ulaşan bir yöntem',
+      'Reklam ve maliyet takibi (varsa)',
+    ],
+  },
+  {
+    weeks: 'Hafta 7-9', boyut: 'satis', title: 'İlgiyi Danışana Çeviren Süreci Kurun',
+    why: 'Gelen ilgi DM\'de kayboluyorsa, ne kadar insan gelse de satışa dönmez. İlgiyi yakalayıp adım adım satışa taşıyan bir süreç kurun.',
+    actions: [
+      'İletişim karşılığında verilecek ücretsiz bir kaynak hazırlayın',
+      'İnsanları satışa veya başvuruya götüren bir sayfa kurun',
+      'Herkesin aynı ilerlediği bir görüşme akışı yazın',
+      '"Düşüneyim" diyenler için bir takip sistemi kurun',
+    ],
+    outcomes: [
+      'Ücretsiz kaynak + iletişim toplama',
+      'Satışa yönlendiren sayfa',
+      'Net satış akışı + takip sistemi',
+    ],
+  },
+  {
+    weeks: 'Hafta 10-12', boyut: 'ekonomi', title: 'Teklifinizi Satılabilir Hale Getirin',
+    why: 'Hizmetiniz iyi olsa bile, insanlar ne aldığını, neden değerli olduğunu ve nasıl başlayacağını net görmezse kararı erteler. Teklifinizi anlaşılır ve güvenilir hale getirmeniz gerekir.',
+    actions: [
+      'Paketinizi kapsam, süre ve destek şekliyle net yazın',
+      'Fiyatınızı çekinmeden söyleyebileceğiniz bir sunum hazırlayın',
+      'En az 2-3 referans / sonuç kanıtı toplayıp görünür yapın',
+      'Hizmetinizi tek cümlede anlatan bir özet çıkarın',
+    ],
+    outcomes: [
+      'Net paket ve kapsam',
+      'Güvenle söylenen fiyat',
+      'Referans / güven kanıtları',
+      '10 saniyelik net anlatım',
+    ],
+  },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const STORAGE_KEY = 'fvp_quiz2_state_v1';
+
+const state = {
+  screen: 0,
+  answers: {},
+  scores: {},
+  lead: { firstName: '', email: '', phone: '', instagram: '', kvkk: false },
+  leadSubmitted: false,
+};
+
+function loadState() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) Object.assign(state, JSON.parse(raw)); } catch (e) {}
+}
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+// ============================================================
+// NAVIGATION (DOM sırasına göre — sabit index yok)
+// ============================================================
+let SCREENS = [];
+function screenIdxById(id) { const el = document.getElementById(id); return el ? SCREENS.indexOf(el) : -1; }
+function isFinalScreen(el) { return el.id === 'screenLoading' || el.id === 'screenResult'; }
+
+const BOYUT_ORDER = ['konumlandirma','trafik','satis','ekonomi'];
+function qKeyToBoyut(qKey) {
+  const m = (qKey || '').match(/^q(\d)_/);
+  return m ? (BOYUT_ORDER[parseInt(m[1],10) - 1] || null) : null;
+}
+
+// FEATURE 1 — Bölüm bazlı ilerleme etiketi
+function getSectionLabel(el) {
+  if (el.querySelector('.welcome')) return '';
+  const bk = qKeyToBoyut(el.dataset.qKey || '');
+  if (bk) return `Bölüm ${BOYUT_ORDER.indexOf(bk) + 1}/${BOYUT_ORDER.length}`;
+  if (isFinalScreen(el)) return 'Sonuç';
+  if (el.querySelector('.interlude, .insight')) return 'Mola';
+  return 'Hazırlık';
+}
+
+// FEATURE 4 + 5 — Son düzlük momentumu + cevap callback'i
+const PROBLEM_BOYUT = { kurus:'konumlandirma', mesaj:'konumlandirma', icerik:'trafik', musteri:'trafik', donusum:'satis', teklif:'ekonomi' };
+const PROBLEM_ECHO = {
+  kurus: 'işini nasıl kuracağını bilememek',
+  mesaj: 'kime hitap edeceğini ve mesajını netleştirememek',
+  icerik: 'düzenli içerik üretmekte zorlanmak',
+  musteri: 'yeni müşteri kazanmakta zorlanmak',
+  donusum: 'gelen ilgiyi satışa çevirememek',
+  teklif: 'hizmetini / teklifini net anlatamamak',
+};
+function updateContextNotes(el) {
+  const mn = document.getElementById('momentumNote');
+  const cb = document.getElementById('qCallback');
+  const qKey = el.dataset.qKey || '';
+  const bk = qKeyToBoyut(qKey);
+  const isBoyutStart = /_1$/.test(qKey) && bk;
+  let callbackShown = false;
+  if (isBoyutStart && state.answers.problem && PROBLEM_BOYUT[state.answers.problem] === bk) {
+    cb.innerHTML = `Az önce seni en çok zorlayan şeyin <strong>"${PROBLEM_ECHO[state.answers.problem]}"</strong> olduğunu söyledin. İşte tam o alandayız — şimdi burada nerede olduğunu ölçüyoruz.`;
+    cb.style.display = 'block';
+    callbackShown = true;
+  } else {
+    cb.style.display = 'none';
+  }
+  if (!callbackShown && (bk === 'ekonomi' || bk === 'satis')) {
+    mn.textContent = bk === 'ekonomi' ? 'Son boyut — raporun neredeyse hazır' : 'Son düzlük — 2 boyut kaldı';
+    mn.classList.add('show');
+  } else {
+    mn.classList.remove('show');
+  }
+}
+
+// FEATURE 5 — Podcast interlude'unu cevaplarla kişiselleştir
+function personalizeInterlude(el) {
+  const line = el.querySelector('#interludeLine');
+  if (!line) return;
+  const name = state.lead.firstName || '';
+  const hedefMap = { akis:'düzenli danışan akışı', gelir:'daha fazla gelir', ozgurluk:'zamandan ve mekandan bağımsız çalışmak', marka:'sektörde tanınan bir marka' };
+  const hedef = hedefMap[state.answers.hedef];
+  const prob = PROBLEM_ECHO[state.answers.problem];
+  let out = name ? `${name}, sıra asıl analizde. ` : 'Sıra asıl analizde. ';
+  if (hedef && prob) out += `Hedefin <strong>${hedef}</strong>, en çok zorlandığın yer <strong>${prob}</strong>. Şimdi 4 boyutta tam olarak nerede olduğunu ölçeceğiz.`;
+  else if (hedef) out += `Hedefin <strong>${hedef}</strong>. Şimdi 4 boyutta tam olarak nerede olduğunu ölçeceğiz.`;
+  else out += 'Şimdi 4 boyutta tam olarak nerede olduğunu ölçeceğiz · 15 soru.';
+  line.innerHTML = out;
+}
+
+// FEATURE — 4 segmentli ilerleme (4 boyut)
+function getSegmentFills(el) {
+  const f = [0,0,0,0];
+  const bk = qKeyToBoyut(el.dataset.qKey || '');
+  if (bk) {
+    const idx = BOYUT_ORDER.indexOf(bk);
+    const m = (el.dataset.qKey || '').match(/_(\d)$/);
+    const sub = m ? parseInt(m[1], 10) : 1;
+    for (let i = 0; i < idx; i++) f[i] = 1;
+    f[idx] = sub / (BOYUTLAR[bk].qKeys.length || 6);
+    return f;
+  }
+  if (isFinalScreen(el)) return [1,1,1,1];
+  const after = el.dataset.afterBoyut ? parseInt(el.dataset.afterBoyut, 10) : 0;
+  for (let i = 0; i < after; i++) f[i] = 1;
+  return f;
+}
+function updateSegments(el) {
+  const fills = getSegmentFills(el);
+  document.querySelectorAll('#progressSegments .progress-seg-fill').forEach((s, i) => {
+    s.style.width = Math.round((fills[i] || 0) * 100) + '%';
+  });
+}
+
+function showScreen(n) {
+  if (n < 0 || n >= SCREENS.length) return;
+  SCREENS.forEach((el, idx) => el.classList.toggle('active', idx === n));
+  const el = SCREENS[n];
+  // FEATURE 2 — Endowed progress: %8 baseline, sonda %100 (etiket okunağı)
+  const raw = parseInt(el.dataset.progress || '0', 10);
+  const display = Math.min(100, Math.round(8 + raw * 0.92));
+  updateSegments(el);
+  const section = getSectionLabel(el);
+  const pct = el.querySelector('.welcome') ? '' : `<span class="em">%${display}</span>`;
+  document.getElementById('sectionLabel').innerHTML = (section && pct) ? `${section} · ${pct}` : (section || pct);
+  updateContextNotes(el);
+  personalizeInterlude(el);
+  state.screen = n;
+  saveState();
+  updateBackBtn();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goNext() { if (state.screen < SCREENS.length - 1) showScreen(state.screen + 1); }
+function goBack() {
+  const el = SCREENS[state.screen];
+  if (state.screen > 0 && !isFinalScreen(el)) showScreen(state.screen - 1);
+}
+function updateBackBtn() {
+  const btn = document.getElementById('topmetaBack');
+  const el = SCREENS[state.screen];
+  const hide = state.screen === 0 || isFinalScreen(el) || el.hasAttribute('data-noback');
+  btn.classList.toggle('visible', !hide);
+}
+
+// ============================================================
+// SELECTION + AUTOADVANCE
+// ============================================================
+function pickAnswer(btn, key, value) {
+  const screen = btn.closest('.screen');
+  screen.querySelectorAll('.opt').forEach(a => a.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.answers[key] = value;
+  saveState();
+  const cta = screen.querySelector('[data-continue]');
+  if (cta) { cta.disabled = false; cta.onclick = goNext; }
+  btn.classList.add('advancing');
+  setTimeout(() => { btn.classList.remove('advancing'); goNext(); }, AUTOADVANCE_MS);
+}
+function pickScore(btn, qKey, score) {
+  const screen = btn.closest('.screen');
+  screen.querySelectorAll('.opt').forEach(a => a.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.scores[qKey] = score;
+  saveState();
+  const cta = screen.querySelector('[data-continue]');
+  if (cta) {
+    cta.disabled = false;
+    if (!cta.id || cta.id !== 'finalBtn') cta.onclick = goNext;
+  }
+  btn.classList.add('advancing');
+  setTimeout(() => { btn.classList.remove('advancing'); goNext(); }, AUTOADVANCE_MS);
+}
+
+function pickNA(btn, qKey) {
+  const screen = btn.closest('.screen');
+  screen.querySelectorAll('.opt').forEach(a => a.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.scores[qKey] = 'na';
+  saveState();
+  const cta = screen.querySelector('[data-continue]');
+  if (cta) { cta.disabled = false; cta.onclick = goNext; }
+  btn.classList.add('advancing');
+  setTimeout(() => { btn.classList.remove('advancing'); goNext(); }, AUTOADVANCE_MS);
+}
+
+// ============================================================
+// LEAD
+// ============================================================
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+function setHint(id, text, error) { const el = document.getElementById(id); if (!el) return; el.textContent = text; el.classList.toggle('error', !!error); }
+function normalizeInstagram(raw) {
+  if (!raw) return ''; let h = raw.trim().replace(/\s+/g, '');
+  const m = h.match(/instagram\.com\/([a-zA-Z0-9._]+)/i); if (m) h = m[1];
+  return h.replace(/^@+/, '');
+}
+function checkLead() {
+  const name = document.getElementById('firstName').value.trim();
+  const email = document.getElementById('emailInput').value.trim();
+  const phoneRaw = document.getElementById('phoneInput').value.replace(/\s+/g, '');
+  const ig = normalizeInstagram(document.getElementById('instagramInput').value);
+  const kvkk = document.getElementById('kvkkCheck').checked;
+  let emailValid = false;
+  if (!email) setHint('emailHint', 'Raporunuzu bu adrese göndereceğiz', false);
+  else if (EMAIL_REGEX.test(email)) { setHint('emailHint', '✓ Geçerli e-posta', false); emailValid = true; }
+  else setHint('emailHint', 'Geçerli bir e-posta girin', true);
+  let phoneValid = false;
+  if (!phoneRaw) setHint('phoneHint', 'Türkiye cep telefonu', false);
+  else if (/^0?5\d{9}$/.test(phoneRaw)) { setHint('phoneHint', '✓ Geçerli numara', false); phoneValid = true; }
+  else setHint('phoneHint', '05XX XXX XX XX formatında girin', true);
+  if (document.getElementById('instagramInput').value && document.getElementById('instagramInput').value.trim()) {
+    if (ig && /^[a-zA-Z0-9._]{1,30}$/.test(ig)) setHint('instagramHint', `✓ @${ig}`, false);
+    else setHint('instagramHint', 'Geçerli kullanıcı adı girin', true);
+  } else setHint('instagramHint', 'Profilinizi tanıyıp daha kişisel önerilerde bulunmamız için', false);
+  state.lead = { firstName: name, email, phone: phoneRaw, instagram: ig, kvkk };
+  saveState();
+  document.getElementById('leadBtn').disabled = !(name.length >= 2 && emailValid && phoneValid && kvkk);
+}
+async function submitLeadAndNext() { if (window.fbq) fbq('track', 'Lead'); await pushToGHL({ stage: 'lead_captured' }); state.leadSubmitted = true; saveState(); finalizeQuiz(); }
+
+// ============================================================
+// SCORE
+// ============================================================
+function avg(arr) { const v = arr.filter(x => typeof x === 'number'); if (!v.length) return 0; return Math.round(v.reduce((a,b)=>a+b,0)/v.length); }
+function computeScores() {
+  const result = {};
+  Object.keys(BOYUTLAR).forEach(k => { result[k] = avg(BOYUTLAR[k].qKeys.map(q => state.scores[q])); });
+  const allBoyuts = Object.values(result);
+  result.toplam = Math.round(allBoyuts.reduce((a,b)=>a+b,0) / allBoyuts.length);
+  return result;
+}
+function getStatus(score) {
+  if (score >= 67) return 'strong';
+  if (score >= 34) return 'medium';
+  return 'weak';
+}
+function getStatusLabel(score) {
+  if (score >= 67) return 'Güçlü';
+  if (score >= 34) return 'Orta';
+  return 'Zayıf';
+}
+function getWeakAltBasliklar(top = 3) {
+  const all = [];
+  Object.keys(BOYUTLAR).forEach(bk => {
+    const boyut = BOYUTLAR[bk];
+    boyut.altBasliklar.forEach(alt => {
+      const sv = state.scores[alt.key]; if (typeof sv !== 'number') return; all.push({ key: alt.key, name: alt.name, boyutKey: bk, boyutName: boyut.name, score: sv });
+    });
+  });
+  return all.sort((a,b) => a.score - b.score).slice(0, top);
+}
+
+// ============================================================
+// RENDER — FITSISTEM 6 KONUM HARİTASI
+// ============================================================
+function drawFitSistemMap(scores) {
+  const map = document.getElementById('fitsistemMap');
+  const cells = Object.keys(BOYUTLAR).map(k => {
+    const b = BOYUTLAR[k]; const score = scores[k]; const status = getStatus(score);
+    return `
+      <div class="fitsistem-cell status-${status}" data-key="${k}">
+        <div class="fitsistem-cell-num">${b.num}</div>
+        <div class="fitsistem-cell-name">${b.name}</div>
+        <div class="fitsistem-cell-status">
+          <span class="fitsistem-cell-status-dot"></span>
+          ${getStatusLabel(score)}
+        </div>
+        <div class="fitsistem-cell-score">${score}<span class="max">/100</span></div>
+      </div>
+    `;
+  }).join('');
+  map.innerHTML = cells;
+}
+
+// ============================================================
+// RENDER — BOYUT LİSTESİ
+// ============================================================
+function drawBoyutList(scores, weakBoyutKeys) {
+  const list = document.getElementById('boyutList');
+  list.innerHTML = Object.keys(BOYUTLAR).map((k, i) => {
+    const b = BOYUTLAR[k]; const score = scores[k]; const weak = weakBoyutKeys.includes(k);
+    const altRows = b.altBasliklar.map(a => {
+      const sRaw = state.scores[a.key]; const isNA = typeof sRaw !== 'number'; const s = isNA ? 0 : sRaw; const aw = !isNA && s < 50;
+      return `<div class="altbaslik-item">
+        <div class="altbaslik-row">
+          <div class="altbaslik-name">${a.name}</div>
+          <div class="altbaslik-bar"><div class="altbaslik-bar-fill ${aw?'weak':''}" data-target="${s}" style="width:0%"></div></div>
+          <div class="altbaslik-score ${aw?'weak':''}">${isNA?'N/A':s}</div>
+        </div>
+        ${a.insight ? `<div class="altbaslik-insight">${a.insight}</div>` : ''}
+      </div>`;
+    }).join('');
+    return `
+      <div class="boyut-row" data-row-idx="${i}">
+        <div class="boyut-row-main">
+          <div class="boyut-name">${b.num} · ${b.name}</div>
+          <div class="boyut-bar"><div class="boyut-bar-fill ${weak?'weak':''}" data-target="${score}" style="width:0%"></div></div>
+          <div class="boyut-score ${weak?'weak':''}">${score}</div>
+        </div>
+        <div class="altbaslik-list">${altRows}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// RENDER — EN ZAYIF 3
+// ============================================================
+const CORE_BOYUTLAR = ['konumlandirma', 'trafik', 'satis', 'ekonomi'];
+const CORE_DESC = {
+  konumlandirma: 'Kime ve neden sen olduğun — diğer her şeyin üstüne oturduğu temel.',
+  trafik: 'Yeni insan akışı — seni hiç tanımayanların kapına gelmesi.',
+  satis: 'Dönüşüm — gelen ilgiyi danışana çevirmen.',
+  ekonomi: 'Satışa hazır teklif — insanların ne aldığını ve neden değerli olduğunu net görmesi.',
+};
+function drawCoreFocus(scores) {
+  const wrap = document.getElementById('weakSummary');
+  const rows = CORE_BOYUTLAR.map(k => {
+    const b = BOYUTLAR[k];
+    const score = scores[k];
+    const status = getStatus(score);
+    let weakest = b.altBasliklar[0];
+    b.altBasliklar.forEach(a => { const sv = (typeof state.scores[a.key]==='number'?state.scores[a.key]:101); const wv = (typeof state.scores[weakest.key]==='number'?state.scores[weakest.key]:101); if (sv < wv) weakest = a; });
+    return `<div class="core-focus-item status-${status}">
+      <div class="core-focus-head">
+        <div class="core-focus-name">${b.name}</div>
+        <div class="core-focus-score">${score}<span>/100</span></div>
+      </div>
+      <div class="core-focus-desc">${CORE_DESC[k]}</div>
+      <div class="core-focus-action"><span class="core-focus-action-label">Önce şuna bak:</span> ${weakest.name} <span class="core-focus-action-score">(${state.scores[weakest.key] || 0}/100)</span></div>
+    </div>`;
+  }).join('');
+  wrap.innerHTML = `
+    <div class="core-focus-tag">İşinin can damarı — önce bu 4 alan</div>
+    <div class="core-focus-intro">Bir online koçluk işinin dört temel alanı: <strong>Konumlandırma</strong> (kime / neden sen), <strong>Trafik</strong> (yeni insan akışı), <strong>Dönüşüm</strong> (gelen ilgiyi danışana çevirmen) ve <strong>Ekonomi</strong> (hizmetinin satın almaya hazır olması). Skorun ne olursa olsun ilk önceliğin burası — her birinde en zayıf noktandan başla.</div>
+    <div class="core-focus-list">${rows}</div>
+  `;
+}
+
+// ============================================================
+// RENDER — RADAR / HEXAGON GÖRSELLEŞTİRME
+// ============================================================
+function drawRadar(scores) {
+  const wrap = document.getElementById('radarChart');
+  if (!wrap) return;
+  const keys = BOYUT_ORDER;
+  const W = 360, H = 320, cx = W/2, cy = H/2 - 4, R = 104, LR = R + 24;
+  const ang = i => (-90 + i*(360/keys.length)) * Math.PI/180;
+  const pt = (i, r) => [cx + r*Math.cos(ang(i)), cy + r*Math.sin(ang(i))];
+  const fmt = arr => arr.map(n => n.toFixed(1)).join(',');
+  let grid = '';
+  [25,50,75,100].forEach(lv => {
+    const pts = keys.map((_,i) => fmt(pt(i, R*lv/100))).join(' ');
+    grid += `<polygon points="${pts}" fill="none" stroke="var(--line)" stroke-width="1"/>`;
+  });
+  let axes = '';
+  keys.forEach((_,i) => { const [x,y] = pt(i, R); axes += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`; });
+  const dataPts = keys.map((k,i) => fmt(pt(i, R*(scores[k]||0)/100))).join(' ');
+  let dots = keys.map((k,i) => { const [x,y] = pt(i, R*(scores[k]||0)/100); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="var(--accent)"/>`; }).join('');
+  let labels = keys.map((k,i) => {
+    const [x,y] = pt(i, LR); const b = BOYUTLAR[k];
+    const anchor = Math.abs(x-cx) < 6 ? 'middle' : (x > cx ? 'start' : 'end');
+    return `<text class="radar-label" x="${x.toFixed(1)}" y="${(y-5).toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-size="12" font-weight="600" fill="var(--text)">${b.name}</text>
+            <text class="radar-label" x="${x.toFixed(1)}" y="${(y+10).toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-size="11" font-weight="700" fill="var(--text-muted)">${scores[k]||0}</text>`;
+  }).join('');
+  wrap.innerHTML = `<svg class="radar-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    ${grid}${axes}
+    <polygon points="${dataPts}" fill="rgba(13,32,77,0.13)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+    ${dots}${labels}
+  </svg>`;
+}
+
+// ============================================================
+// RENDER — KİŞİSELLEŞTİRİLMİŞ TANI SENTEZİ
+// ============================================================
+const DIAG_BUCKET = {
+  kurulum: 'Kurulum aşamasındasın — temel büyüme sistemini netleştirme zamanı.',
+  darbogaz: 'Darboğaz aşamasındasın — bazı parçalar çalışıyor ama sistem bütün olarak akmıyor.',
+  buyume: 'Büyüme aşamasındasın — temel oturmuş, şimdi büyümeyi hızlandırma zamanı.',
+  olcekleme: 'Ölçekleme aşamasındasın — sistem hazır, mesele öngörülebilir ve sürdürülebilir kılmak.',
+};
+const DIAG_WEAK = {
+  konumlandirma: 'temel taşın eksik: kime ve neden sen olduğun netleşmeden diğer alanların tam verim vermez',
+  trafik: 'yeni insan akışın tıkalı: kapına yabancı gelmeden büyüme tesadüfe kalır',
+  satis: 'gelen ilgiyi danışana çeviremiyorsun: görüşmelerin satışla bitmiyor, ilgi DM\'de kayboluyor',
+  ekonomi: 'teklifin satın almaya hazır değil: insanlar ne aldığını ve neden değerli olduğunu net göremiyor',
+};
+const DIAG_HEDEF = { akis: 'düzenli danışan akışı kurmak', gelir: 'daha fazla gelir elde etmek', ozgurluk: 'zamandan ve mekandan bağımsız çalışmak', marka: 'sektörde tanınan bir marka olmak' };
+// Plain-text versiyonu — GHL'e push edip e-postada gösterilir
+function buildDiagnosisText(scores) {
+  const keys = BOYUT_ORDER;
+  let strong = keys[0], weak = keys[0];
+  keys.forEach(k => { if (scores[k] > scores[strong]) strong = k; if (scores[k] < scores[weak]) weak = k; });
+  const name = state.lead.firstName ? `${state.lead.firstName}, ` : '';
+  const bucket = getBucket(scores.toplam);
+  const s1 = `${name}toplam skorun ${scores.toplam}/100. ${DIAG_BUCKET[bucket]}`;
+  const s2 = `En güçlü olduğun alan ${BOYUTLAR[strong].name}, en zayıf alanın ${BOYUTLAR[weak].name} — yani ${DIAG_WEAK[weak]}.`;
+  let s3;
+  if (state.answers.problem && PROBLEM_BOYUT[state.answers.problem] === weak) {
+    s3 = 'Zaten seni en çok zorlayan şeyin de bu olduğunu söylemiştin — tesadüf değil. İlk kaldıracın burası.';
+  } else if (state.answers.hedef && DIAG_HEDEF[state.answers.hedef]) {
+    s3 = `Hedefin ${DIAG_HEDEF[state.answers.hedef]}; oraya giden yol önce bu alandan geçiyor.`;
+  } else {
+    s3 = 'İlk odaklanman gereken yer burası — en hızlı sıçramayı bu alan sağlar.';
+  }
+  return `${s1} ${s2} ${s3}`;
+}
+
+// Bir boyutun içindeki en zayıf alt başlığın adını döner
+function getWeakestSubtitleName(boyutKey) {
+  const b = BOYUTLAR[boyutKey];
+  let weakest = b.altBasliklar[0];
+  b.altBasliklar.forEach(a => {
+    const sv = (typeof state.scores[a.key]==='number'?state.scores[a.key]:101);
+    const wv = (typeof state.scores[weakest.key]==='number'?state.scores[weakest.key]:101);
+    if (sv < wv) weakest = a;
+  });
+  return weakest.name;
+}
+
+function buildDiagnosis(scores) {
+  const el = document.getElementById('resultDiagnosis');
+  if (!el) return;
+  const keys = BOYUT_ORDER;
+  let strong = keys[0], weak = keys[0];
+  keys.forEach(k => { if (scores[k] > scores[strong]) strong = k; if (scores[k] < scores[weak]) weak = k; });
+  const name = state.lead.firstName ? `<strong>${state.lead.firstName}</strong>, ` : '';
+  const bucket = getBucket(scores.toplam);
+  const s1 = `${name}toplam skorun <strong>${scores.toplam}/100</strong>. ${DIAG_BUCKET[bucket]}`;
+  const s2 = `En güçlü olduğun alan <strong>${BOYUTLAR[strong].name}</strong>, en zayıf alanın <strong>${BOYUTLAR[weak].name}</strong> — yani ${DIAG_WEAK[weak]}.`;
+  let s3;
+  if (state.answers.problem && PROBLEM_BOYUT[state.answers.problem] === weak) {
+    s3 = `Zaten seni en çok zorlayan şeyin de bu olduğunu söylemiştin — tesadüf değil. <strong>İlk kaldıracın burası.</strong>`;
+  } else if (state.answers.hedef && DIAG_HEDEF[state.answers.hedef]) {
+    s3 = `Hedefin <strong>${DIAG_HEDEF[state.answers.hedef]}</strong>; oraya giden yol önce bu alandan geçiyor.`;
+  } else {
+    s3 = `<strong>İlk odaklanman gereken yer burası</strong> — en hızlı sıçramayı bu alan sağlar.`;
+  }
+  el.innerHTML = `<div class="result-diagnosis-tag">Senin Tablon</div>
+    <div class="result-diagnosis-text">${s1} ${s2} ${s3}</div>`;
+}
+
+// ============================================================
+// RENDER — 12 HAFTALIK YOL HARİTASI
+// ============================================================
+function drawRoadmap(scores) {
+  const intro = document.getElementById('roadmapIntro');
+  const userHedef = state.answers.hedef || '';
+  const firstName = state.lead.firstName || '';
+  const hedefTextMap = {
+    akis: 'düzenli danışan akışı kurmak',
+    gelir: 'daha fazla gelir elde etmek',
+    ozgurluk: 'zamandan ve mekandan bağımsız çalışmak',
+    marka: 'sektörde adı duyulan bir marka olmak',
+  };
+  const namePrefix = firstName ? `<strong>${firstName}</strong>, ` : '';
+  const hedefText = hedefTextMap[userHedef] || 'işinizi büyütmek';
+  intro.innerHTML = `${namePrefix}hedefiniz <strong>${hedefText}</strong>. Bu yol haritası 4 alanı 3'er hafta çalışmanız için hazırlandı. Her adımda <strong>neden önemli</strong>, <strong>ne yapacağınız</strong> ve <strong>elinize ne geçeceği</strong> yazıyor. Tek başınıza ne kadar sürer, kişiden kişiye değişir.`;
+  const rm = document.getElementById('roadmap');
+  rm.innerHTML = ROADMAP.map((phase, i) => {
+    const score = scores[phase.boyut]; const weak = score < 50;
+    return `
+      <div class="roadmap-phase" data-idx="${i}">
+        <div class="roadmap-phase-weeks">${phase.weeks} · ${BOYUTLAR[phase.boyut].name}${weak?' · Öncelik':''}</div>
+        <h3 class="roadmap-phase-title">${phase.title}</h3>
+
+        <div class="roadmap-block">
+          <div class="roadmap-block-label">Neden Bu Adım?</div>
+          <p class="roadmap-block-text">${phase.why}</p>
+        </div>
+
+        <div class="roadmap-block">
+          <div class="roadmap-block-label">Ne Yapacaksınız?</div>
+          <ul class="roadmap-phase-actions">
+            ${phase.actions.map(a => `<li>${a}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="roadmap-block roadmap-block-outcome">
+          <div class="roadmap-block-label">3 Hafta Sonunda Elinizde Olacak</div>
+          <ul class="roadmap-phase-outcomes">
+            ${phase.outcomes.map(o => `<li>${o}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// REVEAL ANIMATIONS
+// ============================================================
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+function countUp(el, target, durationMs) {
+  if (!el) return;
+  const start = performance.now(); const startVal = parseInt(el.textContent,10) || 0;
+  function tick(now) {
+    const t = Math.min(1, (now - start) / durationMs);
+    el.textContent = Math.round(startVal + (target - startVal) * easeOutCubic(t));
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+function revealResult() {
+  // Hero
+  [
+    { el: document.getElementById('resultOverline'), delay: 100 },
+    { el: document.getElementById('resultTitle'), delay: 300 },
+    { el: document.getElementById('scoreMega'), delay: 600 },
+    { el: document.getElementById('scoreMegaLabel'), delay: 900 },
+  ].forEach(({ el, delay }) => setTimeout(() => { if (el) el.classList.add('reveal-in'); }, delay));
+  setTimeout(() => countUp(document.getElementById('scoreValue'), state.computedScores.toplam, 1400), 700);
+
+  // Tanı sentezi
+  setTimeout(() => { const d = document.getElementById('resultDiagnosis'); if (d) d.classList.add('revealed'); }, 1600);
+
+  // FitSistem Map + Radar
+  setTimeout(() => {
+    document.getElementById('sectionMap').classList.add('revealed');
+    const rw = document.getElementById('radarWrap'); if (rw) rw.classList.add('revealed');
+    document.querySelectorAll('.fitsistem-cell').forEach((cell, i) => {
+      setTimeout(() => cell.classList.add('revealed'), i * 120);
+    });
+  }, 2100);
+
+  // Boyut Listesi
+  setTimeout(() => {
+    document.getElementById('sectionBoyut').classList.add('revealed');
+    document.querySelectorAll('.boyut-row').forEach((row, i) => {
+      setTimeout(() => {
+        row.classList.add('revealed');
+        const bf = row.querySelector('.boyut-row-main .boyut-bar-fill');
+        const bt = parseInt(bf.dataset.target, 10);
+        setTimeout(() => { bf.style.width = bt + '%'; }, 100);
+        countUp(row.querySelector('.boyut-row-main .boyut-score'), bt, 900);
+        row.querySelectorAll('.altbaslik-row').forEach((ar, j) => {
+          setTimeout(() => {
+            const af = ar.querySelector('.altbaslik-bar-fill');
+            af.style.width = af.dataset.target + '%';
+          }, 200 + j * 60);
+        });
+      }, i * 200);
+    });
+  }, 3300);
+
+  // En zayıf 3
+  setTimeout(() => document.getElementById('sectionWeak').classList.add('revealed'), 5500);
+
+  // Roadmap
+  setTimeout(() => {
+    document.getElementById('sectionRoadmap').classList.add('revealed');
+    document.querySelectorAll('.roadmap-phase').forEach((ph, i) => {
+      setTimeout(() => ph.classList.add('revealed'), i * 180);
+    });
+  }, 6000);
+
+  // Final CTA
+  setTimeout(() => document.getElementById('finalCtaBlock').classList.add('revealed'), 7400);
+}
+
+// ============================================================
+// FINALIZE
+// ============================================================
+async function finalizeQuiz() {
+  const scores = computeScores();
+  state.computedScores = scores;
+  state.bucket = getBucket(scores.toplam);
+  state.bonusEligible = scores.toplam >= BONUS_THRESHOLD;
+  state.weakAlts = getWeakAltBasliklar(3);
+  saveState();
+  await pushToGHL({ stage: 'quiz_complete', scores });
+  showScreen(screenIdxById('screenLoading'));
+  setTimeout(() => { renderResult(); showScreen(screenIdxById('screenResult')); setTimeout(revealResult, 100); }, 2400);
+}
+const SEGMENTS = {
+  kurulum:   { title: 'Kurulum Aşamasındasınız', desc: 'Online koçluk işinizin temel büyüme sistemi henüz netleşmemiş görünüyor. Önceliğiniz; kime hizmet verdiğinizi, hangi problemi çözdüğünüzü, paketinizi ve insanları nasıl başvuruya yönlendireceğinizi netleştirmek. Daha fazla içerik üretmeden önce temeli doğru kurmalısınız.', priority: 'Hedef kitle, teklif, içerik yönü ve başvuru akışı.', cta: 'Yol Haritamı Birlikte Netleştirelim' },
+  darbogaz:  { title: 'Darboğaz Aşamasındasınız', desc: 'İşinizde bazı parçalar çalışıyor ama sistem bütün olarak akmıyor. Belki içerik üretiyorsunuz ama yeterince başvuru gelmiyor; belki insanlar yazıyor ama satışa dönüşmüyor; belki hizmetiniz iyi ama teklifiniz net görünmüyor. Büyümenizi durduran ana darboğazı bulup düzeltmeniz gerekiyor.', priority: 'En zayıf büyüme alanını tespit edip sistemi oradan güçlendirmek.', cta: 'Darboğazımı Birlikte Bulalım' },
+  buyume:    { title: 'Büyüme Aşamasındasınız', desc: 'Temel yapınız büyük ölçüde oturmuş görünüyor. Artık mesele sıfırdan sistem kurmak değil; daha düzenli trafik, daha güçlü teklif, daha iyi takip ve daha net satış akışıyla büyümeyi hızlandırmak. Bu aşamada küçük iyileştirmeler bile danışan akışınızda büyük fark yaratabilir.', priority: 'Trafik, dönüşüm ve takip sistemini daha ölçülebilir hale getirmek.', cta: 'Büyümeyi Nasıl Hızlandıracağımı Göster' },
+  olcekleme: { title: 'Ölçekleme Aşamasındasınız', desc: 'Temel sisteminiz büyük ölçüde hazır görünüyor. Önceliğiniz; daha fazla kişiye ulaşmak, reklamı sistemli kullanmak, CRM ve otomasyonu güçlendirmek, satışı ekip veya sistem üzerinden sürdürülebilir kılmak. Mesele sadece daha çok danışan değil; bunu öngörülebilir ve sistemli hale getirmek.', priority: 'Reklam, CRM, otomasyon, ekip ve yüksek hacimli satış süreçleri.', cta: 'Sistemi Nasıl Ölçekleyeceğimi Konuşalım' },
+};
+const WEAK_COMMENTS = {
+  konumlandirma: 'Konumlandırma tarafında netlik eksik görünüyor. İnsanların sizi gördüğünde kime, hangi problem için, nasıl yardımcı olduğunuzu hızlıca anlaması gerekir; bu netlik olmadan içeriğiniz daha fazla kişiye ulaşsa bile başvuruya dönüşmesi zorlaşır.',
+  trafik: 'Trafik tarafında yeni kitleye erişim sınırlı görünüyor. Mevcut takipçilerinize konuşuyor olabilirsiniz; ama düzenli büyüme için sizi tanımayanların da sizi keşfetmesi gerekir — içerik, reklam ve dağıtım birlikte düşünülmelidir.',
+  satis: 'Dönüşüm tarafında ilgi satışa yeterince dönmüyor olabilir. İnsanlar sizi takip ediyor veya size yazıyor olabilir; ama bu ilginin başvuruya/görüşmeye dönüşmesi için net bir sayfa, çağrı, takip ve satış akışı gerekir.',
+  ekonomi: 'Ekonomi tarafında teklifiniz satın almaya yeterince hazır görünmüyor olabilir. Hizmetiniz iyi olsa bile, insanlar ne aldığını, neden bu fiyatı ödediğini ve size neden güvenmesi gerektiğini net göremiyorsa karar vermekte zorlanır.',
+};
+function getSegment(total) {
+  if (total <= 35) return SEGMENTS.kurulum;
+  if (total <= 60) return SEGMENTS.darbogaz;
+  if (total <= 80) return SEGMENTS.buyume;
+  return SEGMENTS.olcekleme;
+}
+function renderSegment(scores) {
+  const el = document.getElementById('segmentBlock'); if (!el) return;
+  const seg = getSegment(scores.toplam);
+  let weak = BOYUT_ORDER[0];
+  BOYUT_ORDER.forEach(k => { if (scores[k] < scores[weak]) weak = k; });
+  const wc = WEAK_COMMENTS[weak] || '';
+  el.innerHTML = `
+    <div class="seg-intro">Cevaplarınıza göre işiniz 4 büyüme alanında değerlendirildi. İşte şu an hangi aşamada olduğunuz:</div>
+    <div class="seg-card">
+      <div class="seg-tag">Aşamanız</div>
+      <div class="seg-title">${seg.title}</div>
+      <div class="seg-desc">${seg.desc}</div>
+      <div class="seg-priority"><strong>İlk odak:</strong> ${seg.priority}</div>
+      ${wc ? `<div class="seg-weak">${wc}</div>` : ''}
+      <button class="cta" onclick="document.getElementById('finalCtaBlock').scrollIntoView({behavior:'smooth',block:'start'})">${seg.cta}</button>
+    </div>`;
+}
+function renderResult() {
+  const scores = state.computedScores;
+  const weakBoyutKeys = Object.keys(BOYUTLAR).map(k => ({ k, s: scores[k] })).sort((a,b)=>a.s-b.s).slice(0,2).map(x => x.k);
+  document.getElementById('resultTitle').textContent = state.lead.firstName ? `${state.lead.firstName}, anatominiz hazır.` : 'Anatominiz hazır.';
+  document.getElementById('scoreValue').textContent = '0';
+  document.getElementById('emailEcho').textContent = state.lead.email || 'e-postanıza';
+  buildDiagnosis(scores);
+  renderSegment(scores);
+  drawRadar(scores);
+  drawFitSistemMap(scores);
+  drawBoyutList(scores, weakBoyutKeys);
+  drawCoreFocus(scores);
+  drawRoadmap(scores);
+  buildCtaReflect();
+}
+function buildCtaReflect() {
+  const el = document.getElementById('ctaReflect'); if (!el) return;
+  const p = state.answers.problem;
+  if (p && PROBLEM_ECHO[p]) {
+    el.innerHTML = `Quiz'in başında seni en çok zorlayan şeyin <strong>${PROBLEM_ECHO[p]}</strong> olduğunu söyledin. Strateji görüşmesinde tam olarak bunu konuşacağız.`;
+    el.style.display = 'block';
+  }
+}
+
+function showCalendar() {
+  if (window.fbq) fbq('track', 'Schedule');
+  // Butonu ve reassure'ı gizle, calendar embed'i aç (aynı sayfada)
+  const btnWrap = document.getElementById('ctaButtonWrap');
+  const reassure = document.getElementById('ctaReassure');
+  const embed = document.getElementById('calendarEmbed');
+  if (btnWrap) btnWrap.style.display = 'none';
+  if (reassure) reassure.style.display = 'none';
+  if (embed) {
+    embed.style.display = 'block';
+    embed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// ============================================================
+// GHL
+// ============================================================
+async function pushToGHL(extra = {}) {
+  if (!GHL_WEBHOOK_URL || GHL_WEBHOOK_URL === 'PLACEHOLDER_GHL_WEBHOOK_URL') {
+    console.log('[GHL placeholder]', { ...state.lead, ...state.answers, ...state.scores, ...extra });
+    return;
+  }
+  const payload = {
+    first_name: state.lead.firstName, email: state.lead.email, phone: state.lead.phone,
+    instagram: state.lead.instagram || '',
+    ...Object.fromEntries(Object.entries(state.answers).map(([k,v]) => [`quiz_${k}`, v])),
+    stage: extra.stage || 'unknown',
+    quiz_version: 'v2',
+  };
+  if (extra.scores) {
+    Object.keys(BOYUTLAR).forEach(k => { payload[`quiz_score_${k}`] = extra.scores[k]; });
+    payload.quiz_score_toplam = extra.scores.toplam;
+    payload.quiz_bucket = state.bucket;
+    payload.quiz_bonus = state.bonusEligible ? 'yes' : 'no';
+    if (state.weakAlts) {
+      payload.quiz_weak_1 = state.weakAlts[0]?.name || '';
+      payload.quiz_weak_2 = state.weakAlts[1]?.name || '';
+      payload.quiz_weak_3 = state.weakAlts[2]?.name || '';
+    }
+    payload.quiz_diagnosis = buildDiagnosisText(extra.scores);
+    payload.quiz_weak_trafik = getWeakestSubtitleName('trafik');
+    payload.quiz_weak_satis = getWeakestSubtitleName('satis');
+    payload.quiz_weak_ekonomi = getWeakestSubtitleName('ekonomi');
+  }
+  try { await fetch(GHL_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); }
+  catch (e) { console.warn('GHL push failed:', e); }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function startQuiz() { if (window.fbq && !window.__qstart) { fbq('trackCustom', 'QuizBaslama'); window.__qstart = 1; } goNext(); }
+function init() {
+  SCREENS = Array.from(document.querySelectorAll('.screen'));
+  loadState();
+  state.screen = 0;
+  showScreen(0);
+  const startBtn = document.getElementById('startBtn');
+  if (startBtn) startBtn.addEventListener('click', () => startQuiz());
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+</script>
+
+<!-- GHL Calendar embed — iframe otomatik resize -->
+<script src="https://link.fitsistem.co/js/form_embed.js" type="text/javascript"></script>
+
+</body>
+</html>
