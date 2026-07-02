@@ -5,7 +5,7 @@ const BASE = "https://fitnessvepazarlama.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
-    "", "/bulten", "/podcast", "/danismanlik",
+    "", "/bulten", "/podcast", "/analiz", "/danismanlik",
     "/topluluk", "/sponsorluk", "/manifesto", "/iletisim",
   ].map((path) => ({
     url: `${BASE}${path}`,
