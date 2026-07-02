@@ -3,6 +3,7 @@ import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { ContentFeed } from "@/components/ContentFeed";
 import { getPosts, getEpisodes } from "@/sanity/lib/queries";
+import { urlFor } from "@/sanity/lib/image";
 import { formatDate } from "@/lib/date";
 import { NewsletterForm } from "@/components/NewsletterForm";
 
@@ -72,13 +73,26 @@ export default async function Home() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {recentEpisodes.map((e, i) => (
                 <Reveal key={e.slug} delay={(i % 3) * 0.08}>
-                  <Link href={`/podcast/${e.slug}`} className="card block h-full p-6">
-                    <div className="text-xs font-medium text-cyan">
-                      {e.episodeLabel ? `${e.episodeLabel} · ` : ""}{formatDate(e.date)}
+                  <Link href={`/podcast/${e.slug}`} className="card block h-full overflow-hidden">
+                    {e.coverImage ? (
+                      <div className="relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={urlFor(e.coverImage).width(600).height(600).url()} alt={e.title} className="aspect-square w-full object-cover" loading="lazy" />
+                        {e.episodeLabel && (
+                          <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
+                            🎙️ {e.episodeLabel}
+                          </span>
+                        )}
+                      </div>
+                    ) : null}
+                    <div className="p-6">
+                      <div className="text-xs font-medium text-cyan">
+                        {formatDate(e.date)}{e.duration ? ` · ${e.duration}` : ""}
+                      </div>
+                      <h3 className="mt-2 text-lg font-semibold leading-snug">{e.title}</h3>
+                      {e.description && <p className="mt-2 line-clamp-2 text-sm text-gray-400">{e.description}</p>}
+                      <span className="mt-4 inline-block text-sm font-medium text-cyan">Dinle →</span>
                     </div>
-                    <h3 className="mt-2 text-lg font-semibold leading-snug">{e.title}</h3>
-                    {e.description && <p className="mt-2 line-clamp-2 text-sm text-gray-400">{e.description}</p>}
-                    <span className="mt-4 inline-block text-sm font-medium text-cyan">Dinle →</span>
                   </Link>
                 </Reveal>
               ))}
