@@ -2,9 +2,10 @@ import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 
 export const metadata = {
-  title: "Sponsorluk — Fitness ve Pazarlama",
+  title: "Sponsorluk",
   description:
     "Fitness ve wellness ekosistemindeki karar vericilere ulaş. Bülten, podcast ve toplulukta sponsorluk fırsatları.",
+  alternates: { canonical: "/sponsorluk" },
 };
 
 const kanallar = [

@@ -6,7 +6,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { formatDate } from "@/lib/date";
 
 export const metadata = {
-  title: "Podcast — Fitness Pazarlama Anatomisi",
+  title: "Podcast: Fitness Pazarlama Anatomisi",
   description: "Antrenör gibi değil, fitness girişimcisi gibi düşün. Her Çarşamba 18:00.",
   alternates: { canonical: "/podcast" },
 };

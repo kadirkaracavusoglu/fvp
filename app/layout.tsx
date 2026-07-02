@@ -48,9 +48,40 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://fitnessvepazarlama.com/#org",
+        name: "Fitness ve Pazarlama",
+        url: "https://fitnessvepazarlama.com",
+        logo: "https://fitnessvepazarlama.com/favicon.png",
+        founder: { "@type": "Person", name: "Kadir Karaçavuşoğlu" },
+        sameAs: [
+          "https://instagram.com/fitnessvepazarlama",
+          "https://youtube.com/@fitnessvepazarlama",
+          "https://linkedin.com/in/kadirkaracavusoglu",
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://fitnessvepazarlama.com/#website",
+        url: "https://fitnessvepazarlama.com",
+        name: "Fitness ve Pazarlama",
+        inLanguage: "tr-TR",
+        publisher: { "@id": "https://fitnessvepazarlama.com/#org" },
+      },
+    ],
+  };
+
   return (
     <html lang="tr" className={`${heading.variable} ${body.variable} h-full antialiased`}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {/* Google Tag Manager */}
         <Script id="gtm" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

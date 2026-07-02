@@ -3,8 +3,9 @@ import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 
 export const metadata = {
-  title: "İletişim — Fitness ve Pazarlama",
+  title: "İletişim",
   description: "Fitness ve Pazarlama ile iletişime geç: WhatsApp topluluk, e-posta ve ücretsiz strateji görüşmesi.",
+  alternates: { canonical: "/iletisim" },
 };
 
 const CONTACT_EMAIL = SITE.email;
