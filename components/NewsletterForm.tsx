@@ -72,16 +72,13 @@ export function NewsletterForm({
                   : "border-[#e6e8ea] bg-white focus-within:border-[#0d204d]"
               }`}
             >
-              <span className={`hidden pl-3 sm:block ${onNavy ? "text-white/60" : "text-[#9ba4b0]"}`} aria-hidden>
-                ✉️
-              </span>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="E-posta adresin"
-                className={`min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm outline-none ${
+                className={`min-w-0 flex-1 bg-transparent px-4 py-2.5 text-sm outline-none ${
                   onNavy ? "text-white placeholder:text-white/60" : "text-[#0d204d] placeholder:text-[#9ba4b0]"
                 }`}
               />

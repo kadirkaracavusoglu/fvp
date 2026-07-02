@@ -47,12 +47,14 @@ export function ContentFeed({ allPosts, heading = "İçerik Akışı" }: { allPo
         {posts.map((p, i) => (
           <Reveal key={p.slug} delay={(i % 3) * 0.08}>
             <Link href={`/yazi/${p.slug}`} className="card block h-full overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={coverUrl(p, 700)} alt={p.title} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
-              <div className="p-6">
-                <div className="mb-2 text-xs font-medium text-cyan">
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={coverUrl(p, 700)} alt={p.title} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
+                <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
                   {catEmoji(p.category)} {catLabel(p.category)}
-                </div>
+                </span>
+              </div>
+              <div className="p-6">
                 <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
                 <p className="mt-2 text-sm text-gray-400">{p.excerpt}</p>
                 <div className="mt-4 text-xs text-gray-400">{formatDate(p.date)}</div>

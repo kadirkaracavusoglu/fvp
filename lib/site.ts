@@ -25,7 +25,6 @@ export const SITE = {
 // Üst menü (header)
 export const NAV = [
   { label: "Ana Sayfa", href: "/" },
-  { label: "Gündem", href: "/gundem" },
   { label: "Bülten", href: "/bulten" },
   { label: "Podcast", href: "/podcast" },
   { label: "Danışmanlık", href: "/danismanlik" },

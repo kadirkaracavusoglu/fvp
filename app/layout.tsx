@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { NewsletterPopup } from "@/components/NewsletterPopup";
 
 const GA_ID = "G-59D2THYMTM";
 const META_PIXEL_ID = "1334125068260935";
@@ -104,6 +105,7 @@ fbq('track', 'PageView');`}
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <NewsletterPopup />
       </body>
     </html>
   );
