@@ -6,6 +6,7 @@ const icerik = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Bülten", href: "/bulten" },
   { label: "Podcast", href: "/podcast" },
+  { label: "Analiz", href: "/analiz" },
 ];
 
 const kurumsal = [

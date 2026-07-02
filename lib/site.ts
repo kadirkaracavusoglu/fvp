@@ -27,6 +27,7 @@ export const NAV = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Bülten", href: "/bulten" },
   { label: "Podcast", href: "/podcast" },
+  { label: "Analiz", href: "/analiz" },
   { label: "Danışmanlık", href: "/danismanlik" },
   { label: "Manifesto", href: "/manifesto" },
 ];
