@@ -38,8 +38,13 @@ export const metadata: Metadata = {
     url: "https://fitnessvepazarlama.com",
     title: "Fitness ve Pazarlama",
     description: "Fitness sektörünü pazarlama merceğinden süzen medya ve topluluk.",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Fitness ve Pazarlama" }],
   },
-  twitter: { card: "summary_large_image", title: "Fitness ve Pazarlama" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fitness ve Pazarlama",
+    images: ["/og-default.png"],
+  },
   icons: { icon: "/favicon.png", apple: "/apple-touch-icon.png" },
 };
 
