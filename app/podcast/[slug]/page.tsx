@@ -27,7 +27,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: ep.title,
       description: ep.description || "",
       type: "article",
-      images: ep.coverImage ? [urlFor(ep.coverImage).width(1200).height(630).url()] : [],
+      url: `https://fitnessvepazarlama.com/podcast/${slug}`,
+      images: ep.coverImage ? [urlFor(ep.coverImage).width(1200).height(630).url()] : ["/og-default.png"],
     },
   };
 }
