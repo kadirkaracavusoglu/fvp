@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
@@ -55,7 +55,7 @@ const notesComponents: PortableTextComponents = {
 export default async function EpisodePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [ep, all] = await Promise.all([getEpisode(slug), getEpisodes()]);
-  if (!ep) notFound();
+  if (!ep) redirect("/");
 
   const embed = spotifyEmbed(ep.spotifyUrl);
   const others = all.filter((e) => e.slug !== slug).slice(0, 3);

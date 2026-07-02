@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
@@ -75,7 +75,7 @@ const components: PortableTextComponents = {
 export default async function YaziPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) notFound();
+  if (!post) redirect("/");
 
   const dateStr = post.date
     ? new Date(post.date).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })
