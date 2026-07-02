@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
+/* ===== FvP — Açık Tema (beyaz zemin + lacivert ana renk) ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy: #0d204d;        /* ANA RENK — başlık, buton, accent */
+  --navy-hover: #14295c;
+  --white: #ffffff;
+
+  --bg: #ffffff;          /* zemin */
+  --strip: #f4f6f9;       /* alternatif bölüm zemini */
+  --surface: #ffffff;     /* kart yüzeyi */
+  --line: #e6e8ea;        /* kenarlık */
+  --text: #0d204d;        /* ana metin (lacivert) */
+  --muted: #5b6472;       /* ikincil metin */
+
+  --background: var(--bg);
+  --foreground: var(--text);
 }
 
+/* Mevcut yardımcı sınıfları açık temaya eşle
+   (text-cyan → lacivert accent, bg-navy-900 → beyaz, vs.) */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-navy: var(--navy);
+  --color-navy-900: var(--bg);       /* header/footer/hero zemini → beyaz */
+  --color-navy-800: var(--strip);    /* şerit zemin → açık gri */
+  --color-navy-700: var(--strip);    /* kart/gradient → açık gri */
+  --color-navy-600: var(--line);     /* kenarlık → açık gri */
+  --color-cyan: var(--navy);         /* accent → lacivert */
+  --color-cyan-600: var(--navy-hover);
+  --color-gray-100: var(--text);     /* koyu metin */
+  --color-gray-400: var(--muted);    /* ikincil metin */
+  --font-sans: var(--font-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* yumuşak arka plan ışıması (açık) */
+.glow-bg {
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(13, 32, 77, 0.07), transparent 70%),
+    radial-gradient(45% 45% at 100% 10%, rgba(13, 32, 77, 0.05), transparent 70%),
+    var(--bg);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--navy);
+  box-shadow: 0 16px 40px -18px rgba(13, 32, 77, 0.35);
+}
+
+.btn-primary {
+  background: var(--navy);
+  color: var(--white);
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: transform .2s ease, background .2s ease;
+}
+.btn-primary:hover { background: var(--navy-hover); transform: translateY(-2px); }
+
+.btn-ghost {
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  border-radius: 9999px;
+  transition: background .2s ease, color .2s ease;
+}
+.btn-ghost:hover { background: var(--navy); color: var(--white); }
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  color: var(--muted);
+  transition: all .2s ease;
+}
+.chip:hover, .chip[data-active="true"] {
+  color: var(--white);
+  background: var(--navy);
+  border-color: var(--navy);
 }

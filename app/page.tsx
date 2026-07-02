@@ -1,65 +1,131 @@
-import Image from "next/image";
+import Link from "next/link";
+import { SITE, CATEGORIES } from "@/lib/site";
+import { Reveal } from "@/components/Reveal";
+import { ContentFeed } from "@/components/ContentFeed";
+import { getPosts } from "@/sanity/lib/queries";
+import { formatDate } from "@/lib/date";
+import { coverUrl } from "@/lib/cover";
+import { NewsletterForm } from "@/components/NewsletterForm";
 
-export default function Home() {
+function catLabel(slug: string) {
+  return CATEGORIES.find((c) => c.slug === slug)?.label ?? slug;
+}
+
+export const revalidate = 60;
+
+export default async function Home() {
+  const posts = await getPosts();
+  const featured = posts.find((p) => p.featured) ?? posts[0];
+  const secondary = posts.filter((p) => p.slug !== featured.slug).slice(0, 3);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* Hero */}
+      <section className="glow-bg">
+        <div className="mx-auto max-w-4xl px-5 py-24 text-center sm:py-32">
+          <Reveal>
+            <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
+              {SITE.belief}
+            </span>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+              {SITE.hero.title}
+            </h1>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
+              {SITE.hero.subtitle}
+            </p>
+          </Reveal>
+          <Reveal delay={0.24}>
+            <div className="mt-10">
+              <NewsletterForm />
+            </div>
+          </Reveal>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Öne çıkan içerik */}
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Reveal>
+            <Link href={`/yazi/${featured.slug}`} className="card block h-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={coverUrl(featured, 1000)} alt={featured.title} className="aspect-[1200/630] w-full object-cover" />
+              <div className="p-8">
+                <div className="mb-3 text-xs font-medium text-cyan">
+                  ⭐ Öne Çıkan · {catLabel(featured.category)}
+                </div>
+                <h2 className="text-2xl font-bold leading-snug sm:text-3xl">{featured.title}</h2>
+                <p className="mt-3 text-gray-400">{featured.excerpt}</p>
+                <div className="mt-6 text-xs text-gray-400">{formatDate(featured.date)}</div>
+              </div>
+            </Link>
+          </Reveal>
+
+          <div className="grid gap-5">
+            {secondary.map((p, i) => (
+              <Reveal key={p.slug} delay={i * 0.08}>
+                <Link href={`/yazi/${p.slug}`} className="card block p-6">
+                  <div className="mb-2 text-xs font-medium text-cyan">{catLabel(p.category)}</div>
+                  <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
+                  <p className="mt-1 text-sm text-gray-400">{p.excerpt}</p>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Podcast şeridi */}
+      <section className="border-y border-navy-600 bg-navy-800">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-5 py-14 text-center md:flex-row md:text-left">
+          <div className="flex-1">
+            <div className="text-xs font-medium text-cyan">🎙️ Podcast</div>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Fitness Pazarlama Anatomisi</h2>
+            <p className="mt-2 text-gray-400">
+              Antrenör gibi değil, fitness girişimcisi gibi düşün. Her Çarşamba 18:00.
+            </p>
+          </div>
+          <Link href="/podcast" className="btn-primary px-6 py-3">
+            Bölümleri Dinle
+          </Link>
+        </div>
+      </section>
+
+      {/* İçerik akışı (pillar filtreli) */}
+      <ContentFeed allPosts={posts} />
+
+      {/* Bülten CTA */}
+      <section className="mx-auto max-w-4xl px-5 pb-16">
+        <Reveal>
+          <div className="card p-10 text-center">
+            <h2 className="text-2xl font-bold sm:text-3xl">Haftada 2 e-posta. Boş laf yok.</h2>
+            <p className="mx-auto mt-3 mb-6 max-w-xl text-gray-400">
+              Fitness işinde gerçekten ne işe yarıyor? İsimler, rakamlar, örnekler — doğrudan gelen kutuna.
+            </p>
+            <NewsletterForm />
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Danışmanlık teaser */}
+      <section className="mx-auto max-w-6xl px-5 pb-24">
+        <Reveal>
+          <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-navy-600 bg-gradient-to-r from-navy-700 to-navy-800 p-10 md:flex-row">
+            <div>
+              <h2 className="text-2xl font-bold">İşini sisteme oturtmaya hazır mısın?</h2>
+              <p className="mt-2 max-w-xl text-gray-400">
+                FitSistem Birebir Danışmanlığı ile konumlanmadan funnel'a, içerikten CRM'e tüm yapıyı kur.
+              </p>
+            </div>
+            <Link href="/danismanlik" className="btn-ghost whitespace-nowrap px-6 py-3">
+              Danışmanlığı İncele
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+    </>
   );
 }
