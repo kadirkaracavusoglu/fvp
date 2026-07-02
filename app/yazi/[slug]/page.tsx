@@ -3,8 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { Metadata } from "next";
-import { getPost, getAllSlugs } from "@/sanity/lib/queries";
+import { getPost, getAllSlugs, getPostsByCategory } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
+import { coverUrl } from "@/lib/cover";
+import { readingTime } from "@/lib/site";
+import { formatDate } from "@/lib/date";
 import { NewsletterForm } from "@/components/NewsletterForm";
 
 export const revalidate = 60;
@@ -77,6 +80,10 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
   const post = await getPost(slug);
   if (!post) redirect("/");
 
+  const related = post.category
+    ? (await getPostsByCategory(post.category)).filter((p) => p.slug !== slug).slice(0, 3)
+    : [];
+
   const dateStr = post.date
     ? new Date(post.date).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })
     : "";
@@ -103,14 +110,16 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
       <Link href="/" className="text-sm text-gray-400 hover:text-cyan">← Tüm içerikler</Link>
 
       <div className="mt-6">
-        {post.categoryLabel && (
-          <span className="text-xs font-medium text-cyan">
+        {post.categoryLabel && post.category && (
+          <Link href={`/kategori/${post.category}`} className="text-xs font-medium text-cyan hover:underline">
             {post.categoryEmoji} {post.categoryLabel}
-          </span>
+          </Link>
         )}
         <h1 className="mt-2 text-3xl font-bold leading-tight text-[#0d204d] sm:text-4xl">{post.title}</h1>
         {post.excerpt && <p className="mt-4 text-lg text-gray-400">{post.excerpt}</p>}
-        {dateStr && <div className="mt-4 text-sm text-gray-400">{dateStr}</div>}
+        <div className="mt-4 text-sm text-gray-400">
+          {dateStr}{post.chars ? ` · ${readingTime(post.chars)} dk okuma` : ""}
+        </div>
       </div>
 
       <div className="mt-8 overflow-hidden rounded-2xl">
@@ -149,6 +158,25 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
           <NewsletterForm />
         </div>
       </div>
+
+      {/* İlgili yazılar */}
+      {related.length > 0 && (
+        <section className="mt-14">
+          <h2 className="mb-5 text-2xl font-bold text-[#0d204d]">İlgili Yazılar</h2>
+          <div className="grid gap-5 sm:grid-cols-3">
+            {related.map((p) => (
+              <Link key={p.slug} href={`/yazi/${p.slug}`} className="card block h-full overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={coverUrl(p, 500)} alt={p.title} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
+                <div className="p-4">
+                  <h3 className="text-sm font-semibold leading-snug text-[#0d204d]">{p.title}</h3>
+                  <div className="mt-2 text-xs text-gray-400">{formatDate(p.date)} · {readingTime(p.chars)} dk</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </article>
   );
 }

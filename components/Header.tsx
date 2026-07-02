@@ -63,6 +63,12 @@ export function Header() {
 
         {/* CTA + mobil buton */}
         <div className="flex items-center gap-2">
+          <Link href="/ara" aria-label="Ara" className="rounded-full p-2 text-[#5b6472] transition-colors hover:text-[#0d204d]">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m21 21-4.3-4.3" strokeLinecap="round" />
+            </svg>
+          </Link>
           <Link href="/bulten" className="btn-primary hidden px-5 py-2 text-sm sm:inline-block">
             Ücretsiz Kayıt Ol
           </Link>

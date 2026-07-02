@@ -56,7 +56,14 @@ export type Post = {
   date: string;
   featured?: boolean;
   coverImage?: unknown;
+  chars?: number;
 };
+
+// Okuma süresi (dk) — ~1200 karakter/dk
+export function readingTime(chars?: number): number {
+  if (!chars) return 1;
+  return Math.max(1, Math.round(chars / 1200));
+}
 
 // Placeholder içerik — sonra Sanity CMS'ten beslenecek
 export const POSTS: Post[] = [

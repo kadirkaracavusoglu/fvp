@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "antrenör pazarlama", "fitness işi", "spor salonu pazarlama",
   ],
   authors: [{ name: "Kadir Karaçavuşoğlu" }],
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", types: { "application/rss+xml": "/rss.xml" } },
   openGraph: {
     type: "website",
     locale: "tr_TR",

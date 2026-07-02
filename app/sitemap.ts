@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getPosts } from "@/sanity/lib/queries";
+import { CATEGORIES } from "@/lib/site";
 
 const BASE = "https://fitnessvepazarlama.com";
 
@@ -14,6 +15,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "" ? 1 : 0.7,
   }));
 
+  const categoryPages = CATEGORIES.map((c) => ({
+    url: `${BASE}/kategori/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
   const posts = await getPosts();
   const postPages = posts.map((p) => ({
     url: `${BASE}/yazi/${p.slug}`,
@@ -22,5 +30,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...postPages];
+  return [...staticPages, ...categoryPages, ...postPages];
 }

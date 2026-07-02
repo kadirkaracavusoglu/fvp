@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CATEGORIES, type Post } from "@/lib/site";
+import { CATEGORIES, readingTime, type Post } from "@/lib/site";
 import { Reveal } from "./Reveal";
 import { formatDate } from "@/lib/date";
 import { coverUrl } from "@/lib/cover";
@@ -14,29 +14,29 @@ function catEmoji(slug: string) {
   return CATEGORIES.find((c) => c.slug === slug)?.emoji ?? "•";
 }
 
+const PAGE = 9;
+
 export function ContentFeed({ allPosts, heading = "İçerik Akışı" }: { allPosts: Post[]; heading?: string | null }) {
   const [active, setActive] = useState<string | null>(null);
-  const posts = active ? allPosts.filter((p) => p.category === active) : allPosts;
+  const [limit, setLimit] = useState(PAGE);
+  const filtered = active ? allPosts.filter((p) => p.category === active) : allPosts;
+  const posts = filtered.slice(0, limit);
+
+  function setCat(c: string | null) {
+    setActive(c);
+    setLimit(PAGE);
+  }
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-16">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         {heading ? <h2 className="text-2xl font-bold sm:text-3xl">{heading}</h2> : <span />}
         <div className="flex flex-wrap gap-2">
-          <button
-            className="chip px-3 py-1 text-xs"
-            data-active={active === null}
-            onClick={() => setActive(null)}
-          >
+          <button className="chip px-3 py-1 text-xs" data-active={active === null} onClick={() => setCat(null)}>
             Tümü
           </button>
           {CATEGORIES.map((c) => (
-            <button
-              key={c.slug}
-              className="chip px-3 py-1 text-xs"
-              data-active={active === c.slug}
-              onClick={() => setActive(c.slug)}
-            >
+            <button key={c.slug} className="chip px-3 py-1 text-xs" data-active={active === c.slug} onClick={() => setCat(c.slug)}>
               {c.emoji} {c.label}
             </button>
           ))}
@@ -57,12 +57,22 @@ export function ContentFeed({ allPosts, heading = "İçerik Akışı" }: { allPo
               <div className="p-6">
                 <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
                 <p className="mt-2 text-sm text-gray-400">{p.excerpt}</p>
-                <div className="mt-4 text-xs text-gray-400">{formatDate(p.date)}</div>
+                <div className="mt-4 text-xs text-gray-400">
+                  {formatDate(p.date)} · {readingTime(p.chars)} dk okuma
+                </div>
               </div>
             </Link>
           </Reveal>
         ))}
       </div>
+
+      {limit < filtered.length && (
+        <div className="mt-10 text-center">
+          <button onClick={() => setLimit((l) => l + PAGE)} className="btn-ghost px-6 py-3 text-sm">
+            Daha fazla yükle ({filtered.length - limit})
+          </button>
+        </div>
+      )}
     </section>
   );
 }

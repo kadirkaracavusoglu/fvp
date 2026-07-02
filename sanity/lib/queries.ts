@@ -9,7 +9,8 @@ const postFields = `
   "category": category->slug.current,
   "date": coalesce(publishedAt, _createdAt),
   featured,
-  coverImage
+  coverImage,
+  "chars": length(pt::text(body))
 `;
 
 // Sanity bağlıysa oradan çek, değilse placeholder POSTS döner
@@ -49,7 +50,8 @@ export async function getPost(slug: string): Promise<FullPost | null> {
         "categoryLabel": category->title,
         "categoryEmoji": category->emoji,
         "date": coalesce(publishedAt, _createdAt),
-        featured, body, coverImage
+        featured, body, coverImage,
+        "chars": length(pt::text(body))
       }`,
       { slug }
     );
