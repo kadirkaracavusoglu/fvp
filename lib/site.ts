@@ -7,7 +7,7 @@ export const SITE = {
   hero: {
     title: "Antrenör gibi değil, fitness girişimcisi gibi düşün.",
     subtitle:
-      "Fitness işini ciddiye alanlar için medya ve topluluk. Gerçek stratejiler, gerçek örnekler, boş laf yok.",
+      "Fitness işini büyütmek için gereken pazarlama, satış ve sistemleri gerçek örneklerle anlatıyoruz. Haftada 2 e-posta, boş laf yok.",
   },
   cta: {
     whatsapp: "https://chat.whatsapp.com/EFEvQNVivG80QWiszY9fDX",
@@ -38,6 +38,23 @@ export const FOOTER_NAV = [
   { label: "Topluluk", href: "/topluluk" },
   { label: "Sponsorluk", href: "/sponsorluk" },
   { label: "İletişim", href: "/iletisim" },
+];
+
+// Yan yana çalıştığımız koçlar (hero altı sosyal kanıt) — foto: /public/koclar/<slug>.jpg (yoksa baş harf)
+export const COACHES = [
+  { name: "Mert Köksüren", role: "Online Koçluk", photo: "" },
+  { name: "Yankı Tansuğ", role: "Fitness Koçluğu", photo: "" },
+  { name: "Erdem İnan", role: "Kadın Koçluğu", photo: "" },
+  { name: "Eray", role: "Wellness", photo: "" },
+  { name: "Bahri Ata", role: "Boks Eğitimi", photo: "" },
+];
+
+// Neden bizi takip etmelisin? (2. section)
+export const WHY_FOLLOW = [
+  { icon: "🎯", title: "Fitness'a özel", text: "Genel pazarlama değil — sadece fitness işini büyütmeye odaklı." },
+  { icon: "📊", title: "Gerçek örnekler", text: "Teori değil; sahada işe yarayan isimler, rakamlar, vakalar." },
+  { icon: "🧩", title: "Tek kaynak", text: "Pazarlama, satış ve sistem bir arada — dağınık bilgi kovalamak yok." },
+  { icon: "⚡", title: "Boş laf yok", text: "Haftada 2 e-posta, doğrudan işe yarar. Zamanını çalmayız." },
 ];
 
 export const CATEGORIES = [
