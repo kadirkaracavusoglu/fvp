@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE, COACHES, WHY_FOLLOW } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { ContentFeed } from "@/components/ContentFeed";
 import { getPosts, getEpisodes } from "@/sanity/lib/queries";
@@ -38,48 +38,6 @@ export default async function Home() {
               <NewsletterForm />
             </div>
           </Reveal>
-
-          {/* Yan yana çalıştığımız koçlar */}
-          <Reveal delay={0.32}>
-            <div className="mt-14">
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
-                Yan yana çalıştığımız koçlar
-              </p>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
-                {COACHES.map((c) => (
-                  <div key={c.name} className="flex items-center gap-2.5">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
-                      {c.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-                    </span>
-                    <span className="text-left">
-                      <span className="block text-sm font-semibold text-[#0d204d]">{c.name}</span>
-                      <span className="block text-xs text-gray-400">{c.role}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Neden bizi takip etmelisin? */}
-      <section className="border-y border-navy-600 bg-navy-800">
-        <div className="mx-auto max-w-6xl px-5 py-16">
-          <Reveal>
-            <h2 className="text-center text-2xl font-bold sm:text-3xl">Neden bizi takip etmelisin?</h2>
-          </Reveal>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {WHY_FOLLOW.map((w, i) => (
-              <Reveal key={w.title} delay={(i % 4) * 0.08}>
-                <div className="card h-full p-6">
-                  <div className="text-3xl">{w.icon}</div>
-                  <h3 className="mt-4 text-lg font-semibold text-[#0d204d]">{w.title}</h3>
-                  <p className="mt-2 text-sm text-gray-400">{w.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -140,8 +98,7 @@ export default async function Home() {
               style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(34,211,238,0.18), transparent 70%)" }}
             />
             <div className="relative">
-              <span className="chip inline-block px-4 py-1 text-xs" data-active="true">📩 Ücretsiz Bülten</span>
-              <h2 className="mx-auto mt-5 max-w-2xl text-3xl font-bold leading-tight text-white sm:text-4xl">
+              <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-tight text-white sm:text-4xl">
                 Fitness işini büyütenlerin okuduğu bülten.
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-white/70">

@@ -7,7 +7,7 @@ export const SITE = {
   hero: {
     title: "Antrenör gibi değil, fitness girişimcisi gibi düşün.",
     subtitle:
-      "Fitness işini büyütmek için gereken pazarlama, satış ve sistemleri gerçek örneklerle anlatıyoruz. Haftada 2 e-posta, boş laf yok.",
+      "Koçlar ve salon sahipleri için: fitness işini büyütmenin pazarlama, satış ve sistemleri — gerçek örneklerle. Haftada 2 e-posta, boş laf yok.",
   },
   cta: {
     whatsapp: "https://chat.whatsapp.com/EFEvQNVivG80QWiszY9fDX",
