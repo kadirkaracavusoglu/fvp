@@ -45,7 +45,6 @@ export const metadata: Metadata = {
     title: "Fitness ve Pazarlama",
     images: ["/og-default.png"],
   },
-  other: { "fb:app_id": "1467973188448472" },
   icons: { icon: "/favicon.png", apple: "/apple-touch-icon.png" },
 };
 
@@ -84,6 +83,7 @@ export default function RootLayout({
   return (
     <html lang="tr" className={`${heading.variable} ${body.variable} h-full antialiased`}>
       <head>
+        <meta property="fb:app_id" content="1467973188448472" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
