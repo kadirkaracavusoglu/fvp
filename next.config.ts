@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      { source: "/quiz", destination: "/quiz.html" },
+      { source: "/analiz", destination: "/analiz.html" },
     ];
   },
 };
