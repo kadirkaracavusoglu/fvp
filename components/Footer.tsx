@@ -100,7 +100,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-navy-600 py-5 text-center text-xs text-gray-400">
-        © {new Date().getFullYear()} Fitness ve Pazarlama · {SITE.belief}
+        © {new Date().getFullYear()} Fitness ve Pazarlama · Kadir Karaçavuşoğlu tarafından
       </div>
     </footer>
   );

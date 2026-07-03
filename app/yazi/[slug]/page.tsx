@@ -128,8 +128,14 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         )}
         <h1 className="mt-2 text-3xl font-bold leading-tight text-[#0d204d] sm:text-4xl">{post.title}</h1>
         {post.excerpt && <p className="mt-4 text-lg text-gray-400">{post.excerpt}</p>}
-        <div className="mt-4 text-sm text-gray-400">
-          {dateStr}{post.chars ? ` · ${readingTime(post.chars)} dk okuma` : ""}
+        <div className="mt-5 flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0d204d] text-xs font-bold text-white">KK</span>
+          <div className="text-sm">
+            <span className="font-semibold text-[#0d204d]">Kadir Karaçavuşoğlu</span>
+            <span className="block text-xs text-gray-400">
+              {dateStr}{post.chars ? ` · ${readingTime(post.chars)} dk okuma` : ""}
+            </span>
+          </div>
         </div>
       </div>
 
