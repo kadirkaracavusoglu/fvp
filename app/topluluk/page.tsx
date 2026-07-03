@@ -2,8 +2,8 @@ import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 
 const faydalar = [
-  "Fitness girişimcileriyle aynı odada ol",
-  "Soru sor, gerçek örneklerden öğren",
+  "Fitness girişimcileriyle aynı odada ol — yalnız çalışmıyorsun",
+  "Soru sor, gerçek örneklerden ve sektörün nabzından öğren",
   "Yeni içerik, podcast ve fırsatlardan ilk sen haberdar ol",
 ];
 
@@ -24,6 +24,7 @@ export default function ToplulukPage() {
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-gray-400">
             Fitness işini büyütmek isteyenlerin buluştuğu WhatsApp topluluğuna katıl.
+            Baskı yok, satış yok — önce tanış, sektörü konuş, sonrası kendiliğinden gelir.
           </p>
         </Reveal>
 

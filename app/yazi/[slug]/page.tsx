@@ -90,18 +90,29 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt || "",
-    datePublished: post.date,
-    author: { "@type": "Person", name: "Kadir Karaçavuşoğlu" },
-    publisher: {
-      "@type": "Organization",
-      name: "Fitness ve Pazarlama",
-      logo: { "@type": "ImageObject", url: "https://fitnessvepazarlama.com/fvp-logo.png" },
-    },
-    mainEntityOfPage: `https://fitnessvepazarlama.com/yazi/${slug}`,
-    ...(post.coverImage ? { image: urlFor(post.coverImage).width(1200).url() } : {}),
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: post.title,
+        description: post.excerpt || "",
+        datePublished: post.date,
+        author: { "@id": "https://fitnessvepazarlama.com/#kadir" },
+        publisher: { "@id": "https://fitnessvepazarlama.com/#org" },
+        mainEntityOfPage: `https://fitnessvepazarlama.com/yazi/${slug}`,
+        ...(post.categoryLabel ? { articleSection: post.categoryLabel } : {}),
+        ...(post.coverImage ? { image: urlFor(post.coverImage).width(1200).url() } : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://fitnessvepazarlama.com" },
+          ...(post.categoryLabel && post.category
+            ? [{ "@type": "ListItem", position: 2, name: post.categoryLabel, item: `https://fitnessvepazarlama.com/kategori/${post.category}` }]
+            : []),
+          { "@type": "ListItem", position: post.category ? 3 : 2, name: post.title, item: `https://fitnessvepazarlama.com/yazi/${slug}` },
+        ],
+      },
+    ],
   };
 
   return (

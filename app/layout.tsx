@@ -57,12 +57,24 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Person",
+        "@id": "https://fitnessvepazarlama.com/#kadir",
+        name: "Kadir Karaçavuşoğlu",
+        url: "https://fitnessvepazarlama.com/manifesto",
+        jobTitle: "Fitness Pazarlama Uzmanı & Kurucu",
+        worksFor: { "@id": "https://fitnessvepazarlama.com/#org" },
+        sameAs: [
+          "https://linkedin.com/in/kadirkaracavusoglu",
+          "https://instagram.com/fitnessvepazarlama",
+        ],
+      },
+      {
         "@type": "Organization",
         "@id": "https://fitnessvepazarlama.com/#org",
         name: "Fitness ve Pazarlama",
         url: "https://fitnessvepazarlama.com",
         logo: "https://fitnessvepazarlama.com/favicon.png",
-        founder: { "@type": "Person", name: "Kadir Karaçavuşoğlu" },
+        founder: { "@id": "https://fitnessvepazarlama.com/#kadir" },
         sameAs: [
           "https://instagram.com/fitnessvepazarlama",
           "https://youtube.com/@fitnessvepazarlama",
