@@ -26,6 +26,7 @@ export const SITE = {
 export const NAV = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Bülten", href: "/bulten" },
+  { label: "Rehberler", href: "/rehber" },
   { label: "Podcast", href: "/podcast" },
   { label: "Analiz", href: "/analiz" },
   { label: "Danışmanlık", href: "/danismanlik" },
@@ -120,3 +121,49 @@ export const POSTS: Post[] = [
   { slug: "marka-konumlanma", title: "Konumlanma: Neden Sen?", excerpt: "Rakiplerden ayrışmanın pazarlama mantığı.", category: "pazarlama", date: "2026-06-10" },
   { slug: "teklif-kapanis", title: "Teklifi Sunarken Yapılan 3 Hata", excerpt: "Kapanışı öldüren kalıplar ve yerine ne koymalı.", category: "satis", date: "2026-06-08" },
 ];
+
+// REHBER = kalıcı/evergreen içerik (SEO+GEO). Bülten'den ayrı, tarihsiz.
+export type Guide = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  updatedAt?: string;
+  coverImage?: unknown;
+  chars?: number;
+  faq?: { question: string; answer: string }[];
+};
+
+// Placeholder rehberler — Sanity bağlanınca oradan beslenecek. Havuz Tur 3 çekirdek kelimeler (SERP boş).
+export const GUIDES: Guide[] = [
+  {
+    slug: "online-antrenor-nasil-olunur",
+    title: "Online Antrenör Nasıl Olunur?",
+    excerpt: "Sertifikan olsa bile müşteri bulmak ayrı bir iştir. Online koçluğa sıfırdan başlamanın adım adım yol haritası: niş, konumlanma, ilk müşteri ve sistem.",
+    category: "pazarlama",
+    faq: [
+      { question: "Online antrenör olmak için sertifika şart mı?", answer: "Yasal olarak bir antrenörlük/kişisel antrenör sertifikası önerilir, ancak müşteri bulmanın belirleyicisi sertifika değil; net bir niş, güven veren içerik ve bir satış sistemidir." },
+      { question: "İlk müşteriyi nasıl bulurum?", answer: "İlk müşteri genelde reklamla değil, net bir niş + düzenli içerik + çevre üzerinden gelir. Belirli bir kişiye (örneğin 40 yaş üstü kadınlar) net bir vaatle konuşmak, geniş kitleye seslenmekten daha hızlı sonuç verir." },
+    ],
+  },
+  {
+    slug: "online-koclukta-fiyat-nasil-belirlenir",
+    title: "Online Koçlukta Fiyat Nasıl Belirlenir?",
+    excerpt: "Ucuz fiyat çok müşteri değil, az güven getirir. Değer temelli fiyatlama, fiyatı ne zaman yükseltmeli ve indirim tuzağından çıkış.",
+    category: "satis",
+    faq: [
+      { question: "Fiyatı düşük tutmak daha çok müşteri getirir mi?", answer: "Genellikle hayır. Düşük fiyat 'az güven' sinyali verir ve daha kararsız müşteri çeker. Fiyatını yükselten koç çoğu zaman daha az ama daha ciddi danışanla çalışır." },
+      { question: "Değer temelli fiyatlama nedir?", answer: "Değer temelli fiyatlama, hizmetin maliyetine değil müşteriye sağladığı sonuca göre fiyat belirlemektir." },
+    ],
+  },
+  {
+    slug: "online-koclugu-buyutme-sistemi",
+    title: "Online Koçluk İşini Büyütme Sistemi",
+    excerpt: "Birkaç müşteriden düzenli akışa geçmenin yolu daha çok çalışmak değil, tekrarlanabilir bir sistem kurmaktır: içerik, funnel ve takip.",
+    category: "pazarlama",
+    faq: [
+      { question: "Online koçluk işi neden büyümüyor?", answer: "Çoğu zaman sorun yetenekte değil, gelen ilgiyi düzenli müşteriye çeviren bir sistemin olmamasındadır. Trafik, funnel ve takip birbirine bağlanmadığında iş kişisel çabaya kalır ve tavan yapar." },
+    ],
+  },
+];
+

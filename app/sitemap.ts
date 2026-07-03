@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
-import { getPosts } from "@/sanity/lib/queries";
+import { getPosts, getGuides } from "@/sanity/lib/queries";
 import { CATEGORIES } from "@/lib/site";
 
 const BASE = "https://fitnessvepazarlama.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
-    "", "/bulten", "/podcast", "/analiz", "/danismanlik",
+    "", "/bulten", "/rehber", "/podcast", "/analiz", "/danismanlik",
     "/topluluk", "/sponsorluk", "/manifesto", "/iletisim",
   ].map((path) => ({
     url: `${BASE}${path}`,
@@ -30,5 +30,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...categoryPages, ...postPages];
+  const guides = await getGuides();
+  const guidePages = guides.map((g) => ({
+    url: `${BASE}/rehber/${g.slug}`,
+    lastModified: g.updatedAt ? new Date(g.updatedAt) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8, // evergreen — SEO değeri yüksek
+  }));
+
+  return [...staticPages, ...categoryPages, ...postPages, ...guidePages];
 }

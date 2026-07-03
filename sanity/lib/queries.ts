@@ -122,3 +122,59 @@ export async function getEpisodeSlugs(): Promise<string[]> {
     return [];
   }
 }
+
+// ---- Rehber (kalıcı/evergreen — SEO/GEO) ----
+import { GUIDES as FALLBACK_GUIDES, type Guide } from "@/lib/site";
+
+const guideFields = `
+  "slug": slug.current, title, excerpt,
+  "category": category->slug.current,
+  "updatedAt": coalesce(updatedAt, _updatedAt),
+  coverImage, faq,
+  "chars": length(pt::text(body))
+`;
+
+export async function getGuides(): Promise<Guide[]> {
+  if (!client) return FALLBACK_GUIDES;
+  try {
+    const data = await client.fetch<Guide[]>(`*[_type == "rehber"] | order(title asc){${guideFields}}`);
+    return data.length ? data : FALLBACK_GUIDES;
+  } catch {
+    return FALLBACK_GUIDES;
+  }
+}
+
+export type FullGuide = Guide & { body?: unknown; categoryLabel?: string; categoryEmoji?: string };
+
+export async function getGuide(slug: string): Promise<FullGuide | null> {
+  const fallback = FALLBACK_GUIDES.find((g) => g.slug === slug) ?? null;
+  if (!client) return fallback;
+  try {
+    const data = await client.fetch<FullGuide | null>(
+      `*[_type == "rehber" && slug.current == $slug][0]{
+        "slug": slug.current, title, excerpt,
+        "category": category->slug.current,
+        "categoryLabel": category->title,
+        "categoryEmoji": category->emoji,
+        "updatedAt": coalesce(updatedAt, _updatedAt),
+        coverImage, faq, body,
+        "chars": length(pt::text(body))
+      }`,
+      { slug }
+    );
+    return data ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export async function getGuideSlugs(): Promise<string[]> {
+  const fb = FALLBACK_GUIDES.map((g) => g.slug);
+  if (!client) return fb;
+  try {
+    const data = await client.fetch<string[]>(`*[_type == "rehber" && defined(slug.current)].slug.current`);
+    return data.length ? data : fb;
+  } catch {
+    return fb;
+  }
+}
