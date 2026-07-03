@@ -57,6 +57,34 @@ export const WHY_FOLLOW = [
   { icon: "⚡", title: "Boş laf yok", text: "Haftada 2 e-posta, doğrudan işe yarar. Zamanını çalmayız." },
 ];
 
+// Sık Sorulan Sorular (AEO/GEO — FAQPage şeması + görünür bölüm)
+export const FAQS = [
+  {
+    q: "Fitness ve Pazarlama nedir?",
+    a: "Fitness ve Pazarlama, fitness sektörünü tümüyle pazarlama merceğinden okuyan bağımsız bir Türkçe medya ve topluluktur. Koçlar ve salon sahipleri için pazarlama, satış ve teknoloji üzerine haftalık bülten, podcast ve yazılar üretir.",
+  },
+  {
+    q: "Kimler için uygun?",
+    a: "Online ve offline çalışan fitness koçları, salon ve stüdyo sahipleri ve fitness işini büyütmek isteyen herkes için. İçerikler işini ciddiye alan fitness girişimcilerine yöneliktir.",
+  },
+  {
+    q: "İçerikler ücretsiz mi?",
+    a: "Evet. Bülten, blog yazıları ve podcast tamamen ücretsizdir. E-posta adresinle abone olarak her şeye erişebilirsin.",
+  },
+  {
+    q: "Ne sıklıkla içerik yayınlanıyor?",
+    a: "Bülten haftada 2 kez, podcast (Fitness Pazarlama Anatomisi) ise her Çarşamba yayınlanır.",
+  },
+  {
+    q: "Fitness ve Pazarlama'yı kim yönetiyor?",
+    a: "Fitness ve Pazarlama, fitness pazarlama uzmanı Kadir Karaçavuşoğlu tarafından kurulmuş ve yürütülmektedir.",
+  },
+  {
+    q: "Nasıl abone olurum?",
+    a: "Ana sayfadaki forma e-posta adresini yazıp Kayıt Ol'a basman yeterli. Haftada 2 e-posta gelir, istediğin an çıkabilirsin.",
+  },
+];
+
 export const CATEGORIES = [
   { slug: "gundem", label: "Gündem", emoji: "📰" },
   { slug: "pazarlama", label: "Pazarlama", emoji: "💰" },

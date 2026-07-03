@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE } from "@/lib/site";
+import { SITE, FAQS } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { ContentFeed } from "@/components/ContentFeed";
 import { getPosts, getEpisodes } from "@/sanity/lib/queries";
@@ -87,6 +87,40 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      {/* SSS — AEO/GEO */}
+      <section className="mx-auto max-w-3xl px-5 py-16">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: FAQS.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            }),
+          }}
+        />
+        <Reveal>
+          <h2 className="text-center text-2xl font-bold sm:text-3xl">Sık Sorulan Sorular</h2>
+        </Reveal>
+        <div className="mt-8 space-y-3">
+          {FAQS.map((f, i) => (
+            <Reveal key={f.q} delay={(i % 4) * 0.06}>
+              <details className="group rounded-xl border border-[#e6e8ea] bg-white p-5">
+                <summary className="flex cursor-pointer items-center justify-between text-base font-semibold text-[#0d204d]">
+                  {f.q}
+                  <span className="ml-3 text-cyan transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-gray-400">{f.a}</p>
+              </details>
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
       {/* Bülten CTA — lacivert vurgu bandı */}
       <section className="mx-auto max-w-6xl px-5 py-16">
