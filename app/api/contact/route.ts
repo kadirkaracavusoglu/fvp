@@ -7,7 +7,7 @@ function isValidEmail(email: string) {
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, subject, message } = await req.json();
+    const { name, email, phone, subject, message, attribution } = await req.json();
 
     if (!name || name.trim().length < 2) {
       return NextResponse.json({ ok: false, error: "Lütfen adını gir." }, { status: 400 });
@@ -26,14 +26,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "İletişim sistemi henüz bağlanmadı." }, { status: 503 });
     }
 
-    const { error } = await supabaseAdmin.from("contacts").insert({
+    const base = {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       phone: phone.trim(),
       subject: subject || "Genel",
       message: message.trim(),
       source: "fitnessvepazarlama.com",
-    });
+    };
+    const attr = attribution && Object.keys(attribution).length ? attribution : null;
+
+    let { error } = await supabaseAdmin.from("contacts").insert({ ...base, attribution: attr });
+
+    // "attribution" kolonu henüz eklenmediyse attribution'sız kaydet (kayıp lead olmasın)
+    if (error && /attribution|column|schema cache/i.test(error.message)) {
+      ({ error } = await supabaseAdmin.from("contacts").insert(base));
+    }
 
     if (error) {
       console.error("Supabase contact error:", error.message);

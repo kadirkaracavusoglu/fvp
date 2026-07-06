@@ -27,17 +27,18 @@ export function NewsletterPopup() {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          className="fixed inset-x-0 bottom-0 z-[100] p-4 md:inset-0 md:flex md:items-center md:justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-[#0d204d]/50 backdrop-blur-sm" onClick={close} />
+          {/* Karartma yalnızca masaüstünde — mobilde içeriği kapatmaz (Google engelleyici interstitial kuralı) */}
+          <div className="absolute inset-0 hidden bg-[#0d204d]/50 backdrop-blur-sm md:block" onClick={close} />
           <motion.div
-            className="relative w-full max-w-md rounded-2xl border border-[#e6e8ea] bg-white p-8 text-center shadow-2xl"
-            initial={{ scale: 0.9, y: 20 }}
+            className="relative mx-auto w-full max-w-md rounded-2xl border border-[#e6e8ea] bg-white p-6 text-center shadow-2xl sm:p-8"
+            initial={{ scale: 0.95, y: 40 }}
             animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.95, y: 10 }}
+            exit={{ scale: 0.97, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 26 }}
           >
             <button

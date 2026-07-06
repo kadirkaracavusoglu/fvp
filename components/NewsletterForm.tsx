@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { track, getAttribution } from "@/lib/tracking";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -24,10 +25,11 @@ export function NewsletterForm({
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, attribution: getAttribution() }),
       });
       const data = await res.json();
       if (data.ok) {
+        track("newsletter_signup", { location: variant });
         setStatus("success");
         setEmail("");
       } else {

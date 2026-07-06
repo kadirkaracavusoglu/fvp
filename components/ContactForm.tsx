@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track, getAttribution } from "@/lib/tracking";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -68,6 +69,7 @@ export function ContactForm({
     const payload = {
       ...form,
       subject: multi ? selected.join(", ") : form.subject,
+      attribution: getAttribution(),
     };
     try {
       const res = await fetch("/api/contact", {
@@ -77,6 +79,7 @@ export function ContactForm({
       });
       const data = await res.json();
       if (data.ok) {
+        track(multi ? "sponsorship_submit" : "contact_submit", { subject: payload.subject });
         setStatus("success");
         setForm({ name: "", email: "", phone: "", subject: defaultSubject, message: "" });
         setSelected([]);

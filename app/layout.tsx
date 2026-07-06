@@ -6,6 +6,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { NewsletterPopup } from "@/components/NewsletterPopup";
 import { ServiceWorker } from "@/components/ServiceWorker";
+import { Analytics } from "@vercel/analytics/next";
+import { AttributionCapture } from "@/components/AttributionCapture";
 
 export const viewport: Viewport = {
   themeColor: "#0d204d",
@@ -161,6 +163,8 @@ fbq('track', 'PageView');`}
         <Footer />
         <NewsletterPopup />
         <ServiceWorker />
+        <AttributionCapture />
+        <Analytics />
       </body>
     </html>
   );

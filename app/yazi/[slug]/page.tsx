@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
@@ -78,7 +78,7 @@ const components: PortableTextComponents = {
 export default async function YaziPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) redirect("/");
+  if (!post) notFound();
 
   const related = post.category
     ? (await getPostsByCategory(post.category)).filter((p) => p.slug !== slug).slice(0, 3)
@@ -143,7 +143,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         {post.coverImage ? (
           <Image
             src={urlFor(post.coverImage).width(1400).height(800).url()}
-            alt={post.title}
+            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | Fitness ve Pazarlama`}
             width={1400}
             height={800}
             priority
@@ -153,7 +153,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`/api/cover?title=${encodeURIComponent(post.title)}&cat=${post.category}`}
-            alt={post.title}
+            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | Fitness ve Pazarlama`}
             className="aspect-[1200/630] w-full object-cover"
           />
         )}
@@ -162,6 +162,15 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
       <div className="mt-8">
         {post.body ? (
           <PortableText value={post.body as never} components={components} />
+        ) : post.sections && post.sections.length ? (
+          post.sections.map((s) => (
+            <section key={s.h}>
+              <h2 className="mt-10 text-2xl font-bold text-[#0d204d]">{s.h}</h2>
+              {s.p.map((para, i) => (
+                <p key={i} className="mt-4 leading-relaxed text-[#33405c]">{para}</p>
+              ))}
+            </section>
+          ))
         ) : (
           <p className="text-gray-400">İçerik yakında.</p>
         )}

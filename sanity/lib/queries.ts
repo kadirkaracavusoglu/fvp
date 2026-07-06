@@ -20,7 +20,11 @@ export async function getPosts(): Promise<Post[]> {
     const data = await client.fetch<Post[]>(
       `*[_type == "post"] | order(publishedAt desc){${postFields}}`
     );
-    return data.length ? data : FALLBACK_POSTS;
+    if (!data.length) return FALLBACK_POSTS;
+    // Sanity'de olmayan fallback yazıları (kod-ekli bülten) listeye kat, tarihe göre sırala
+    const slugs = new Set(data.map((p) => p.slug));
+    const extras = FALLBACK_POSTS.filter((p) => !slugs.has(p.slug) && p.sections?.length);
+    return [...data, ...extras].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   } catch {
     return FALLBACK_POSTS;
   }
@@ -40,8 +44,16 @@ export type FullPost = Post & {
   seoDescription?: string;
 };
 
+import { CATEGORIES } from "@/lib/site";
+function fallbackPost(slug: string): FullPost | null {
+  const p = FALLBACK_POSTS.find((x) => x.slug === slug);
+  if (!p) return null;
+  const cat = CATEGORIES.find((c) => c.slug === p.category);
+  return { ...p, categoryLabel: cat?.label, categoryEmoji: cat?.emoji };
+}
+
 export async function getPost(slug: string): Promise<FullPost | null> {
-  if (!client) return null;
+  if (!client) return fallbackPost(slug);
   try {
     const data = await client.fetch<FullPost | null>(
       `*[_type == "post" && slug.current == $slug][0]{
@@ -55,18 +67,20 @@ export async function getPost(slug: string): Promise<FullPost | null> {
       }`,
       { slug }
     );
-    return data;
+    return data ?? fallbackPost(slug);
   } catch {
-    return null;
+    return fallbackPost(slug);
   }
 }
 
 export async function getAllSlugs(): Promise<string[]> {
-  if (!client) return [];
+  const fb = FALLBACK_POSTS.map((p) => p.slug);
+  if (!client) return fb;
   try {
-    return await client.fetch<string[]>(`*[_type == "post" && defined(slug.current)].slug.current`);
+    const data = await client.fetch<string[]>(`*[_type == "post" && defined(slug.current)].slug.current`);
+    return Array.from(new Set([...data, ...fb]));
   } catch {
-    return [];
+    return fb;
   }
 }
 

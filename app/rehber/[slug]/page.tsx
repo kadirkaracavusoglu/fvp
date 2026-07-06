@@ -118,6 +118,15 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
       <div className="mt-8">
         {g.body ? (
           <PortableText value={g.body as never} components={components} />
+        ) : g.sections && g.sections.length ? (
+          g.sections.map((s) => (
+            <section key={s.h}>
+              <h2 className="mt-10 text-2xl font-bold text-[#0d204d]">{s.h}</h2>
+              {s.p.map((para, i) => (
+                <p key={i} className="mt-4 leading-relaxed text-[#33405c]">{para}</p>
+              ))}
+            </section>
+          ))
         ) : (
           <p className="leading-relaxed text-[#33405c]">Bu rehberin tam içeriği hazırlanıyor. Aşağıdaki sık sorulan sorular temel cevapları veriyor.</p>
         )}

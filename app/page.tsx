@@ -64,7 +64,7 @@ export default async function Home() {
                     {e.coverImage ? (
                       <div className="relative">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={urlFor(e.coverImage).width(600).height(600).url()} alt={e.title} className="aspect-square w-full object-cover" loading="lazy" />
+                        <img src={urlFor(e.coverImage).width(600).height(600).url()} alt={`${e.title} — Fitness Pazarlama Anatomisi podcast`} className="aspect-square w-full object-cover" loading="lazy" />
                         {e.episodeLabel && (
                           <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
                             🎙️ {e.episodeLabel}
