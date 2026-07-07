@@ -14,6 +14,7 @@ export const viewport: Viewport = {
 };
 
 const GA_ID = "G-59D2THYMTM";
+const GOOGLE_ADS_ID = "AW-18306666790";
 const META_PIXEL_ID = "1334125068260935";
 
 // widmind sitesinin fontu — Inter Tight (tek yerden değiştirilir)
@@ -121,7 +122,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${GA_ID}');`}
+gtag('config', '${GA_ID}');
+gtag('config', '${GOOGLE_ADS_ID}');`}
         </Script>
         {/* Meta Pixel */}
         <Script id="meta-pixel" strategy="afterInteractive">
