@@ -9,6 +9,7 @@ import { ServiceWorker } from "@/components/ServiceWorker";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AttributionCapture } from "@/components/AttributionCapture";
+import { CookieConsent } from "@/components/CookieConsent";
 
 export const viewport: Viewport = {
   themeColor: "#0d204d",
@@ -174,6 +175,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         <main className="flex-1">{children}</main>
         <Footer />
         <NewsletterPopup />
+        <CookieConsent />
         <ServiceWorker />
         <AttributionCapture />
         <Analytics />

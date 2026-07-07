@@ -15,6 +15,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "" ? 1 : 0.7,
   }));
 
+  const legalPages = ["/gizlilik", "/kvkk", "/cerez", "/kosullar"].map((path) => ({
+    url: `${BASE}${path}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  }));
+
   const categoryPages = CATEGORIES.map((c) => ({
     url: `${BASE}/kategori/${c.slug}`,
     lastModified: new Date(),
@@ -38,5 +45,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8, // evergreen — SEO değeri yüksek
   }));
 
-  return [...staticPages, ...categoryPages, ...postPages, ...guidePages];
+  return [...staticPages, ...legalPages, ...categoryPages, ...postPages, ...guidePages];
 }

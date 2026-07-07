@@ -99,8 +99,18 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-navy-600 py-5 text-center text-xs text-gray-400">
-        © {new Date().getFullYear()} Fitness ve Pazarlama · Kadir Karaçavuşoğlu tarafından
+      <div className="border-t border-navy-600 py-5">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-5 text-center sm:flex-row sm:justify-between">
+          <p className="text-xs text-gray-400">
+            © {new Date().getFullYear()} Fitness ve Pazarlama · Kadir Karaçavuşoğlu tarafından
+          </p>
+          <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
+            <Link href="/gizlilik" className="hover:text-cyan">Gizlilik</Link>
+            <Link href="/kvkk" className="hover:text-cyan">KVKK</Link>
+            <Link href="/cerez" className="hover:text-cyan">Çerez Politikası</Link>
+            <Link href="/kosullar" className="hover:text-cyan">Kullanım Koşulları</Link>
+          </nav>
+        </div>
       </div>
     </footer>
   );
