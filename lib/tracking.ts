@@ -18,10 +18,15 @@ export function track(event: string, params: Params = {}) {
   const w = window as unknown as {
     dataLayer?: Params[];
     fbq?: (...args: unknown[]) => void;
+    gtag?: (...args: unknown[]) => void;
   };
-  // GA4 / GTM
+  // GTM dataLayer (ileride GTM'de tag kurulursa diye)
   w.dataLayer = w.dataLayer || [];
   w.dataLayer.push({ event, ...params });
+  // GA4'e DOĞRUDAN gönder (GTM yapılandırması gerekmeden görünür)
+  if (typeof w.gtag === "function") {
+    w.gtag("event", event, params);
+  }
   // Meta Pixel (yalnızca dönüşüm event'lerinde)
   if (FB_MAP[event] && typeof w.fbq === "function") {
     w.fbq("track", FB_MAP[event], params);
