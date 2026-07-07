@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { NewsletterPopup } from "@/components/NewsletterPopup";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AttributionCapture } from "@/components/AttributionCapture";
 
 export const viewport: Viewport = {
@@ -167,6 +168,7 @@ fbq('track', 'PageView');`}
         <ServiceWorker />
         <AttributionCapture />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
