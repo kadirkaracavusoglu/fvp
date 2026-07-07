@@ -115,6 +115,39 @@ export function readingTime(chars?: number): number {
 // Placeholder içerik — sonra Sanity CMS'ten beslenecek
 export const POSTS: Post[] = [
   {
+    slug: "bulten-10-arkasindaki-degisim",
+    title: "Fitness ve Pazarlama Bülteni #10 — Gelişmenin Arkasındaki Değişim",
+    excerpt: "Zayıflama iğnesi çağında koça kalan asıl iş, koşu kulüplerinin yükselişi, menopoz nişi, akıllı saat verisi ve kadınlarda kreatin. 5 başlık — ve her birinin arkasındaki asıl değişim.",
+    category: "gundem",
+    date: "2026-07-07",
+    featured: true,
+    sections: [
+      { h: "📰 Fitness'da Gündem", p: [
+        "Zayıflama iğnesi (GLP-1) talebi büyüyor ama asıl sinyal başka yerde: insanlar \"nasıl kilo veririm\"i çözülmüş sayıyor, soru \"verdiğimi nasıl korurum\"a kaydı. Bu, koça \"iğne sonrası kas koruma ve kalıcılık koçluğu\" alanını açıyor. İğneyi eleştiren değil, yanına konumlanan kazanır.",
+        "Koşu kulüpleri hızla yayılıyor — ve bu bir davranış değişiminin işareti. İnsanlar spora artık tek başına değil, bir toplulukla başlıyor; fitness bireysel eylemden sosyal deneyime kayıyor. Müşteri artık reklamla tek tek değil, topluluğun içinden geliyor. Kalabalığın toplandığı yere gidip değer bırakan koç, o topluluğun doğal otoritesi olur.",
+        "Menopoz ve 40+ kadın fitness'ı: talep büyük, doğru okuyan yok. Bu kitle \"zayıflamak\" için değil, güçlü ve fonksiyonel kalmak için hareket ediyor. Öncelik estetikten sağlıklı yaşlanmaya kayınca, daha az kalabalık ve daha sadık bir kapı açılıyor.",
+        "Akıllı saat verisi yaygınlaştı ama veri, bilgi demek değil. İnsanlar ölçmeyi öğrendi, yorumlayamıyor. Cihaz ölçüyor ama karar veremiyor; veriyi anlama ve güvene çeviren koç, cihazın yapamadığını yapıyor. Teknoloji koçu değersizleştirmiyor, yorumcuya olan ihtiyacı büyütüyor.",
+        "Kadınlarda kreatin tartışması gündemde ve kafa karışıklığı bir fırsat sinyali. Bir konuda kararsızlık varsa, orada otorite boşluğu var demektir. Net, sakin, kaynağa dayalı içerik sizi \"bilimi sadeleştiren güvenilir ses\" konumuna oturtur.",
+      ]},
+      { h: "💰 Fitness'da Pazarlama", p: [
+        "Yükselen bir trend gördüğünüzde fırsat, trendin \"herkesin bildiği ama kimsenin arkasındaki değişimi açıklamadığı\" ilk anındadır.",
+        "Bir içerik üretin ama haberi tekrar etmeyin, arkasındaki davranış değişimini anlatın. \"Kreatin gündemde\" demek haber; \"kadınlar neden artık kreatine yöneliyor, bu neyi gösteriyor\" demek içgörü. Gelişmeyi değil, arkasındaki değişimi okuyan koç, o konunun akılda kalan ismi olur.",
+      ]},
+      { h: "🤝 Fitness'da Satış", p: [
+        "Satışların çoğu ilk görüşmede değil, sonrasındaki sessizlikte kaybediliyor. İnsanların satın alma davranışı değişti: kimse ilk konuşmada karar vermek istemiyor, \"düşüneceğim\" artık standart bir adım.",
+        "Bugünün alıcısı ısrar değil ilgi bekliyor. Görüşmeden sonra o kişinin anlattığı spesifik soruna dair kısa, faydalı bir şey göndermek \"seni ve sorununu hatırlıyorum\" mesajı verir. Mesele bir takip tekniği değil; insanların artık nasıl satın almak istediğini doğru okumak.",
+      ]},
+      { h: "🤖 Fitness'da Teknoloji", p: [
+        "Bir mesaja ne kadar hızlı döndüğünüz giderek daha kritik, çünkü insanların bekleme eşiği düştü. Anlık yanıta alışan bir kitle, bir saat sonra gelen cevabı \"ilgisizlik\" olarak okuyor. Değişen şey teknoloji değil, beklenti.",
+        "Yapay zeka burada bir kaldıraç: bir soru geldiğinde temel bilgileri anında yanıtlayan bir asistan, siz dönene kadar ilgiyi sıcak tutuyor. Teknolojiyi kuran değil, insanların değişen sabrını doğru okuyan kazanıyor.",
+      ]},
+      { h: "💬 Ekipten İçgörüler", p: [
+        "Bu hafta sahada şunu bir kez daha gördüm: danışan gitmeden önce sessizleşir. Aylardır konuşan biri birden yazmaz olur; çoğu koç bunu \"meşguldür\" diye geçer. Oysa sessizlik çoğu zaman \"kaybediyorum\" sinyalidir.",
+        "O sessizliği fark edip önce siz \"nasıl gidiyor, bir şey mi değişti?\" diye dokunduğunuzda, gitmek üzere olan danışanın çoğunu geri kazanırsınız. Retention pahalı reklamla değil, doğru anda okunan bir sinyalle korunuyor.",
+      ]},
+    ],
+  },
+  {
     slug: "bulten-9-sektorde-bu-hafta",
     title: "Fitness ve Pazarlama Bülteni #9 — Sektörde Bu Hafta",
     excerpt: "Hyrox'un açtığı rekabetsiz pencere, Meta'nın önce-sonra yasağı, longevity nişi, şirketlere fitness ve Reformer patlaması. 5 başlık, doğrudan işinize yansımalarıyla.",
