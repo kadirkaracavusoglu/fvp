@@ -43,6 +43,7 @@ export function ContactForm({
     subject: defaultSubject,
     message: "",
   });
+  const [website, setWebsite] = useState(""); // honeypot
   const [selected, setSelected] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
@@ -68,6 +69,7 @@ export function ContactForm({
     setMessage("");
     const payload = {
       ...form,
+      website,
       subject: multi ? selected.join(", ") : form.subject,
       attribution: getAttribution(),
     };
@@ -114,6 +116,17 @@ export function ContactForm({
 
   return (
     <form onSubmit={onSubmit} className="card mx-auto max-w-xl space-y-4 p-6 sm:p-8 text-left">
+      {/* Honeypot — görünmez, botlar doldurur */}
+      <input
+        type="text"
+        name="website"
+        value={website}
+        onChange={(e) => setWebsite(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className={label} htmlFor="name">Ad Soyad *</label>

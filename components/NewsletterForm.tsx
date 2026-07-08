@@ -14,6 +14,7 @@ export function NewsletterForm({
   socialProof?: boolean;
 }) {
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot — insanlar boş bırakır
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
 
@@ -25,7 +26,7 @@ export function NewsletterForm({
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, attribution: getAttribution() }),
+        body: JSON.stringify({ email, website, attribution: getAttribution() }),
       });
       const data = await res.json();
       if (data.ok) {
@@ -66,6 +67,17 @@ export function NewsletterForm({
             animate={{ opacity: 1, y: 0 }}
             onSubmit={onSubmit}
           >
+            {/* Honeypot — ekranda görünmez, botlar doldurur */}
+            <input
+              type="text"
+              name="website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
             {/* Birleşik pill: input + buton */}
             <div
               className={`group flex items-center gap-2 rounded-full border p-1.5 shadow-sm transition-all focus-within:shadow-md ${

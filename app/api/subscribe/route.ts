@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { rateLimit, clientIp, isBot } from "@/lib/spam";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -7,7 +8,17 @@ function isValidEmail(email: string) {
 
 export async function POST(req: Request) {
   try {
-    const { email, attribution } = await req.json();
+    const { email, attribution, website } = await req.json();
+
+    // Honeypot: "website" alanı doluysa bot → sahte başarı dön (kaydetme)
+    if (isBot(website)) {
+      return NextResponse.json({ ok: true });
+    }
+
+    // Hız sınırı: IP başına dakikada 5 istek
+    if (!rateLimit(`sub:${clientIp(req)}`)) {
+      return NextResponse.json({ ok: false, error: "Çok fazla deneme. Lütfen biraz sonra tekrar deneyin." }, { status: 429 });
+    }
 
     if (!email || !isValidEmail(email)) {
       return NextResponse.json({ ok: false, error: "Geçerli bir e-posta girin." }, { status: 400 });
