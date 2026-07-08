@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import * as Sentry from "@sentry/nextjs";
 
 export default function Error({
   error,
@@ -11,7 +12,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Hata izleme buraya bağlanabilir (ör. Sentry)
+    Sentry.captureException(error); // DSN yoksa no-op
     console.error("Sayfa hatası:", error);
   }, [error]);
 

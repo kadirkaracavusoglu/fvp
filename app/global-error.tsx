@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 // Kök layout'ta oluşan hataları yakalar; kendi <html>/<body>'sini içermek zorundadır.
 export default function GlobalError({
@@ -11,6 +12,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
+    Sentry.captureException(error); // DSN yoksa no-op
     console.error("Kritik hata:", error);
   }, [error]);
 
