@@ -17,7 +17,7 @@ export default async function Home() {
     <>
       {/* Hero — tek amaç: bülten kaydı */}
       <section className="glow-bg">
-        <div className="mx-auto max-w-4xl px-5 py-24 text-center sm:py-32">
+        <div className="mx-auto max-w-4xl px-5 py-16 text-center sm:py-24">
           <Reveal>
             <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
               {SITE.belief}

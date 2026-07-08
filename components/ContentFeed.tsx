@@ -3,16 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CATEGORIES, readingTime, type Post } from "@/lib/site";
-import { Reveal } from "./Reveal";
 import { formatDate } from "@/lib/date";
 import { coverUrl } from "@/lib/cover";
-
-function catLabel(slug: string) {
-  return CATEGORIES.find((c) => c.slug === slug)?.label ?? slug;
-}
-function catEmoji(slug: string) {
-  return CATEGORIES.find((c) => c.slug === slug)?.emoji ?? "•";
-}
 
 const PAGE = 9;
 
@@ -44,25 +36,18 @@ export function ContentFeed({ allPosts, heading = "İçerik Akışı" }: { allPo
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((p, i) => (
-          <Reveal key={p.slug} delay={(i % 3) * 0.08}>
-            <Link href={`/yazi/${p.slug}`} className="card block h-full overflow-hidden">
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={coverUrl(p, 700)} alt={`${p.title} | Fitness ve Pazarlama`} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
-                <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
-                  {catEmoji(p.category)} {catLabel(p.category)}
-                </span>
+        {posts.map((p) => (
+          <Link key={p.slug} href={`/yazi/${p.slug}`} className="card block h-full overflow-hidden transition-transform hover:-translate-y-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={coverUrl(p, 700)} alt={`${p.title} | Fitness ve Pazarlama`} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
+            <div className="p-6">
+              <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
+              <p className="mt-2 text-sm text-gray-400">{p.excerpt}</p>
+              <div className="mt-4 text-xs text-gray-400">
+                {formatDate(p.date)} · {readingTime(p.chars)} dk okuma
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
-                <p className="mt-2 text-sm text-gray-400">{p.excerpt}</p>
-                <div className="mt-4 text-xs text-gray-400">
-                  {formatDate(p.date)} · {readingTime(p.chars)} dk okuma
-                </div>
-              </div>
-            </Link>
-          </Reveal>
+            </div>
+          </Link>
         ))}
       </div>
 
