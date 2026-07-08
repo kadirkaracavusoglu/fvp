@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      {
+        // Statik görsel/font varlıkları → 1 yıl immutable cache (CWV: verimli önbellek)
+        source: "/:all*(svg|jpg|jpeg|png|webp|avif|ico|woff|woff2)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
 };

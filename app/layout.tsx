@@ -171,8 +171,9 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             alt=""
           />
         </noscript>
+        <a href="#main" className="skip-link">İçeriğe geç</a>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1">{children}</main>
         <Footer />
         <NewsletterPopup />
         <CookieConsent />
