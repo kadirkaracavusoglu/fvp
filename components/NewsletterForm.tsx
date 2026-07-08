@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { track, getAttribution } from "@/lib/tracking";
 
@@ -109,13 +108,6 @@ export function NewsletterForm({
             {status === "error" && (
               <p className={`mt-2 text-center text-xs ${onNavy ? "text-white/80" : "text-red-600"}`}>{message}</p>
             )}
-
-            <p className={`mt-2.5 text-center text-[11px] leading-snug ${onNavy ? "text-white/55" : "text-gray-400"}`}>
-              Kayıt olarak{" "}
-              <Link href="/gizlilik" className="underline hover:no-underline">Gizlilik Politikası</Link> ve{" "}
-              <Link href="/kvkk" className="underline hover:no-underline">KVKK Aydınlatma Metni</Link>&apos;ni kabul
-              etmiş olursunuz.
-            </p>
 
             {socialProof && (
               <div className={`mt-3 flex items-center justify-center gap-2 text-xs ${onNavy ? "text-white/70" : "text-gray-400"}`}>

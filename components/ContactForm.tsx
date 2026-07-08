@@ -183,12 +183,6 @@ export function ContactForm({
         {status === "loading" ? "Gönderiliyor…" : "Mesajı Gönder"}
       </button>
       <p className="text-center text-xs text-gray-400">Genellikle 1-2 iş günü içinde dönüş yapıyoruz.</p>
-      <p className="text-center text-[11px] leading-snug text-gray-400">
-        Formu göndererek{" "}
-        <a href="/gizlilik" className="underline hover:no-underline">Gizlilik Politikası</a> ve{" "}
-        <a href="/kvkk" className="underline hover:no-underline">KVKK Aydınlatma Metni</a>&apos;ni kabul etmiş
-        olursunuz.
-      </p>
     </form>
   );
 }

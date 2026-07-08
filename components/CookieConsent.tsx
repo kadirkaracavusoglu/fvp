@@ -44,18 +44,19 @@ export function CookieConsent() {
         >
           <div className="rounded-2xl border border-[#e6e8ea] bg-white p-5 shadow-2xl">
             <p className="text-sm leading-relaxed text-[#33405c]">
-              Bu sitede deneyiminizi iyileştirmek, kullanımı analiz etmek ve reklam performansını ölçmek için çerezler
-              kullanıyoruz. Kullanmaya devam ederek çerez kullanımını kabul etmiş olursunuz.{" "}
+              Bu sitede deneyimi iyileştirmek, kullanımı analiz etmek ve reklam performansını ölçmek için çerezler
+              kullanıyoruz. Ayrıntılı bilgi için{" "}
               <Link href="/cerez" className="font-medium text-cyan underline">
-                Detaylar
-              </Link>
+                Çerez Politikası
+              </Link>{" "}
+              sayfamıza göz atabilirsiniz.
             </p>
             <div className="mt-4 flex items-center gap-3">
               <button
                 onClick={accept}
                 className="rounded-full bg-[#0d204d] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
               >
-                Kabul Et
+                Tamam
               </button>
               <Link
                 href="/gizlilik"
