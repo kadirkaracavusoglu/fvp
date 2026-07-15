@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Fitness ve Pazarlama",
     short_name: "FvP",
     description:
-      "Fitness sektörünü pazarlama merceğinden okuyan bağımsız medya. Koçlar ve salon sahipleri için.",
+      "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya. Koçlar, salonlar ve markalar için.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

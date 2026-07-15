@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s — Fitness ve Pazarlama",
   },
   description:
-    "Fitness sektörünü pazarlama merceğinden süzen medya ve topluluk. Gerçek stratejiler, gerçek örnekler.",
+    "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk. Gerçek stratejiler, gerçek örnekler.",
   keywords: [
     "fitness pazarlama", "online koçluk", "fitness girişimcisi",
     "antrenör pazarlama", "fitness işi", "spor salonu pazarlama",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     siteName: "Fitness ve Pazarlama",
     url: "https://fitnessvepazarlama.com",
     title: "Fitness ve Pazarlama",
-    description: "Fitness sektörünü pazarlama merceğinden süzen medya ve topluluk.",
+    description: "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk.",
     images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Fitness ve Pazarlama" }],
   },
   twitter: {

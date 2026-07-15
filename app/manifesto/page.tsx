@@ -26,10 +26,10 @@ export default function ManifestoPage() {
         <Reveal>
           <div className="space-y-5 text-lg leading-relaxed text-gray-100">
             <p>
-              <strong>Fitness ve Pazarlama</strong>, fitness sektörünü tümüyle pazarlama
-              merceğinden süzen bir medya ve topluluk. Amaç basit: bu işi ciddiye alan
-              koçlara, salon sahiplerine ve girişimcilere gerçekten işe yarayan sistemleri
-              göstermek.
+              <strong>Fitness ve Pazarlama</strong>, fitness sektörünün gündemini, işini
+              ve geleceğini konuşan bağımsız bir medya ve topluluk. Amaç basit: bu işi
+              ciddiye alan koçlara, salon sahiplerine ve markalara sektörü anlamayı ve
+              işini büyütmeyi kolaylaştırmak.
             </p>
             <p>
               Antrenör gibi değil, fitness girişimcisi gibi düşünmeni istiyoruz. Çünkü

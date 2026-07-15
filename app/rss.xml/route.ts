@@ -27,7 +27,7 @@ export async function GET() {
   <channel>
     <title>Fitness ve Pazarlama</title>
     <link>${BASE}</link>
-    <description>Fitness sektörünü pazarlama merceğinden süzen medya ve topluluk.</description>
+    <description>Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk.</description>
     <language>tr</language>
 ${items}
   </channel>

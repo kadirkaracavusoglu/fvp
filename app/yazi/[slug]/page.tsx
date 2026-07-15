@@ -179,7 +179,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
       {/* Yazı sonu bülten CTA */}
       <div className="mt-14 rounded-2xl border border-[#e6e8ea] bg-[#f4f6f9] p-8 text-center">
         <h3 className="text-xl font-bold text-[#0d204d]">Bunun gibi içerikler her hafta gelen kutunda.</h3>
-        <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">Fitness işini pazarlama merceğinden süzen bülten.</p>
+        <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">Fitness işinin gündemini ve büyümesini konuşan bülten.</p>
         <div className="mt-5">
           <NewsletterForm />
         </div>

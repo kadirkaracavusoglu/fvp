@@ -6,7 +6,7 @@ import { getPosts } from "@/sanity/lib/queries";
 export const metadata = {
   title: "Bülten",
   description:
-    "Fitness işini pazarlama merceğinden süzen bülten ve blog. Gerçek stratejiler, gerçek örnekler. Tüm yazıları oku.",
+    "Fitness işinin gündemini ve büyümesini konuşan bülten ve blog. Gerçek stratejiler, gerçek örnekler. Tüm yazıları oku.",
   alternates: { canonical: "/bulten" },
 };
 
@@ -23,7 +23,7 @@ export default async function BultenPage() {
           <Reveal>
             <div className="text-xs font-medium text-cyan">📩 Bülten</div>
             <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-              Fitness işini pazarlama merceğinden okuyanların yeri.
+              Fitness işinin gündemini ve büyümesini konuşanların yeri.
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-gray-400">
               Sektörün nabzı, talep yaratma, satış ve teknoloji üzerine gerçek örneklerle

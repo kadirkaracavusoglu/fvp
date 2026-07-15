@@ -2,12 +2,12 @@ export const SITE = {
   name: "Fitness ve Pazarlama",
   short: "FvP",
   belief: "Fitness işi şansa değil, sisteme dayanır.",
-  tagline: "Fitness sektörünü tümüyle pazarlama merceğinden süzen ses.",
+  tagline: "Fitness sektörünün gündemini, geleceğini ve nasıl büyüdüğünü konuşan bağımsız medya.",
   email: "info@fitnessvepazarlama.com",
   hero: {
     title: "Antrenör gibi değil, fitness girişimcisi gibi düşün.",
     subtitle:
-      "Fitness sektörünü pazarlama merceğinden okuyan bağımsız medya. Koçlar ve salon sahipleri için haftalık analiz, haber ve gerçek örnekler.",
+      "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya. Koçlar, salonlar ve markalar için haftalık haber, analiz ve gerçek örnekler.",
   },
   cta: {
     whatsapp: "https://chat.whatsapp.com/EFEvQNVivG80QWiszY9fDX",
@@ -28,10 +28,9 @@ export const NAV = [
   { label: "Bülten", href: "/bulten" },
   { label: "Rehberler", href: "/rehber" },
   { label: "Podcast", href: "/podcast" },
-  { label: "Analiz", href: "/analiz" },
-  { label: "Danışmanlık", href: "/danismanlik" },
   { label: "Manifesto", href: "/manifesto" },
 ];
+// Askıya alındı (8 Tem 2026 — medya odağı): { label: "Analiz", href: "/analiz" }, { label: "Danışmanlık", href: "/danismanlik" }
 
 // Footer — tüm sayfalar
 export const FOOTER_NAV = [
@@ -62,7 +61,7 @@ export const WHY_FOLLOW = [
 export const FAQS = [
   {
     q: "Fitness ve Pazarlama nedir?",
-    a: "Fitness ve Pazarlama, fitness sektörünü tümüyle pazarlama merceğinden okuyan bağımsız bir Türkçe medya ve topluluktur. Koçlar ve salon sahipleri için pazarlama, satış ve teknoloji üzerine haftalık bülten, podcast ve yazılar üretir.",
+    a: "Fitness ve Pazarlama, fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız bir Türkçe medya ve topluluktur. Koçlar, salonlar ve markalar için gündem, pazarlama, satış ve teknoloji üzerine haftalık bülten, podcast ve yazılar üretir.",
   },
   {
     q: "Kimler için uygun?",

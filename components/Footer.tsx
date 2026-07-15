@@ -5,14 +5,13 @@ import { SITE } from "@/lib/site";
 const icerik = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Bülten", href: "/bulten" },
+  { label: "Rehberler", href: "/rehber" },
   { label: "Podcast", href: "/podcast" },
-  { label: "Analiz", href: "/analiz" },
 ];
 
 const kurumsal = [
-  { label: "Danışmanlık", href: "/danismanlik" },
-  { label: "Sponsorluk", href: "/sponsorluk" },
   { label: "Manifesto", href: "/manifesto" },
+  { label: "Sponsorluk", href: "/sponsorluk" },
   { label: "İletişim", href: "/iletisim" },
 ];
 

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!cat) return { title: "Kategori" };
   return {
     title: `${cat.label} — Fitness ve Pazarlama`,
-    description: `Fitness sektörü ${cat.label.toLowerCase()} üzerine yazılar — pazarlama merceğinden.`,
+    description: `Fitness sektörü ${cat.label.toLowerCase()} üzerine yazılar — iş ve büyüme gözüyle.`,
     alternates: { canonical: `/kategori/${slug}` },
   };
 }

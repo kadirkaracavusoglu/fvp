@@ -16,7 +16,7 @@ export async function GET() {
 
   const body = `# Fitness ve Pazarlama — Tüm İçerik
 
-> Fitness sektörünü pazarlama merceğinden okuyan bağımsız Türkçe medya. Koçlar ve salon sahipleri için.
+> Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız Türkçe medya. Koçlar, salonlar ve markalar için.
 
 Kurucu: Kadir Karaçavuşoğlu. Site: ${BASE}
 
