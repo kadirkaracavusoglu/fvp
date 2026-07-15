@@ -1,6 +1,7 @@
 import { getPosts, getEpisodes } from "@/sanity/lib/queries";
+import { SITE } from "@/lib/site";
 
-const BASE = "https://fitnessvepazarlama.com";
+const BASE = SITE.url;
 export const revalidate = 3600;
 
 export async function GET() {
@@ -14,11 +15,11 @@ export async function GET() {
     .map((e) => `### ${e.episodeLabel ? e.episodeLabel + " — " : ""}${e.title}\n${BASE}/podcast/${e.slug}\n${e.description || ""}`)
     .join("\n\n");
 
-  const body = `# Fitness ve Pazarlama — Tüm İçerik
+  const body = `# ${SITE.name} — Tüm İçerik
 
 > Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız Türkçe medya. Koçlar, salonlar ve markalar için.
 
-Kurucu: Kadir Karaçavuşoğlu. Site: ${BASE}
+Kurucu: ${SITE.author.name}. Site: ${BASE}
 
 ## Yazılar (${posts.length})
 

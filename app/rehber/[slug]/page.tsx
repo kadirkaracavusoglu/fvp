@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { getGuide, getGuideSlugs } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { NewsletterForm } from "@/components/NewsletterForm";
+import { SITE } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: g.title,
       description: g.excerpt || "",
       type: "article",
-      url: `https://fitnessvepazarlama.com/rehber/${slug}`,
+      url: `${SITE.url}/rehber/${slug}`,
       images: g.coverImage ? [urlFor(g.coverImage).width(1200).height(630).url()] : [],
     },
   };
@@ -63,9 +64,9 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
         headline: g.title,
         description: g.excerpt || "",
         ...(g.updatedAt ? { dateModified: g.updatedAt } : {}),
-        author: { "@id": "https://fitnessvepazarlama.com/#kadir" },
-        publisher: { "@id": "https://fitnessvepazarlama.com/#org" },
-        mainEntityOfPage: `https://fitnessvepazarlama.com/rehber/${slug}`,
+        author: { "@id": `${SITE.url}/#author` },
+        publisher: { "@id": `${SITE.url}/#org` },
+        mainEntityOfPage: `${SITE.url}/rehber/${slug}`,
         ...(g.categoryLabel ? { articleSection: g.categoryLabel } : {}),
       },
       ...(g.faq && g.faq.length
@@ -81,9 +82,9 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://fitnessvepazarlama.com" },
-          { "@type": "ListItem", position: 2, name: "Rehberler", item: "https://fitnessvepazarlama.com/rehber" },
-          { "@type": "ListItem", position: 3, name: g.title, item: `https://fitnessvepazarlama.com/rehber/${slug}` },
+          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: SITE.url },
+          { "@type": "ListItem", position: 2, name: "Rehberler", item: `${SITE.url}/rehber` },
+          { "@type": "ListItem", position: 3, name: g.title, item: `${SITE.url}/rehber/${slug}` },
         ],
       },
     ],

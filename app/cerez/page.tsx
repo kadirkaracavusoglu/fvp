@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, H2, P, UL, Note } from "@/components/LegalPage";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Çerez Politikası",
   description:
-    "Fitness ve Pazarlama sitesinde kullanılan çerezler, ne işe yaradıkları ve bunları nasıl yönetebileceğinize dair çerez politikası.",
+    `${SITE.name} sitesinde kullanılan çerezler, ne işe yaradıkları ve bunları nasıl yönetebileceğinize dair çerez politikası.`,
   alternates: { canonical: "/cerez" },
 };
 
@@ -16,7 +17,7 @@ export default function CerezPage() {
     <LegalPage
       title="Çerez Politikası"
       updated={UPDATED}
-      intro="Bu politika, fitnessvepazarlama.com sitesinde hangi çerezleri ve benzeri teknolojileri kullandığımızı, ne amaçla kullandığımızı ve bunları nasıl yönetebileceğinizi açıklar."
+      intro={`Bu politika, ${SITE.domain} sitesinde hangi çerezleri ve benzeri teknolojileri kullandığımızı, ne amaçla kullandığımızı ve bunları nasıl yönetebileceğinizi açıklar.`}
     >
       <H2>1. Çerez Nedir?</H2>
       <P>
@@ -65,7 +66,7 @@ export default function CerezPage() {
       <H2>5. İletişim</H2>
       <P>
         Çerez kullanımı hakkında sorularınız için{" "}
-        <a className="text-cyan underline" href="mailto:info@fitnessvepazarlama.com">info@fitnessvepazarlama.com</a>{" "}
+        <a className="text-cyan underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>{" "}
         adresine yazabilirsiniz.
       </P>
 

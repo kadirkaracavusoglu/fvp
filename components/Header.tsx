@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { NAV } from "@/lib/site";
+import { SITE, NAV } from "@/lib/site";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -29,10 +29,10 @@ export function Header() {
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center" aria-label="Fitness ve Pazarlama — Ana Sayfa">
+        <Link href="/" className="flex shrink-0 items-center" aria-label={`${SITE.name} — Ana Sayfa`}>
           <Image
             src="/fvp-logo.png"
-            alt="Fitness ve Pazarlama"
+            alt={SITE.name}
             width={901}
             height={359}
             priority

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CATEGORIES, readingTime } from "@/lib/site";
+import { SITE, CATEGORIES, readingTime } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { formatDate } from "@/lib/date";
 import { coverUrl } from "@/lib/cover";
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const cat = CATEGORIES.find((c) => c.slug === slug);
   if (!cat) return { title: "Kategori" };
   return {
-    title: `${cat.label} — Fitness ve Pazarlama`,
+    title: `${cat.label} — ${SITE.name}`,
     description: `Fitness sektörü ${cat.label.toLowerCase()} üzerine yazılar — iş ve büyüme gözüyle.`,
     alternates: { canonical: `/kategori/${slug}` },
   };

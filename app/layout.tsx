@@ -12,6 +12,7 @@ import { AttributionCapture } from "@/components/AttributionCapture";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ANALYTICS } from "@/lib/analytics";
 import { THEME } from "@/lib/theme";
+import { SITE } from "@/lib/site";
 
 export const viewport: Viewport = {
   themeColor: THEME.navy,
@@ -26,34 +27,30 @@ const heading = Inter_Tight({
 const body = heading;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fitnessvepazarlama.com"),
+  metadataBase: new URL(SITE.url),
   title: {
-    default: "Fitness ve Pazarlama — Fitness işini sisteme oturt",
-    template: "%s — Fitness ve Pazarlama",
+    default: `${SITE.name} — ${SITE.titleSuffix}`,
+    template: `%s — ${SITE.name}`,
   },
-  description:
-    "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk. Gerçek stratejiler, gerçek örnekler.",
-  keywords: [
-    "fitness pazarlama", "online koçluk", "fitness girişimcisi",
-    "antrenör pazarlama", "fitness işi", "spor salonu pazarlama",
-  ],
-  authors: [{ name: "Kadir Karaçavuşoğlu" }],
+  description: SITE.description,
+  keywords: [...SITE.keywords],
+  authors: [{ name: SITE.author.name }],
   alternates: { canonical: "/", types: { "application/rss+xml": "/rss.xml" } },
   openGraph: {
     type: "website",
-    locale: "tr_TR",
-    siteName: "Fitness ve Pazarlama",
-    url: "https://fitnessvepazarlama.com",
-    title: "Fitness ve Pazarlama",
-    description: "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk.",
-    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Fitness ve Pazarlama" }],
+    locale: SITE.locale,
+    siteName: SITE.name,
+    url: SITE.url,
+    title: SITE.name,
+    description: SITE.description,
+    images: [{ url: SITE.ogImage, width: 1200, height: 630, alt: SITE.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fitness ve Pazarlama",
-    images: ["/og-default.png"],
+    title: SITE.name,
+    images: [SITE.ogImage],
   },
-  icons: { icon: "/favicon.png", apple: "/apple-touch-icon.png" },
+  icons: { icon: SITE.logo.icon, apple: "/apple-touch-icon.png" },
 };
 
 export default function RootLayout({
@@ -66,36 +63,29 @@ export default function RootLayout({
     "@graph": [
       {
         "@type": "Person",
-        "@id": "https://fitnessvepazarlama.com/#kadir",
-        name: "Kadir Karaçavuşoğlu",
-        url: "https://fitnessvepazarlama.com/manifesto",
-        jobTitle: "Fitness Pazarlama Uzmanı & Kurucu",
-        worksFor: { "@id": "https://fitnessvepazarlama.com/#org" },
-        sameAs: [
-          "https://linkedin.com/in/kadirkaracavusoglu",
-          "https://instagram.com/fitnessvepazarlama",
-        ],
+        "@id": `${SITE.url}/#author`,
+        name: SITE.author.name,
+        url: `${SITE.url}${SITE.author.page}`,
+        jobTitle: SITE.author.jobTitle,
+        worksFor: { "@id": `${SITE.url}/#org` },
+        sameAs: [SITE.social.linkedin, SITE.social.instagram],
       },
       {
         "@type": "Organization",
-        "@id": "https://fitnessvepazarlama.com/#org",
-        name: "Fitness ve Pazarlama",
-        url: "https://fitnessvepazarlama.com",
-        logo: "https://fitnessvepazarlama.com/favicon.png",
-        founder: { "@id": "https://fitnessvepazarlama.com/#kadir" },
-        sameAs: [
-          "https://instagram.com/fitnessvepazarlama",
-          "https://youtube.com/@fitnessvepazarlama",
-          "https://linkedin.com/in/kadirkaracavusoglu",
-        ],
+        "@id": `${SITE.url}/#org`,
+        name: SITE.name,
+        url: SITE.url,
+        logo: `${SITE.url}${SITE.logo.icon}`,
+        founder: { "@id": `${SITE.url}/#author` },
+        sameAs: [SITE.social.instagram, SITE.social.youtube, SITE.social.linkedin],
       },
       {
         "@type": "WebSite",
-        "@id": "https://fitnessvepazarlama.com/#website",
-        url: "https://fitnessvepazarlama.com",
-        name: "Fitness ve Pazarlama",
+        "@id": `${SITE.url}/#website`,
+        url: SITE.url,
+        name: SITE.name,
         inLanguage: "tr-TR",
-        publisher: { "@id": "https://fitnessvepazarlama.com/#org" },
+        publisher: { "@id": `${SITE.url}/#org` },
       },
     ],
   };

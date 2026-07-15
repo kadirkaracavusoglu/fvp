@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, H2, P, UL, Note } from "@/components/LegalPage";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Gizlilik Politikası",
   description:
-    "Fitness ve Pazarlama olarak kişisel verilerinizi nasıl topladığımız, kullandığımız, sakladığımız ve koruduğumuza dair gizlilik politikası.",
+    `${SITE.name} olarak kişisel verilerinizi nasıl topladığımız, kullandığımız, sakladığımız ve koruduğumuza dair gizlilik politikası.`,
   alternates: { canonical: "/gizlilik" },
 };
 
@@ -16,12 +17,12 @@ export default function GizlilikPage() {
     <LegalPage
       title="Gizlilik Politikası"
       updated={UPDATED}
-      intro="Bu Gizlilik Politikası, Fitness ve Pazarlama (fitnessvepazarlama.com) olarak sizden hangi kişisel verileri topladığımızı, bu verileri neden ve nasıl işlediğimizi, kimlerle paylaştığımızı ve haklarınızı açıklar."
+      intro={`Bu Gizlilik Politikası, ${SITE.name} (${SITE.domain}) olarak sizden hangi kişisel verileri topladığımızı, bu verileri neden ve nasıl işlediğimizi, kimlerle paylaştığımızı ve haklarınızı açıklar.`}
     >
       <H2>1. Veri Sorumlusu</H2>
       <P>
-        Kişisel verileriniz, veri sorumlusu sıfatıyla Kadir Karaçavuşoğlu (&quot;Fitness ve Pazarlama&quot;) tarafından
-        aşağıda açıklanan kapsamda işlenmektedir. İletişim: <a className="text-cyan underline" href="mailto:info@fitnessvepazarlama.com">info@fitnessvepazarlama.com</a>
+        Kişisel verileriniz, veri sorumlusu sıfatıyla {SITE.author.name} (&quot;{SITE.name}&quot;) tarafından
+        aşağıda açıklanan kapsamda işlenmektedir. İletişim: <a className="text-cyan underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>
       </P>
 
       <H2>2. Topladığımız Kişisel Veriler</H2>
@@ -100,7 +101,7 @@ export default function GizlilikPage() {
       </P>
 
       <Note>
-        Sorularınız için bize <a className="underline" href="mailto:info@fitnessvepazarlama.com">info@fitnessvepazarlama.com</a>{" "}
+        Sorularınız için bize <a className="underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>{" "}
         adresinden ulaşabilirsiniz.
       </Note>
     </LegalPage>

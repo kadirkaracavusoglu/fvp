@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, H2, P, UL, Note } from "@/components/LegalPage";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Kullanım Koşulları",
   description:
-    "Fitness ve Pazarlama web sitesinin kullanımına ilişkin koşullar, içerik hakları ve sorumluluk reddi.",
+    `${SITE.name} web sitesinin kullanımına ilişkin koşullar, içerik hakları ve sorumluluk reddi.`,
   alternates: { canonical: "/kosullar" },
 };
 
@@ -16,7 +17,7 @@ export default function KosullarPage() {
     <LegalPage
       title="Kullanım Koşulları"
       updated={UPDATED}
-      intro="Bu koşullar, fitnessvepazarlama.com sitesini kullanımınıza ilişkin kuralları belirler. Siteyi kullanarak bu koşulları kabul etmiş sayılırsınız."
+      intro={`Bu koşullar, ${SITE.domain} sitesini kullanımınıza ilişkin kuralları belirler. Siteyi kullanarak bu koşulları kabul etmiş sayılırsınız.`}
     >
       <H2>1. Kabul</H2>
       <P>
@@ -26,7 +27,7 @@ export default function KosullarPage() {
 
       <H2>2. İçerik ve Fikri Mülkiyet</H2>
       <P>
-        Sitedeki tüm içerik (yazılar, bülten, podcast, görseller, marka ve logolar) Fitness ve Pazarlama&apos;ya aittir
+        Sitedeki tüm içerik (yazılar, bülten, podcast, görseller, marka ve logolar) {SITE.name}&apos;ya aittir
         ve fikri mülkiyet mevzuatıyla korunur. İçeriği, kaynak göstererek ve ticari olmayan amaçla makul ölçüde
         paylaşabilirsiniz; ancak izinsiz olarak çoğaltamaz, yeniden yayınlayamaz veya ticari amaçla kullanamazsınız.
       </P>
@@ -64,7 +65,7 @@ export default function KosullarPage() {
 
       <Note>
         Sorularınız için{" "}
-        <a className="underline" href="mailto:info@fitnessvepazarlama.com">info@fitnessvepazarlama.com</a> ·{" "}
+        <a className="underline" href={`mailto:${SITE.email}`}>{SITE.email}</a> ·{" "}
         <Link className="underline" href="/gizlilik">Gizlilik Politikası</Link> ·{" "}
         <Link className="underline" href="/kvkk">KVKK</Link> ·{" "}
         <Link className="underline" href="/cerez">Çerez Politikası</Link>

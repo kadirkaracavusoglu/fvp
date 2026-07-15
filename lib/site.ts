@@ -1,9 +1,37 @@
+// ===== MARKA — TEK KAYNAK =====
+// Siteyi başka bir marka için kurarken değişecek yerler: bu dosya + lib/theme.ts + env.
+// Buraya ait bir metni sayfaya elle yazma; SITE üzerinden oku.
+
 export const SITE = {
   name: "Fitness ve Pazarlama",
   short: "FvP",
+  domain: "fitnessvepazarlama.com",
+  url: "https://fitnessvepazarlama.com",
   belief: "Fitness işi şansa değil, sisteme dayanır.",
   tagline: "Fitness sektörünün gündemini, geleceğini ve nasıl büyüdüğünü konuşan bağımsız medya.",
+  titleSuffix: "Fitness işini sisteme oturt", // <title> ana sayfa eki — hero.title'dan ayrı
+  description:
+    "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk. Gerçek stratejiler, gerçek örnekler.",
   email: "info@fitnessvepazarlama.com",
+  locale: "tr_TR",
+  lang: "tr",
+  keywords: [
+    "fitness pazarlama", "online koçluk", "fitness girişimcisi",
+    "antrenör pazarlama", "fitness işi", "spor salonu pazarlama",
+  ],
+  // Marka sahibi / içeriğin sesi — JSON-LD Person + yazar künyesi + yasal metinlerde veri sorumlusu
+  author: {
+    name: "Kadir Karaçavuşoğlu",
+    initials: "KK",
+    jobTitle: "Fitness Pazarlama Uzmanı & Kurucu",
+    page: "/manifesto",
+  },
+  logo: {
+    default: "/fvp-logo.png",
+    light: "/fvp-logo-beyaz.png",
+    icon: "/favicon.png",
+  },
+  ogImage: "/og-default.png",
   hero: {
     title: "Antrenör gibi değil, fitness girişimcisi gibi düşün.",
     subtitle:

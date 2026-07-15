@@ -7,6 +7,7 @@ import { getEpisode, getEpisodes, getEpisodeSlugs } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { formatDate } from "@/lib/date";
 import { NewsletterForm } from "@/components/NewsletterForm";
+import { SITE } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: ep.title,
       description: ep.description || "",
       type: "article",
-      url: `https://fitnessvepazarlama.com/podcast/${slug}`,
+      url: `${SITE.url}/podcast/${slug}`,
       images: ep.coverImage ? [urlFor(ep.coverImage).width(1200).height(630).url()] : ["/og-default.png"],
     },
   };

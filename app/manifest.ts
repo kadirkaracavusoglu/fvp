@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { THEME } from "@/lib/theme";
+import { SITE } from "@/lib/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Fitness ve Pazarlama",
+    name: SITE.name,
     short_name: "FvP",
     description:
       "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya. Koçlar, salonlar ve markalar için.",

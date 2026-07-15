@@ -1,15 +1,15 @@
-import { CATEGORIES } from "@/lib/site";
+import { SITE, CATEGORIES } from "@/lib/site";
 
-const BASE = "https://fitnessvepazarlama.com";
+const BASE = SITE.url;
 export const revalidate = 3600;
 
 export async function GET() {
   const cats = CATEGORIES.map((c) => `- [${c.label}](${BASE}/kategori/${c.slug}): ${c.label} kategorisindeki içerikler`).join("\n");
-  const body = `# Fitness ve Pazarlama
+  const body = `# ${SITE.name}
 
 > Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız Türkçe medya. Koçlar, salonlar ve markalar için haftalık haber, analiz, podcast ve bülten.
 
-Fitness ve Pazarlama (fitnessvepazarlama.com), fitness sektörünün iş tarafına — koç, salon ve markalara — yönelik; gündem, pazarlama, satış ve teknoloji üzerine içerik üreten bağımsız bir medya ve topluluktur. Kurucu ve ses: Kadir Karaçavuşoğlu. Temel inanç: "Fitness işi şansa değil, sisteme dayanır."
+${SITE.name} (${SITE.domain}), fitness sektörünün iş tarafına — koç, salon ve markalara — yönelik; gündem, pazarlama, satış ve teknoloji üzerine içerik üreten bağımsız bir medya ve topluluktur. Kurucu ve ses: ${SITE.author.name}. Temel inanç: "${SITE.belief}"
 
 ## Ana Bölümler
 - [Bülten / Blog](${BASE}/bulten): Haftalık yazılar ve tüm içerik arşivi

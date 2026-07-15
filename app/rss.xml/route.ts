@@ -1,6 +1,7 @@
 import { getPosts } from "@/sanity/lib/queries";
+import { SITE } from "@/lib/site";
 
-const BASE = "https://fitnessvepazarlama.com";
+const BASE = SITE.url;
 
 export const revalidate = 300;
 
@@ -25,7 +26,7 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Fitness ve Pazarlama</title>
+    <title>${SITE.name}</title>
     <link>${BASE}</link>
     <description>Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk.</description>
     <language>tr</language>

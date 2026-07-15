@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getPosts, getGuides } from "@/sanity/lib/queries";
-import { CATEGORIES } from "@/lib/site";
+import { SITE, CATEGORIES } from "@/lib/site";
 
-const BASE = "https://fitnessvepazarlama.com";
+const BASE = SITE.url;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [

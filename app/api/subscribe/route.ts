@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
+import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "Kayıt sistemi henüz bağlanmadı." }, { status: 503 });
     }
 
-    const base = { email: email.toLowerCase().trim(), source: "fitnessvepazarlama.com" };
+    const base = { email: email.toLowerCase().trim(), source: SITE.domain };
     const attr = attribution && Object.keys(attribution).length ? attribution : null;
 
     let { error } = await supabaseAdmin

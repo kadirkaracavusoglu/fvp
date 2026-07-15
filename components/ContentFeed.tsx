@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CATEGORIES, readingTime, type Post } from "@/lib/site";
+import { SITE, CATEGORIES, readingTime, type Post } from "@/lib/site";
 import { formatDate } from "@/lib/date";
 import { coverUrl } from "@/lib/cover";
 
@@ -39,7 +39,7 @@ export function ContentFeed({ allPosts, heading = "İçerik Akışı" }: { allPo
         {posts.map((p) => (
           <Link key={p.slug} href={`/yazi/${p.slug}`} className="card block h-full overflow-hidden transition-transform hover:-translate-y-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={coverUrl(p, 700)} alt={`${p.title} | Fitness ve Pazarlama`} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
+            <img src={coverUrl(p, 700)} alt={`${p.title} | ${SITE.name}`} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
             <div className="p-6">
               <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
               <p className="mt-2 text-sm text-gray-400">{p.excerpt}</p>

@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { getPost, getAllSlugs, getPostsByCategory } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { coverUrl } from "@/lib/cover";
-import { readingTime } from "@/lib/site";
+import { SITE, readingTime } from "@/lib/site";
 import { formatDate } from "@/lib/date";
 import { NewsletterForm } from "@/components/NewsletterForm";
 
@@ -34,7 +34,7 @@ export async function generateMetadata({
       title: post.title,
       description: desc,
       type: "article",
-      url: `https://fitnessvepazarlama.com/yazi/${slug}`,
+      url: `${SITE.url}/yazi/${slug}`,
       publishedTime: post.date,
       images: post.coverImage ? [urlFor(post.coverImage).width(1200).height(630).url()] : [],
     },
@@ -96,20 +96,20 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         headline: post.title,
         description: post.excerpt || "",
         datePublished: post.date,
-        author: { "@id": "https://fitnessvepazarlama.com/#kadir" },
-        publisher: { "@id": "https://fitnessvepazarlama.com/#org" },
-        mainEntityOfPage: `https://fitnessvepazarlama.com/yazi/${slug}`,
+        author: { "@id": `${SITE.url}/#author` },
+        publisher: { "@id": `${SITE.url}/#org` },
+        mainEntityOfPage: `${SITE.url}/yazi/${slug}`,
         ...(post.categoryLabel ? { articleSection: post.categoryLabel } : {}),
         ...(post.coverImage ? { image: urlFor(post.coverImage).width(1200).url() } : {}),
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://fitnessvepazarlama.com" },
+          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: SITE.url },
           ...(post.categoryLabel && post.category
-            ? [{ "@type": "ListItem", position: 2, name: post.categoryLabel, item: `https://fitnessvepazarlama.com/kategori/${post.category}` }]
+            ? [{ "@type": "ListItem", position: 2, name: post.categoryLabel, item: `${SITE.url}/kategori/${post.category}` }]
             : []),
-          { "@type": "ListItem", position: post.category ? 3 : 2, name: post.title, item: `https://fitnessvepazarlama.com/yazi/${slug}` },
+          { "@type": "ListItem", position: post.category ? 3 : 2, name: post.title, item: `${SITE.url}/yazi/${slug}` },
         ],
       },
     ],
@@ -131,7 +131,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         <div className="mt-5 flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">KK</span>
           <div className="text-sm">
-            <span className="font-semibold text-navy">Kadir Karaçavuşoğlu</span>
+            <span className="font-semibold text-navy">{SITE.author.name}</span>
             <span className="block text-xs text-gray-400">
               {dateStr}{post.chars ? ` · ${readingTime(post.chars)} dk okuma` : ""}
             </span>
@@ -143,7 +143,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         {post.coverImage ? (
           <Image
             src={urlFor(post.coverImage).width(1400).height(800).url()}
-            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | Fitness ve Pazarlama`}
+            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | ${SITE.name}`}
             width={1400}
             height={800}
             priority
@@ -153,7 +153,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`/api/cover?title=${encodeURIComponent(post.title)}&cat=${post.category}`}
-            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | Fitness ve Pazarlama`}
+            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | ${SITE.name}`}
             className="aspect-[1200/630] w-full object-cover"
           />
         )}

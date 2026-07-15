@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 export const metadata = {
   title: "Manifesto",
   description:
-    "Fitness işi şansa değil, sisteme dayanır. Fitness ve Pazarlama'nın manifestosu. Kadir Karaçavuşoğlu.",
+    `${SITE.belief} ${SITE.name} manifestosu. ${SITE.author.name}.`,
   alternates: { canonical: "/manifesto" },
 };
 
@@ -26,7 +26,7 @@ export default function ManifestoPage() {
         <Reveal>
           <div className="space-y-5 text-lg leading-relaxed text-gray-100">
             <p>
-              <strong>Fitness ve Pazarlama</strong>, fitness sektörünün gündemini, işini
+              <strong>{SITE.name}</strong>, fitness sektörünün gündemini, işini
               ve geleceğini konuşan bağımsız bir medya ve topluluk. Amaç basit: bu işi
               ciddiye alan koçlara, salon sahiplerine ve markalara sektörü anlamayı ve
               işini büyütmeyi kolaylaştırmak.
@@ -37,7 +37,7 @@ export default function ManifestoPage() {
               sisteme dayanır.
             </p>
             <p>
-              Burayı <strong>Kadir Karaçavuşoğlu</strong> yürütüyor. Podcast, bülten ve
+              Burayı <strong>{SITE.author.name}</strong> yürütüyor. Podcast, bülten ve
               toplulukla büyüyen bu yapı; zamanla üyelerin ve gerçek vakaların kanıtıyla
               besleniyor. Göster, anlatma — ilkesi bu.
             </p>
