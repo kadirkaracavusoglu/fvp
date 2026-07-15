@@ -13,7 +13,7 @@ export function LegalPage({
 }) {
   return (
     <div className="mx-auto max-w-3xl px-5 py-16">
-      <h1 className="text-3xl font-bold leading-tight text-[#0d204d] sm:text-4xl">{title}</h1>
+      <h1 className="text-3xl font-bold leading-tight text-navy sm:text-4xl">{title}</h1>
       <p className="mt-3 text-sm text-gray-400">Son güncelleme: {updated}</p>
       {intro && <p className="mt-6 text-lg leading-relaxed text-[#33405c]">{intro}</p>}
       <div className="mt-6">{children}</div>
@@ -22,7 +22,7 @@ export function LegalPage({
 }
 
 export const H2 = ({ children }: { children: ReactNode }) => (
-  <h2 className="mt-10 text-xl font-bold text-[#0d204d]">{children}</h2>
+  <h2 className="mt-10 text-xl font-bold text-navy">{children}</h2>
 );
 
 export const P = ({ children }: { children: ReactNode }) => (

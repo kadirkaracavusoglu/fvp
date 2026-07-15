@@ -54,10 +54,10 @@ export function NewsletterForm({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className={`flex items-center justify-center gap-3 rounded-2xl border px-5 py-4 text-sm font-medium ${
-              onNavy ? "border-white/25 bg-white/10 text-white" : "border-[#0d204d]/15 bg-[#f4f6f9] text-[#0d204d]"
+              onNavy ? "border-white/25 bg-white/10 text-white" : "border-navy/15 bg-[#f4f6f9] text-navy"
             }`}
           >
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0d204d] text-xs text-white">✓</span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-navy text-xs text-white">✓</span>
             Kaydın alındı! Gelen kutunu (ve spam'i) kontrol et.
           </motion.div>
         ) : (
@@ -83,7 +83,7 @@ export function NewsletterForm({
               className={`group flex items-center gap-2 rounded-full border p-1.5 shadow-sm transition-all focus-within:shadow-md ${
                 onNavy
                   ? "border-white/25 bg-white/10 focus-within:border-white"
-                  : "border-[#e6e8ea] bg-white focus-within:border-[#0d204d]"
+                  : "border-[#e6e8ea] bg-white focus-within:border-navy"
               }`}
             >
               <input
@@ -93,14 +93,14 @@ export function NewsletterForm({
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="E-posta adresin"
                 className={`min-w-0 flex-1 bg-transparent px-4 py-2.5 text-sm outline-none ${
-                  onNavy ? "text-white placeholder:text-white/60" : "text-[#0d204d] placeholder:text-[#9ba4b0]"
+                  onNavy ? "text-white placeholder:text-white/60" : "text-navy placeholder:text-[#9ba4b0]"
                 }`}
               />
               <button
                 type="submit"
                 disabled={status === "loading"}
                 className={`flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-transform hover:-translate-y-0.5 disabled:opacity-70 ${
-                  onNavy ? "bg-white text-[#0d204d]" : "bg-[#0d204d] text-white"
+                  onNavy ? "bg-white text-navy" : "bg-navy text-white"
                 }`}
               >
                 {status === "loading" ? (
@@ -124,7 +124,7 @@ export function NewsletterForm({
             {socialProof && (
               <div className={`mt-3 flex items-center justify-center gap-2 text-xs ${onNavy ? "text-white/70" : "text-gray-400"}`}>
                 <span className="flex -space-x-1.5">
-                  {["#0d204d", "#1d3670", "#22d3ee"].map((c) => (
+                  {["var(--navy)", "var(--navy-soft)", "var(--accent)"].map((c) => (
                     <span key={c} className="h-4 w-4 rounded-full border-2 border-white" style={{ background: c }} />
                   ))}
                 </span>

@@ -66,7 +66,7 @@ export default async function Home() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={urlFor(e.coverImage).width(600).height(600).url()} alt={`${e.title} — Fitness Pazarlama Anatomisi podcast`} className="aspect-square w-full object-cover" loading="lazy" />
                         {e.episodeLabel && (
-                          <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
+                          <span className="absolute left-3 top-3 rounded-full bg-navy px-3 py-1 text-xs font-medium text-white">
                             🎙️ {e.episodeLabel}
                           </span>
                         )}
@@ -111,7 +111,7 @@ export default async function Home() {
           {FAQS.map((f, i) => (
             <Reveal key={f.q} delay={(i % 4) * 0.06}>
               <details className="group rounded-xl border border-[#e6e8ea] bg-white p-5">
-                <summary className="flex cursor-pointer items-center justify-between text-base font-semibold text-[#0d204d]">
+                <summary className="flex cursor-pointer items-center justify-between text-base font-semibold text-navy">
                   {f.q}
                   <span className="ml-3 text-cyan transition-transform group-open:rotate-45">+</span>
                 </summary>

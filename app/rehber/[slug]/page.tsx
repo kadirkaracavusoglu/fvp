@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 const components: PortableTextComponents = {
   block: {
-    h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-[#0d204d]">{children}</h2>,
-    h3: ({ children }) => <h3 className="mt-8 text-xl font-semibold text-[#0d204d]">{children}</h3>,
+    h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
+    h3: ({ children }) => <h3 className="mt-8 text-xl font-semibold text-navy">{children}</h3>,
     normal: ({ children }) => <p className="mt-4 leading-relaxed text-[#33405c]">{children}</p>,
   },
   list: {
@@ -43,7 +43,7 @@ const components: PortableTextComponents = {
     number: ({ children }) => <ol className="mt-4 list-decimal space-y-2 pl-6 text-[#33405c]">{children}</ol>,
   },
   marks: {
-    strong: ({ children }) => <strong className="font-semibold text-[#0d204d]">{children}</strong>,
+    strong: ({ children }) => <strong className="font-semibold text-navy">{children}</strong>,
     link: ({ children, value }) => (
       <a href={value?.href} target="_blank" rel="noreferrer" className="text-cyan underline">{children}</a>
     ),
@@ -100,10 +100,10 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
             {g.categoryEmoji} {g.categoryLabel}
           </Link>
         )}
-        <h1 className="mt-2 text-3xl font-bold leading-tight text-[#0d204d] sm:text-4xl">{g.title}</h1>
+        <h1 className="mt-2 text-3xl font-bold leading-tight text-navy sm:text-4xl">{g.title}</h1>
         {/* Kısa cevap — SEO+GEO: ilk paragrafta net cevap */}
         {g.excerpt && (
-          <p className="mt-5 rounded-xl border-l-4 border-[#0d204d] bg-[#f4f6f9] p-4 text-lg leading-relaxed text-[#33405c]">
+          <p className="mt-5 rounded-xl border-l-4 border-navy bg-[#f4f6f9] p-4 text-lg leading-relaxed text-[#33405c]">
             {g.excerpt}
           </p>
         )}
@@ -121,7 +121,7 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
         ) : g.sections && g.sections.length ? (
           g.sections.map((s) => (
             <section key={s.h}>
-              <h2 className="mt-10 text-2xl font-bold text-[#0d204d]">{s.h}</h2>
+              <h2 className="mt-10 text-2xl font-bold text-navy">{s.h}</h2>
               {s.p.map((para, i) => (
                 <p key={i} className="mt-4 leading-relaxed text-[#33405c]">{para}</p>
               ))}
@@ -135,11 +135,11 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
       {/* SSS — görünür + FAQPage şeması (GEO) */}
       {g.faq && g.faq.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-2xl font-bold text-[#0d204d]">Sık Sorulan Sorular</h2>
+          <h2 className="text-2xl font-bold text-navy">Sık Sorulan Sorular</h2>
           <div className="mt-5 space-y-4">
             {g.faq.map((f) => (
               <div key={f.question} className="rounded-xl border border-[#e6e8ea] p-5">
-                <h3 className="font-semibold text-[#0d204d]">{f.question}</h3>
+                <h3 className="font-semibold text-navy">{f.question}</h3>
                 <p className="mt-2 leading-relaxed text-[#33405c]">{f.answer}</p>
               </div>
             ))}
@@ -148,7 +148,7 @@ export default async function RehberDetayPage({ params }: { params: Promise<{ sl
       )}
 
       <div className="mt-14 rounded-2xl border border-[#e6e8ea] bg-[#f4f6f9] p-8 text-center">
-        <h3 className="text-xl font-bold text-[#0d204d]">Sektörün nabzını her hafta yakalayın.</h3>
+        <h3 className="text-xl font-bold text-navy">Sektörün nabzını her hafta yakalayın.</h3>
         <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">Rehberler kalıcı, bülten güncel. İkisiyle bir adım öndesiniz.</p>
         <div className="mt-5"><NewsletterForm /></div>
       </div>

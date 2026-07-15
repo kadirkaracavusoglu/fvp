@@ -68,7 +68,7 @@ export default async function KategoriPage({ params }: { params: Promise<{ slug:
                   <div className="relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={coverUrl(p, 700)} alt={p.title} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
-                    <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
+                    <span className="absolute left-3 top-3 rounded-full bg-navy px-3 py-1 text-xs font-medium text-white">
                       {cat.emoji} {cat.label}
                     </span>
                   </div>

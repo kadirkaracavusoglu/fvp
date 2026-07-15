@@ -11,9 +11,10 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AttributionCapture } from "@/components/AttributionCapture";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ANALYTICS } from "@/lib/analytics";
+import { THEME } from "@/lib/theme";
 
 export const viewport: Viewport = {
-  themeColor: "#0d204d",
+  themeColor: THEME.navy,
 };
 
 // widmind sitesinin fontu — Inter Tight (tek yerden değiştirilir)

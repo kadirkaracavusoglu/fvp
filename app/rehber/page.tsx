@@ -54,7 +54,7 @@ export default async function RehberPage() {
                     className="aspect-[1200/630] w-full object-cover"
                     loading="lazy"
                   />
-                  <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
+                  <span className="absolute left-3 top-3 rounded-full bg-navy px-3 py-1 text-xs font-medium text-white">
                     {catEmoji(g.category)} {catLabel(g.category)}
                   </span>
                 </div>

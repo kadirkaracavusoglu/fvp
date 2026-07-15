@@ -54,13 +54,13 @@ export function CookieConsent() {
             <div className="mt-3 flex items-center gap-3">
               <button
                 onClick={accept}
-                className="rounded-full bg-[#0d204d] px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+                className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
               >
                 Tamam
               </button>
               <Link
                 href="/gizlilik"
-                className="text-xs font-medium text-gray-400 hover:text-[#0d204d]"
+                className="text-xs font-medium text-gray-400 hover:text-navy"
               >
                 Gizlilik
               </Link>
