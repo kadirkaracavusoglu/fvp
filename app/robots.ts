@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITE } from "@/lib/site";
 
 const AI_BOTS = [
   "GPTBot",
@@ -21,6 +22,6 @@ export default function robots(): MetadataRoute.Robots {
       // AI asistanları / arama botları — açıkça hoş geldin (kaynak gösterebilsinler)
       ...AI_BOTS.map((bot) => ({ userAgent: bot, allow: "/", disallow: ["/studio", "/api"] })),
     ],
-    sitemap: "https://fitnessvepazarlama.com/sitemap.xml",
+    sitemap: `${SITE.url}/sitemap.xml`,
   };
 }

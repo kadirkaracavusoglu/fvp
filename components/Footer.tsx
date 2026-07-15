@@ -44,7 +44,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 sm:grid-cols-2 md:grid-cols-4">
         {/* Marka */}
         <div>
-          <Image src="/fvp-logo.png" alt="Fitness ve Pazarlama" width={901} height={359} className="h-10 w-auto" />
+          <Image src={SITE.logo.default} alt={SITE.name} width={901} height={359} className="h-10 w-auto" />
           <p className="mt-4 max-w-xs text-sm text-gray-400">{SITE.belief}</p>
           <a href={`mailto:${SITE.email}`} className="mt-4 inline-block text-sm text-gray-400 hover:text-cyan">
             {SITE.email}
@@ -101,7 +101,7 @@ export function Footer() {
       <div className="border-t border-navy-600 py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-5 text-center sm:flex-row sm:justify-between">
           <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} Fitness ve Pazarlama
+            © {new Date().getFullYear()} {SITE.name}
           </p>
           <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
             <Link href="/gizlilik" className="hover:text-cyan">Gizlilik</Link>

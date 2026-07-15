@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CATEGORIES, readingTime } from "@/lib/site";
+import { SITE, CATEGORIES, readingTime } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { formatDate } from "@/lib/date";
 import { coverUrl } from "@/lib/cover";
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const cat = CATEGORIES.find((c) => c.slug === slug);
   if (!cat) return { title: "Kategori" };
   return {
-    title: `${cat.label} — Fitness ve Pazarlama`,
+    title: `${cat.label} — ${SITE.name}`,
     description: `Fitness sektörü ${cat.label.toLowerCase()} üzerine yazılar — iş ve büyüme gözüyle.`,
     alternates: { canonical: `/kategori/${slug}` },
   };
@@ -68,7 +68,7 @@ export default async function KategoriPage({ params }: { params: Promise<{ slug:
                   <div className="relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={coverUrl(p, 700)} alt={p.title} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
-                    <span className="absolute left-3 top-3 rounded-full bg-[#0d204d] px-3 py-1 text-xs font-medium text-white">
+                    <span className="absolute left-3 top-3 rounded-full bg-navy px-3 py-1 text-xs font-medium text-white">
                       {cat.emoji} {cat.label}
                     </span>
                   </div>

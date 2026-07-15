@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, H2, P, UL, Note } from "@/components/LegalPage";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "KVKK Aydınlatma Metni",
   description:
-    "6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında Fitness ve Pazarlama tarafından hazırlanan aydınlatma metni.",
+    `6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında ${SITE.name} tarafından hazırlanan aydınlatma metni.`,
   alternates: { canonical: "/kvkk" },
 };
 
@@ -20,9 +21,9 @@ export default function KvkkPage() {
     >
       <H2>1. Veri Sorumlusu</H2>
       <P>
-        Kişisel verileriniz, veri sorumlusu Kadir Karaçavuşoğlu (&quot;Fitness ve Pazarlama&quot;,
-        fitnessvepazarlama.com) tarafından aşağıda açıklanan amaç ve hukuki sebeplerle işlenmektedir. İletişim:{" "}
-        <a className="text-cyan underline" href="mailto:info@fitnessvepazarlama.com">info@fitnessvepazarlama.com</a>
+        Kişisel verileriniz, veri sorumlusu {SITE.author.name} (&quot;{SITE.name}&quot;,
+        {SITE.domain}) tarafından aşağıda açıklanan amaç ve hukuki sebeplerle işlenmektedir. İletişim:{" "}
+        <a className="text-cyan underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>
       </P>
 
       <H2>2. İşlenen Kişisel Veriler</H2>
@@ -80,7 +81,7 @@ export default function KvkkPage() {
       <H2>8. Başvuru</H2>
       <P>
         Yukarıdaki haklarınıza ilişkin taleplerinizi{" "}
-        <a className="text-cyan underline" href="mailto:info@fitnessvepazarlama.com">info@fitnessvepazarlama.com</a>{" "}
+        <a className="text-cyan underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>{" "}
         adresine iletebilirsiniz. Talebiniz, KVKK&apos;da öngörülen süre içinde ücretsiz olarak sonuçlandırılır.
       </P>
 

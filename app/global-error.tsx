@@ -1,5 +1,7 @@
 "use client";
 
+import { THEME } from "@/lib/theme";
+
 import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
 
@@ -26,22 +28,22 @@ export default function GlobalError({
           alignItems: "center",
           justifyContent: "center",
           margin: 0,
-          background: "#f4f6f9",
-          color: "#0d204d",
+          background: THEME.strip,
+          color: THEME.navy,
           textAlign: "center",
           padding: "24px",
         }}
       >
         <div>
           <h1 style={{ fontSize: "28px", fontWeight: 800, margin: 0 }}>Beklenmeyen bir hata oluştu</h1>
-          <p style={{ color: "#5b6472", marginTop: "12px" }}>
+          <p style={{ color: THEME.muted, marginTop: "12px" }}>
             Sayfayı yenilemeyi deneyin.
           </p>
           <button
             onClick={reset}
             style={{
               marginTop: "20px",
-              background: "#0d204d",
+              background: THEME.navy,
               color: "#fff",
               border: "none",
               borderRadius: "999px",

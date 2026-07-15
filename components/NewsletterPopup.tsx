@@ -33,7 +33,7 @@ export function NewsletterPopup() {
           exit={{ opacity: 0 }}
         >
           {/* Karartma yalnızca masaüstünde — mobilde içeriği kapatmaz (Google engelleyici interstitial kuralı) */}
-          <div className="absolute inset-0 hidden bg-[#0d204d]/50 backdrop-blur-sm md:block" onClick={close} />
+          <div className="absolute inset-0 hidden bg-navy/50 backdrop-blur-sm md:block" onClick={close} />
           <motion.div
             className="relative mx-auto w-full max-w-md rounded-2xl border border-[#e6e8ea] bg-white p-6 text-center shadow-2xl sm:p-8"
             initial={{ scale: 0.95, y: 40 }}
@@ -44,12 +44,12 @@ export function NewsletterPopup() {
             <button
               onClick={close}
               aria-label="Kapat"
-              className="absolute right-4 top-4 text-xl leading-none text-[#9ba4b0] hover:text-[#0d204d]"
+              className="absolute right-4 top-4 text-xl leading-none text-[#9ba4b0] hover:text-navy"
             >
               ✕
             </button>
             <div className="text-xs font-medium text-cyan">📩 Bülten</div>
-            <h3 className="mt-2 text-2xl font-bold text-[#0d204d]">Fitness işini sisteme oturt.</h3>
+            <h3 className="mt-2 text-2xl font-bold text-navy">Fitness işini sisteme oturt.</h3>
             <p className="mx-auto mt-2 max-w-xs text-sm text-gray-400">
               Haftada 2 e-posta; gerçek stratejiler, gerçek örnekler. Boş laf yok.
             </p>

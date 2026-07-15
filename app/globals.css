@@ -1,16 +1,22 @@
 @import "tailwindcss";
 
-/* ===== FvP — Açık Tema (beyaz zemin + lacivert ana renk) ===== */
+/* ===== FvP — Açık Tema (beyaz zemin + lacivert ana renk) =====
+   Renklerin TEK KAYNAĞI burasıdır. Marka değiştirirken yalnız bu bloğu değiştir.
+   ⚠️ lib/theme.ts ile elle eşit tutulmalı — themeColor / manifest / global-error
+   CSS değişkeni okuyamıyor, statik değer istiyor. */
 :root {
   --navy: #0d204d;        /* ANA RENK — başlık, buton, accent */
+  --navy-rgb: 13, 32, 77; /* şeffaflıklı kullanımlar için: rgba(var(--navy-rgb), .3) */
   --navy-hover: #14295c;
+  --navy-soft: #1d3670;   /* dekoratif ikinci ton */
+  --accent: #22d3ee;      /* dekoratif vurgu */
   --white: #ffffff;
 
   --bg: #ffffff;          /* zemin */
   --strip: #f4f6f9;       /* alternatif bölüm zemini */
   --surface: #ffffff;     /* kart yüzeyi */
   --line: #e6e8ea;        /* kenarlık */
-  --text: #0d204d;        /* ana metin (lacivert) */
+  --text: var(--navy);    /* ana metin */
   --muted: #5b6472;       /* ikincil metin */
 
   --background: var(--bg);
@@ -23,6 +29,11 @@
   --color-background: var(--bg);
   --color-foreground: var(--text);
   --color-navy: var(--navy);
+  --color-navy-soft: var(--navy-soft);
+  --color-accent: var(--accent);
+  --color-line: var(--line);         /* border-line */
+  --color-strip: var(--strip);       /* bg-strip */
+  --color-muted: var(--muted);       /* text-muted */
   --color-navy-900: var(--bg);       /* header/footer/hero zemini → beyaz */
   --color-navy-800: var(--strip);    /* şerit zemin → açık gri */
   --color-navy-700: var(--strip);    /* kart/gradient → açık gri */
@@ -48,8 +59,8 @@ body {
 /* yumuşak arka plan ışıması (açık) */
 .glow-bg {
   background:
-    radial-gradient(60% 50% at 50% 0%, rgba(13, 32, 77, 0.07), transparent 70%),
-    radial-gradient(45% 45% at 100% 10%, rgba(13, 32, 77, 0.05), transparent 70%),
+    radial-gradient(60% 50% at 50% 0%, rgba(var(--navy-rgb), 0.07), transparent 70%),
+    radial-gradient(45% 45% at 100% 10%, rgba(var(--navy-rgb), 0.05), transparent 70%),
     var(--bg);
 }
 
@@ -62,7 +73,7 @@ body {
 .card:hover {
   transform: translateY(-4px);
   border-color: var(--navy);
-  box-shadow: 0 16px 40px -18px rgba(13, 32, 77, 0.35);
+  box-shadow: 0 16px 40px -18px rgba(var(--navy-rgb), 0.35);
 }
 
 .btn-primary {

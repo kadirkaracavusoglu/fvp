@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { SITE } from "@/lib/site";
 
 // nodejs runtime — dev'de edge'e göre daha kararlı; sonuç cache'lenir
 export const revalidate = 31536000;
@@ -15,7 +16,7 @@ const CAT: Record<string, { label: string; emoji: string; accent: string; glow: 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cat = searchParams.get("cat") || "";
-  const c = CAT[cat] || { label: "Fitness ve Pazarlama", emoji: "⚡", accent: "#22d3ee", glow: "#14295c" };
+  const c = CAT[cat] || { label: SITE.name, emoji: "⚡", accent: "#22d3ee", glow: "#14295c" };
 
   try {
     return new ImageResponse(
@@ -65,7 +66,7 @@ export async function GET(req: Request) {
             <div style={{ display: "flex", fontSize: 32, fontWeight: 700 }}>
               Fitness<span style={{ color: c.accent }}>ve</span>Pazarlama
             </div>
-            <div style={{ display: "flex", fontSize: 24, color: "#9ba4b0" }}>fitnessvepazarlama.com</div>
+            <div style={{ display: "flex", fontSize: 24, color: "#9ba4b0" }}>{SITE.domain}</div>
           </div>
         </div>
       ),

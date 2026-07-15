@@ -28,13 +28,13 @@ export function SearchClient({ posts }: { posts: Post[] }) {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-16">
-      <h1 className="text-3xl font-bold tracking-tight text-[#0d204d] sm:text-4xl">Ara</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-navy sm:text-4xl">Ara</h1>
       <input
         autoFocus
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Yazılarda ara… (örn. niş, reklam, fiyat)"
-        className="mt-6 w-full rounded-xl border border-[#e6e8ea] bg-white px-5 py-4 text-base text-[#0d204d] outline-none transition-colors focus:border-[#0d204d]"
+        className="mt-6 w-full rounded-xl border border-[#e6e8ea] bg-white px-5 py-4 text-base text-navy outline-none transition-colors focus:border-navy"
       />
 
       <div className="mt-8">
@@ -52,7 +52,7 @@ export function SearchClient({ posts }: { posts: Post[] }) {
                   <img src={coverUrl(p, 300)} alt={p.title} className="h-20 w-32 shrink-0 rounded-lg object-cover" loading="lazy" />
                   <div className="min-w-0">
                     <div className="text-xs font-medium text-cyan">{catLabel(p.category)}</div>
-                    <h3 className="truncate text-sm font-semibold text-[#0d204d]">{p.title}</h3>
+                    <h3 className="truncate text-sm font-semibold text-navy">{p.title}</h3>
                     <p className="mt-1 line-clamp-2 text-xs text-gray-400">{p.excerpt}</p>
                     <div className="mt-1 text-xs text-gray-400">{formatDate(p.date)} · {readingTime(p.chars)} dk</div>
                   </div>

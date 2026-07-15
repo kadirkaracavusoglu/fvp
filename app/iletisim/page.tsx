@@ -4,7 +4,7 @@ import { ContactForm } from "@/components/ContactForm";
 
 export const metadata = {
   title: "İletişim",
-  description: "Fitness ve Pazarlama ile iletişime geç: WhatsApp topluluk, e-posta ve ücretsiz strateji görüşmesi.",
+  description: `${SITE.name} ile iletişime geç: WhatsApp topluluk, e-posta ve ücretsiz strateji görüşmesi.`,
   alternates: { canonical: "/iletisim" },
 };
 

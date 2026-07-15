@@ -19,20 +19,20 @@ export default function Error({
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-5 py-24 text-center">
       <div className="text-sm font-semibold text-cyan">Bir şeyler ters gitti</div>
-      <h1 className="mt-3 text-3xl font-bold text-[#0d204d] sm:text-4xl">Bu sayfa yüklenemedi.</h1>
+      <h1 className="mt-3 text-3xl font-bold text-navy sm:text-4xl">Bu sayfa yüklenemedi.</h1>
       <p className="mt-4 text-gray-400">
         Geçici bir sorun olabilir. Tekrar deneyebilir ya da ana sayfaya dönebilirsin.
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <button
           onClick={reset}
-          className="rounded-full bg-[#0d204d] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          className="rounded-full bg-navy px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
         >
           Tekrar dene
         </button>
         <Link
           href="/"
-          className="rounded-full border border-[#e6e8ea] px-6 py-3 text-sm font-semibold text-[#0d204d] transition hover:border-[#0d204d]"
+          className="rounded-full border border-[#e6e8ea] px-6 py-3 text-sm font-semibold text-navy transition hover:border-navy"
         >
           Ana sayfaya dön
         </Link>

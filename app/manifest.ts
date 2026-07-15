@@ -1,15 +1,17 @@
 import type { MetadataRoute } from "next";
+import { THEME } from "@/lib/theme";
+import { SITE } from "@/lib/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Fitness ve Pazarlama",
+    name: SITE.name,
     short_name: "FvP",
     description:
       "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya. Koçlar, salonlar ve markalar için.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#0d204d",
+    theme_color: THEME.navy,
     lang: "tr",
     icons: [
       { src: "/icon-192.png", sizes: "192x192", type: "image/png" },

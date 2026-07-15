@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { getPost, getAllSlugs, getPostsByCategory } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { coverUrl } from "@/lib/cover";
-import { readingTime } from "@/lib/site";
+import { SITE, readingTime } from "@/lib/site";
 import { formatDate } from "@/lib/date";
 import { NewsletterForm } from "@/components/NewsletterForm";
 
@@ -34,7 +34,7 @@ export async function generateMetadata({
       title: post.title,
       description: desc,
       type: "article",
-      url: `https://fitnessvepazarlama.com/yazi/${slug}`,
+      url: `${SITE.url}/yazi/${slug}`,
       publishedTime: post.date,
       images: post.coverImage ? [urlFor(post.coverImage).width(1200).height(630).url()] : [],
     },
@@ -56,11 +56,11 @@ const components: PortableTextComponents = {
     ),
   },
   block: {
-    h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-[#0d204d]">{children}</h2>,
-    h3: ({ children }) => <h3 className="mt-8 text-xl font-semibold text-[#0d204d]">{children}</h3>,
+    h2: ({ children }) => <h2 className="mt-10 text-2xl font-bold text-navy">{children}</h2>,
+    h3: ({ children }) => <h3 className="mt-8 text-xl font-semibold text-navy">{children}</h3>,
     normal: ({ children }) => <p className="mt-4 leading-relaxed text-[#33405c]">{children}</p>,
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-[#0d204d] pl-4 italic text-[#5b6472]">{children}</blockquote>
+      <blockquote className="my-6 border-l-4 border-navy pl-4 italic text-[#5b6472]">{children}</blockquote>
     ),
   },
   list: {
@@ -68,7 +68,7 @@ const components: PortableTextComponents = {
     number: ({ children }) => <ol className="mt-4 list-decimal space-y-2 pl-6 text-[#33405c]">{children}</ol>,
   },
   marks: {
-    strong: ({ children }) => <strong className="font-semibold text-[#0d204d]">{children}</strong>,
+    strong: ({ children }) => <strong className="font-semibold text-navy">{children}</strong>,
     link: ({ children, value }) => (
       <a href={value?.href} target="_blank" rel="noreferrer" className="text-cyan underline">{children}</a>
     ),
@@ -96,20 +96,20 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         headline: post.title,
         description: post.excerpt || "",
         datePublished: post.date,
-        author: { "@id": "https://fitnessvepazarlama.com/#kadir" },
-        publisher: { "@id": "https://fitnessvepazarlama.com/#org" },
-        mainEntityOfPage: `https://fitnessvepazarlama.com/yazi/${slug}`,
+        author: { "@id": `${SITE.url}/#author` },
+        publisher: { "@id": `${SITE.url}/#org` },
+        mainEntityOfPage: `${SITE.url}/yazi/${slug}`,
         ...(post.categoryLabel ? { articleSection: post.categoryLabel } : {}),
         ...(post.coverImage ? { image: urlFor(post.coverImage).width(1200).url() } : {}),
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://fitnessvepazarlama.com" },
+          { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: SITE.url },
           ...(post.categoryLabel && post.category
-            ? [{ "@type": "ListItem", position: 2, name: post.categoryLabel, item: `https://fitnessvepazarlama.com/kategori/${post.category}` }]
+            ? [{ "@type": "ListItem", position: 2, name: post.categoryLabel, item: `${SITE.url}/kategori/${post.category}` }]
             : []),
-          { "@type": "ListItem", position: post.category ? 3 : 2, name: post.title, item: `https://fitnessvepazarlama.com/yazi/${slug}` },
+          { "@type": "ListItem", position: post.category ? 3 : 2, name: post.title, item: `${SITE.url}/yazi/${slug}` },
         ],
       },
     ],
@@ -126,12 +126,12 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
             {post.categoryEmoji} {post.categoryLabel}
           </Link>
         )}
-        <h1 className="mt-2 text-3xl font-bold leading-tight text-[#0d204d] sm:text-4xl">{post.title}</h1>
+        <h1 className="mt-2 text-3xl font-bold leading-tight text-navy sm:text-4xl">{post.title}</h1>
         {post.excerpt && <p className="mt-4 text-lg text-gray-400">{post.excerpt}</p>}
         <div className="mt-5 flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0d204d] text-xs font-bold text-white">KK</span>
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">KK</span>
           <div className="text-sm">
-            <span className="font-semibold text-[#0d204d]">Kadir Karaçavuşoğlu</span>
+            <span className="font-semibold text-navy">{SITE.author.name}</span>
             <span className="block text-xs text-gray-400">
               {dateStr}{post.chars ? ` · ${readingTime(post.chars)} dk okuma` : ""}
             </span>
@@ -143,7 +143,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         {post.coverImage ? (
           <Image
             src={urlFor(post.coverImage).width(1400).height(800).url()}
-            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | Fitness ve Pazarlama`}
+            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | ${SITE.name}`}
             width={1400}
             height={800}
             priority
@@ -153,7 +153,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`/api/cover?title=${encodeURIComponent(post.title)}&cat=${post.category}`}
-            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | Fitness ve Pazarlama`}
+            alt={`${post.title}${post.categoryLabel ? ` — ${post.categoryLabel}` : ""} | ${SITE.name}`}
             className="aspect-[1200/630] w-full object-cover"
           />
         )}
@@ -165,7 +165,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         ) : post.sections && post.sections.length ? (
           post.sections.map((s) => (
             <section key={s.h}>
-              <h2 className="mt-10 text-2xl font-bold text-[#0d204d]">{s.h}</h2>
+              <h2 className="mt-10 text-2xl font-bold text-navy">{s.h}</h2>
               {s.p.map((para, i) => (
                 <p key={i} className="mt-4 leading-relaxed text-[#33405c]">{para}</p>
               ))}
@@ -178,7 +178,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
 
       {/* Yazı sonu bülten CTA */}
       <div className="mt-14 rounded-2xl border border-[#e6e8ea] bg-[#f4f6f9] p-8 text-center">
-        <h3 className="text-xl font-bold text-[#0d204d]">Bunun gibi içerikler her hafta gelen kutunda.</h3>
+        <h3 className="text-xl font-bold text-navy">Bunun gibi içerikler her hafta gelen kutunda.</h3>
         <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">Fitness işinin gündemini ve büyümesini konuşan bülten.</p>
         <div className="mt-5">
           <NewsletterForm />
@@ -188,14 +188,14 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
       {/* İlgili yazılar */}
       {related.length > 0 && (
         <section className="mt-14">
-          <h2 className="mb-5 text-2xl font-bold text-[#0d204d]">İlgili Yazılar</h2>
+          <h2 className="mb-5 text-2xl font-bold text-navy">İlgili Yazılar</h2>
           <div className="grid gap-5 sm:grid-cols-3">
             {related.map((p) => (
               <Link key={p.slug} href={`/yazi/${p.slug}`} className="card block h-full overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={coverUrl(p, 500)} alt={p.title} className="aspect-[1200/630] w-full object-cover" loading="lazy" />
                 <div className="p-4">
-                  <h3 className="text-sm font-semibold leading-snug text-[#0d204d]">{p.title}</h3>
+                  <h3 className="text-sm font-semibold leading-snug text-navy">{p.title}</h3>
                   <div className="mt-2 text-xs text-gray-400">{formatDate(p.date)} · {readingTime(p.chars)} dk</div>
                 </div>
               </Link>

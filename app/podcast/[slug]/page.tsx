@@ -7,6 +7,7 @@ import { getEpisode, getEpisodes, getEpisodeSlugs } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { formatDate } from "@/lib/date";
 import { NewsletterForm } from "@/components/NewsletterForm";
+import { SITE } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: ep.title,
       description: ep.description || "",
       type: "article",
-      url: `https://fitnessvepazarlama.com/podcast/${slug}`,
+      url: `${SITE.url}/podcast/${slug}`,
       images: ep.coverImage ? [urlFor(ep.coverImage).width(1200).height(630).url()] : ["/og-default.png"],
     },
   };
@@ -44,7 +45,7 @@ function spotifyEmbed(url?: string) {
 const notesComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => <p className="mt-3 leading-relaxed text-[#33405c]">{children}</p>,
-    h3: ({ children }) => <h3 className="mt-6 text-lg font-semibold text-[#0d204d]">{children}</h3>,
+    h3: ({ children }) => <h3 className="mt-6 text-lg font-semibold text-navy">{children}</h3>,
   },
   list: { bullet: ({ children }) => <ul className="mt-3 list-disc space-y-1.5 pl-6 text-[#33405c]">{children}</ul> },
   marks: {
@@ -75,7 +76,7 @@ export default async function EpisodePage({ params }: { params: Promise<{ slug: 
         <div className="text-xs font-medium text-cyan">
           🎙️ {ep.episodeLabel ? `${ep.episodeLabel} · ` : ""}{formatDate(ep.date)}{ep.duration ? ` · ${ep.duration}` : ""}
         </div>
-        <h1 className="mt-2 text-3xl font-bold leading-tight text-[#0d204d] sm:text-4xl">{ep.title}</h1>
+        <h1 className="mt-2 text-3xl font-bold leading-tight text-navy sm:text-4xl">{ep.title}</h1>
         {ep.description && <p className="mt-4 text-lg text-gray-400">{ep.description}</p>}
       </div>
 
@@ -96,7 +97,7 @@ export default async function EpisodePage({ params }: { params: Promise<{ slug: 
       {/* Show notes */}
       {ep.showNotes ? (
         <section className="mt-10">
-          <h2 className="text-2xl font-bold text-[#0d204d]">Show Notes</h2>
+          <h2 className="text-2xl font-bold text-navy">Show Notes</h2>
           <div className="mt-3"><PortableText value={ep.showNotes as never} components={notesComponents} /></div>
         </section>
       ) : null}
@@ -104,11 +105,11 @@ export default async function EpisodePage({ params }: { params: Promise<{ slug: 
       {/* Timestamps */}
       {ep.timestamps && ep.timestamps.length > 0 ? (
         <section className="mt-10">
-          <h2 className="text-2xl font-bold text-[#0d204d]">Zaman Damgaları</h2>
+          <h2 className="text-2xl font-bold text-navy">Zaman Damgaları</h2>
           <ul className="mt-4 space-y-2">
             {ep.timestamps.map((t, i) => (
               <li key={i} className="flex gap-3 text-[#33405c]">
-                <span className="shrink-0 rounded-md bg-[#f4f6f9] px-2 py-0.5 font-mono text-xs text-[#0d204d]">{t.time}</span>
+                <span className="shrink-0 rounded-md bg-[#f4f6f9] px-2 py-0.5 font-mono text-xs text-navy">{t.time}</span>
                 <span className="text-sm">{t.label}</span>
               </li>
             ))}
@@ -120,7 +121,7 @@ export default async function EpisodePage({ params }: { params: Promise<{ slug: 
       {ep.transcript ? (
         <section className="mt-10">
           <details className="group rounded-xl border border-[#e6e8ea] p-5">
-            <summary className="cursor-pointer text-lg font-semibold text-[#0d204d]">Transkript <span className="text-sm font-normal text-gray-400">(aç/kapat)</span></summary>
+            <summary className="cursor-pointer text-lg font-semibold text-navy">Transkript <span className="text-sm font-normal text-gray-400">(aç/kapat)</span></summary>
             <div className="mt-4 text-sm"><PortableText value={ep.transcript as never} components={notesComponents} /></div>
           </details>
         </section>
@@ -128,7 +129,7 @@ export default async function EpisodePage({ params }: { params: Promise<{ slug: 
 
       {/* Bülten CTA */}
       <div className="mt-14 rounded-2xl border border-[#e6e8ea] bg-[#f4f6f9] p-8 text-center">
-        <h3 className="text-xl font-bold text-[#0d204d]">Her bölümü kaçırma.</h3>
+        <h3 className="text-xl font-bold text-navy">Her bölümü kaçırma.</h3>
         <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">Yeni bölümler ve haftalık bülten doğrudan gelen kutunda.</p>
         <div className="mt-5"><NewsletterForm /></div>
       </div>
@@ -136,12 +137,12 @@ export default async function EpisodePage({ params }: { params: Promise<{ slug: 
       {/* Diğer bölümler */}
       {others.length > 0 && (
         <section className="mt-14">
-          <h2 className="mb-5 text-2xl font-bold text-[#0d204d]">Diğer Bölümler</h2>
+          <h2 className="mb-5 text-2xl font-bold text-navy">Diğer Bölümler</h2>
           <div className="grid gap-5 sm:grid-cols-3">
             {others.map((e) => (
               <Link key={e.slug} href={`/podcast/${e.slug}`} className="card block h-full p-5">
                 <div className="text-xs text-gray-400">{e.episodeLabel}</div>
-                <h3 className="mt-1 text-sm font-semibold leading-snug text-[#0d204d]">{e.title}</h3>
+                <h3 className="mt-1 text-sm font-semibold leading-snug text-navy">{e.title}</h3>
               </Link>
             ))}
           </div>

@@ -96,14 +96,14 @@ export function ContactForm({
   }
 
   const field =
-    "w-full rounded-xl border border-[#e6e8ea] bg-white px-4 py-3 text-sm text-[#0d204d] outline-none transition-colors placeholder:text-[#9ba4b0] focus:border-[#0d204d]";
-  const label = "mb-1.5 block text-sm font-medium text-[#0d204d]";
+    "w-full rounded-xl border border-[#e6e8ea] bg-white px-4 py-3 text-sm text-navy outline-none transition-colors placeholder:text-[#9ba4b0] focus:border-navy";
+  const label = "mb-1.5 block text-sm font-medium text-navy";
 
   if (status === "success") {
     return (
       <div className="card mx-auto max-w-xl p-8 text-center">
         <div className="text-3xl">✓</div>
-        <h3 className="mt-3 text-xl font-semibold text-[#0d204d]">Mesajın ulaştı!</h3>
+        <h3 className="mt-3 text-xl font-semibold text-navy">Mesajın ulaştı!</h3>
         <p className="mt-2 text-sm text-gray-400">
           En kısa sürede sana <strong>{form.email || "e-posta"}</strong> üzerinden dönüş yapacağız.
         </p>
@@ -173,8 +173,8 @@ export function ContactForm({
                   aria-pressed={on}
                   className={`rounded-full border px-4 py-2 text-sm transition-colors ${
                     on
-                      ? "border-[#0d204d] bg-[#0d204d] text-white"
-                      : "border-[#e6e8ea] text-[#5b6472] hover:border-[#0d204d]"
+                      ? "border-navy bg-navy text-white"
+                      : "border-[#e6e8ea] text-[#5b6472] hover:border-navy"
                   }`}
                 >
                   {on ? "✓ " : ""}{opt}
