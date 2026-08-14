@@ -1,17 +1,47 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
-import { FUNNEL } from "@/lib/funnel";
+import { BASVURU_LABELS, FUNNEL, scoreApplication, type BasvuruCevaplar } from "@/lib/funnel";
+import { ghlAttributionPayload } from "@/lib/ghl";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function cleanText(value: unknown, limit = 600) {
+  return typeof value === "string" ? value.trim().slice(0, limit) : "";
+}
+
+function cleanAnswers(value: unknown): BasvuruCevaplar {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const out: BasvuruCevaplar = {};
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (Array.isArray(raw)) {
+      const arr = raw.map((v) => cleanText(v, 160)).filter(Boolean).slice(0, 8);
+      if (arr.length) out[key] = arr;
+    } else {
+      const text = cleanText(raw, 700);
+      if (text) out[key] = text;
+    }
+  }
+  return out;
+}
+
+function answerSummary(answers: BasvuruCevaplar) {
+  return Object.entries(answers)
+    .map(([key, value]) => {
+      const label = BASVURU_LABELS[key] || key;
+      const text = Array.isArray(value) ? value.join(", ") : value;
+      return `${label}: ${text}`;
+    })
+    .join("\n");
+}
+
 // VSL detaylı başvuru — opt-in sonrası zenginleştirme. Cevaplar + iletişim.
 export async function POST(req: Request) {
   try {
-    const { firstName, lastName, email, phone, instagram, cevaplar, website, attribution } = await req.json();
+    const { firstName, lastName, email, phone, instagram, businessName, websiteUrl, cevaplar, website, attribution } = await req.json();
 
     if (isBot(website)) return NextResponse.json({ ok: true });
     if (!rateLimit(`basvuru:${clientIp(req)}`)) {
@@ -25,9 +55,20 @@ export async function POST(req: Request) {
     const ln = typeof lastName === "string" ? lastName.trim().slice(0, 80) : "";
     const tel = typeof phone === "string" ? phone.trim().slice(0, 40) : "";
     const ig = typeof instagram === "string" ? instagram.trim().slice(0, 120) : "";
+    const business = cleanText(businessName, 120);
+    const web = cleanText(websiteUrl, 180);
     const mail = email.toLowerCase().trim();
-    const answers = cevaplar && typeof cevaplar === "object" ? cevaplar : null;
-    const enrichedAnswers = ig ? { ...(answers || {}), instagram: ig } : answers;
+    const answers = cleanAnswers(cevaplar);
+    const score = scoreApplication(answers);
+    const enrichedAnswers = {
+      ...answers,
+      instagram: ig,
+      businessName: business,
+      websiteUrl: web,
+      _lead_score: score.score,
+      _lead_segment: score.segment,
+      _lead_reasons: score.reasons,
+    };
     const attr = attribution && Object.keys(attribution).length ? attribution : null;
 
     if (supabaseAdmin) {
@@ -43,16 +84,31 @@ export async function POST(req: Request) {
 
     // GHL'e özet (webhook tanımlıysa). Cevaplar tek metinde de gider (satışçı okusun).
     if (FUNNEL.ghlWebhook) {
-      const ozet = enrichedAnswers
-        ? Object.entries(enrichedAnswers).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n")
-        : "";
+      const ozet = answerSummary(answers);
+      const ghlAttr = ghlAttributionPayload(attr);
       fetch(FUNNEL.ghlWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...enrichedAnswers,
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
-          email: mail, phone: tel, instagram: ig, source: "VSL başvuru (/vsl/basvuru)",
-          problem: ozet, ...(enrichedAnswers || {}), ...(attr || {}),
+          email: mail,
+          phone: tel,
+          instagram: ig,
+          businessName: business,
+          websiteUrl: web,
+          source: "VSL başvuru (/vsl/basvuru)",
+          formType: "vsl_basvuru",
+          leadStage: "application_submitted",
+          funnel: "fvp_vsl",
+          pageUrl: `${SITE.url}/vsl/basvuru`,
+          applicationSummary: ozet,
+          problem: ozet,
+          leadScore: score.score,
+          leadSegment: score.segment,
+          leadReasons: score.reasons.join(", "),
+          ...ghlAttr,
+          ...(attr || {}),
         }),
       }).catch(() => {});
     }

@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase";
+import { BASVURU_SORULARI } from "@/lib/funnel";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch";
 
@@ -36,6 +37,7 @@ export type ChannelRow = {
   visits: number;
   optins: number;
   applications: number;
+  calendarViews: number;
   booked: number;
 };
 
@@ -44,9 +46,24 @@ export type RecentLead = {
   email: string;
   phone: string;
   instagram: string;
+  businessName: string;
   formType: string;
   channel: string;
+  score: number | null;
+  segment: string;
+  goal: string;
+  bottlenecks: string;
+  utmSource: string;
+  utmCampaign: string;
+  utmContent: string;
   createdAt: string;
+};
+
+export type AnswerBreakdown = {
+  key: string;
+  label: string;
+  total: number;
+  answers: { label: string; count: number }[];
 };
 
 export type VslPanelData = {
@@ -62,19 +79,30 @@ export type VslPanelData = {
     optins: number;
     plays: number;
     watch5m: number;
-    applications: number;
-    calendarViews: number;
-    thankyouViews: number;
-    booked: number;
-    optinRate: number | null;
-    applicationRate: number | null;
-    bookedRate: number | null;
-  };
+	    applications: number;
+	    qualifiedApplications: number;
+	    hotApplications: number;
+	    calendarViews: number;
+	    calendarLoaded: number;
+	    calendarExternalClicks: number;
+	    thankyouViews: number;
+	    thankyouVideoClicks: number;
+	    booked: number;
+	    utmCaptured: number;
+	    optinRate: number | null;
+	    playRate: number | null;
+	    watch5Rate: number | null;
+	    applicationRate: number | null;
+	    calendarLoadRate: number | null;
+	    bookedRate: number | null;
+	    utmRate: number | null;
+	  };
   funnel: FunnelStep[];
   form: FunnelStep[];
   video: FunnelStep[];
-  channels: ChannelRow[];
-  recentLeads: RecentLead[];
+	  channels: ChannelRow[];
+	  questionBreakdown: AnswerBreakdown[];
+	  recentLeads: RecentLead[];
   trackingHealth: { label: string; value: string; state: "ok" | "warn" }[];
 };
 
@@ -195,6 +223,11 @@ function channelKey(attr?: Record<string, string> | null): string {
   return "organik";
 }
 
+function hasCampaign(attr?: Record<string, string> | null): boolean {
+  if (!attr) return false;
+  return Boolean(attr.utm_source || attr.utm_campaign || attr.utm_content || attr.fbclid || attr.gclid);
+}
+
 const CHANNEL_LABELS: Record<string, string> = {
   meta: "Meta / IG",
   google: "Google / YouTube",
@@ -204,13 +237,14 @@ const CHANNEL_LABELS: Record<string, string> = {
   organik: "Organik / direkt",
 };
 
-function bump(map: Map<string, ChannelRow>, key: string, field: keyof Pick<ChannelRow, "visits" | "optins" | "applications" | "booked">) {
+function bump(map: Map<string, ChannelRow>, key: string, field: keyof Pick<ChannelRow, "visits" | "optins" | "applications" | "calendarViews" | "booked">) {
   const row = map.get(key) || {
     key,
     label: CHANNEL_LABELS[key] || key,
     visits: 0,
     optins: 0,
     applications: 0,
+    calendarViews: 0,
     booked: 0,
   };
   row[field] += 1;
@@ -224,6 +258,62 @@ function leadName(row: LeadRow): string {
 function instagram(row: LeadRow): string {
   const val = row.cevaplar?.instagram;
   return typeof val === "string" ? val : "";
+}
+
+function textAnswer(row: LeadRow, key: string): string {
+  const val = row.cevaplar?.[key];
+  if (typeof val === "string") return val;
+  if (Array.isArray(val)) return val.filter((v) => typeof v === "string").join(", ");
+  return "";
+}
+
+function leadScore(row: LeadRow): number | null {
+  const val = row.cevaplar?._lead_score;
+  return typeof val === "number" ? val : null;
+}
+
+function leadSegment(row: LeadRow): string {
+  const val = row.cevaplar?._lead_segment;
+  return typeof val === "string" ? val : "";
+}
+
+function uniqueLeadRows(rows: LeadRow[], formType: string): LeadRow[] {
+  const seen = new Set<string>();
+  const out: LeadRow[] = [];
+  for (const row of rows) {
+    if (row.form_type !== formType) continue;
+    const email = (row.email || "").toLowerCase().trim();
+    const id = email || `${row.created_at}:${row.phone || ""}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push(row);
+  }
+  return out;
+}
+
+function answerBreakdown(rows: LeadRow[]): AnswerBreakdown[] {
+  const keys = ["asama", "gelir", "darbogazlar", "yatirim", "karar_hizi"];
+  return keys.map((key) => {
+    const question = BASVURU_SORULARI.find((s) => s.key === key);
+    const counts = new Map<string, number>();
+    for (const row of rows) {
+      const value = row.cevaplar?.[key];
+      const values = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
+      for (const item of values) {
+        if (typeof item !== "string" || !item.trim()) continue;
+        counts.set(item, (counts.get(item) || 0) + 1);
+      }
+    }
+    return {
+      key,
+      label: question?.soru || key,
+      total: [...counts.values()].reduce((a, b) => a + b, 0),
+      answers: [...counts.entries()]
+        .map(([label, count]) => ({ label, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5),
+    };
+  }).filter((row) => row.total > 0);
 }
 
 function formLabel(type?: string | null): string {
@@ -244,21 +334,32 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       visits: 0,
       popupOpens: 0,
       optins: 0,
-      plays: 0,
-      watch5m: 0,
-      applications: 0,
-      calendarViews: 0,
-      thankyouViews: 0,
-      booked: 0,
-      optinRate: null,
-      applicationRate: null,
-      bookedRate: null,
-    },
+	      plays: 0,
+	      watch5m: 0,
+	      applications: 0,
+	      qualifiedApplications: 0,
+	      hotApplications: 0,
+	      calendarViews: 0,
+	      calendarLoaded: 0,
+	      calendarExternalClicks: 0,
+	      thankyouViews: 0,
+	      thankyouVideoClicks: 0,
+	      booked: 0,
+	      utmCaptured: 0,
+	      optinRate: null,
+	      playRate: null,
+	      watch5Rate: null,
+	      applicationRate: null,
+	      calendarLoadRate: null,
+	      bookedRate: null,
+	      utmRate: null,
+	    },
     funnel: [],
     form: [],
-    video: [],
-    channels: [],
-    recentLeads: [],
+	    video: [],
+	    channels: [],
+	    questionBreakdown: [],
+	    recentLeads: [],
     trackingHealth: [],
   };
 
@@ -279,21 +380,42 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
     const watch5m = uniqueAny(events, ["vsl_min5", "vsl_sn300"]);
     const watch10m = uniqueAny(events, ["vsl_min10", "vsl_sn600"]);
     const watch15m = uniqueAny(events, ["vsl_min15", "vsl_sn900"]);
-    const watch50 = uniqueBy(events, "vsl_50");
-    const cta = uniqueBy(events, "cta_click");
-    const formStart = uniqueBy(events, "vsl_basvuru_start");
-    const formS1 = uniqueBy(events, "vsl_basvuru_s1");
-    const formS4 = uniqueBy(events, "vsl_basvuru_s4");
-    const formS8 = uniqueBy(events, "vsl_basvuru_s8");
-    const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
-    const calendarViews = uniqueBy(events, "vsl_calendar_view");
-    const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
-    const thankyouViews = uniqueBy(events, "vsl_thankyou_view");
-    const bookedEvent = uniqueBy(events, "vsl_calendar_booked");
+	    const watch50 = uniqueBy(events, "vsl_50");
+	    const cta = uniqueBy(events, "cta_click");
+	    const formStart = uniqueBy(events, "vsl_basvuru_start");
+	    const formS1 = uniqueBy(events, "vsl_basvuru_s1");
+	    const formBottleneckStep = BASVURU_SORULARI.findIndex((s) => s.key === "darbogazlar") + 1;
+	    const formInvestmentStep = BASVURU_SORULARI.findIndex((s) => s.key === "yatirim") + 1;
+	    const contactStep = BASVURU_SORULARI.length + 1;
+	    const formBottleneck = formBottleneckStep > 0 ? uniqueBy(events, `vsl_basvuru_s${formBottleneckStep}`) : 0;
+	    const formInvestment = formInvestmentStep > 0 ? uniqueBy(events, `vsl_basvuru_s${formInvestmentStep}`) : 0;
+	    const formContact = uniqueAny(events, ["vsl_basvuru_contact_view", `vsl_basvuru_s${contactStep}`]);
+	    const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
+	    const calendarViews = uniqueBy(events, "vsl_calendar_view");
+	    const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
+	    const calendarExternalClicks = uniqueBy(events, "vsl_calendar_external_click");
+	    const thankyouViews = uniqueBy(events, "vsl_thankyou_view");
+	    const thankyouVideoClicks = uniqueBy(events, "vsl_thankyou_video_click");
+	    const bookedEvent = uniqueBy(events, "vsl_calendar_booked");
 
-    const optins = uniqueLeadCount(leads, "vsl_optin");
-    const applications = uniqueLeadCount(leads, "vsl_basvuru");
-    const booked = uniqueLeadCount(leads, "vsl_randevu") || bookedEvent;
+	    const optins = uniqueLeadCount(leads, "vsl_optin");
+	    const applicationRows = uniqueLeadRows(leads, "vsl_basvuru");
+	    const applications = applicationRows.length;
+	    const booked = uniqueLeadCount(leads, "vsl_randevu") || bookedEvent;
+	    const qualifiedApplications = applicationRows.filter((row) => {
+	      const score = leadScore(row) || 0;
+	      return score >= 5 || /Yüksek|Orta/.test(leadSegment(row));
+	    }).length;
+	    const hotApplications = applicationRows.filter((row) => {
+	      const score = leadScore(row) || 0;
+	      return score >= 8 || /Yüksek/.test(leadSegment(row));
+	    }).length;
+	    const utmCaptured = uniqueLeadRows(leads, "vsl_optin")
+	      .concat(applicationRows)
+	      .filter((row, index, arr) => {
+	        const email = (row.email || "").toLowerCase().trim();
+	        return hasCampaign(row.attribution) && arr.findIndex((r) => (r.email || "").toLowerCase().trim() === email) === index;
+	      }).length;
 
     const funnel: FunnelStep[] = [
       { key: "visit", label: "VSL sayfasını gördü", count: visits, pct: 100 },
@@ -308,13 +430,14 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       { key: "booked", label: "Randevu aldı", count: booked, pct: pct(booked, visits), pctPrev: pct(booked, calendarViews) },
     ];
 
-    const form: FunnelStep[] = [
-      { key: "start", label: "Forma girdi", count: formStart, pct: 100 },
-      { key: "s1", label: "İlk soruyu gördü", count: formS1, pct: pct(formS1, formStart), pctPrev: pct(formS1, formStart) },
-      { key: "s4", label: "Engel sorusuna geldi", count: formS4, pct: pct(formS4, formStart), pctPrev: pct(formS4, formS1) },
-      { key: "contact", label: "İletişim ekranına geldi", count: formS8, pct: pct(formS8, formStart), pctPrev: pct(formS8, formS4) },
-      { key: "submit", label: "Başvuruyu gönderdi", count: applications || formSubmitEvent, pct: pct(applications || formSubmitEvent, formStart), pctPrev: pct(applications || formSubmitEvent, formS8) },
-    ];
+	    const form: FunnelStep[] = [
+	      { key: "start", label: "Forma girdi", count: formStart, pct: 100 },
+	      { key: "s1", label: "İlk soruyu gördü", count: formS1, pct: pct(formS1, formStart), pctPrev: pct(formS1, formStart) },
+	      { key: "bottleneck", label: "Darboğaz sorusuna geldi", count: formBottleneck, pct: pct(formBottleneck, formStart), pctPrev: pct(formBottleneck, formS1) },
+	      { key: "investment", label: "Yatırım sorusuna geldi", count: formInvestment, pct: pct(formInvestment, formStart), pctPrev: pct(formInvestment, formBottleneck) },
+	      { key: "contact", label: "İletişim ekranına geldi", count: formContact, pct: pct(formContact, formStart), pctPrev: pct(formContact, formInvestment) },
+	      { key: "submit", label: "Başvuruyu gönderdi", count: applications || formSubmitEvent, pct: pct(applications || formSubmitEvent, formStart), pctPrev: pct(applications || formSubmitEvent, formContact) },
+	    ];
 
     const video: FunnelStep[] = [
       { key: "play", label: "Oynattı", count: plays, pct: pct(plays, optins || visits) },
@@ -329,15 +452,23 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
 
     const channelMap = new Map<string, ChannelRow>();
     const seenVisits = new Set<string>();
-    for (const event of events) {
-      if (event.name !== "vsl_optin_view") continue;
-      const id = event.session_id || `${event.created_at}-${event.path}`;
-      if (seenVisits.has(id)) continue;
-      seenVisits.add(id);
-      bump(channelMap, channelKey(event.attribution), "visits");
-    }
-    const seenLead = new Set<string>();
-    for (const lead of leads) {
+	    for (const event of events) {
+	      if (event.name !== "vsl_optin_view") continue;
+	      const id = event.session_id || `${event.created_at}-${event.path}`;
+	      if (seenVisits.has(id)) continue;
+	      seenVisits.add(id);
+	      bump(channelMap, channelKey(event.attribution), "visits");
+	    }
+	    const seenCalendar = new Set<string>();
+	    for (const event of events) {
+	      if (event.name !== "vsl_calendar_view") continue;
+	      const id = event.session_id || `${event.created_at}-${event.path}`;
+	      if (seenCalendar.has(id)) continue;
+	      seenCalendar.add(id);
+	      bump(channelMap, channelKey(event.attribution), "calendarViews");
+	    }
+	    const seenLead = new Set<string>();
+	    for (const lead of leads) {
       const type = lead.form_type || "";
       if (!["vsl_optin", "vsl_basvuru", "vsl_randevu"].includes(type)) continue;
       const email = (lead.email || "").toLowerCase().trim();
@@ -350,28 +481,38 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       if (type === "vsl_randevu") bump(channelMap, key, "booked");
     }
 
-    const recentLeads = leads
-      .filter((l) => l.form_type === "vsl_basvuru" || l.form_type === "vsl_randevu")
-      .sort((a, b) => b.created_at.localeCompare(a.created_at))
-      .slice(0, 20)
-      .map((l) => ({
-        name: leadName(l),
-        email: l.email || "",
-        phone: l.phone || "",
-        instagram: instagram(l),
-        formType: formLabel(l.form_type),
-        channel: CHANNEL_LABELS[channelKey(l.attribution)] || channelKey(l.attribution),
-        createdAt: l.created_at,
-      }));
+	    const recentLeads = leads
+	      .filter((l) => l.form_type === "vsl_basvuru" || l.form_type === "vsl_randevu")
+	      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+	      .slice(0, 20)
+	      .map((l) => ({
+	        name: leadName(l),
+	        email: l.email || "",
+	        phone: l.phone || "",
+	        instagram: instagram(l),
+	        businessName: textAnswer(l, "businessName"),
+	        formType: formLabel(l.form_type),
+	        channel: CHANNEL_LABELS[channelKey(l.attribution)] || channelKey(l.attribution),
+	        score: leadScore(l),
+	        segment: leadSegment(l),
+	        goal: textAnswer(l, "hedef_12_ay"),
+	        bottlenecks: textAnswer(l, "darbogazlar"),
+	        utmSource: l.attribution?.utm_source || "",
+	        utmCampaign: l.attribution?.utm_campaign || "",
+	        utmContent: l.attribution?.utm_content || "",
+	        createdAt: l.created_at,
+	      }));
 
-    const trackingHealth = [
-      { label: "Event akışı", value: `${events.length} olay`, state: events.length ? "ok" : "warn" },
-      { label: "Lead akışı", value: `${leads.length} kayıt`, state: leads.length ? "ok" : "warn" },
-      { label: "Opt-in → Supabase", value: `${optins} kişi`, state: optins ? "ok" : "warn" },
-      { label: "Başvuru → Supabase", value: `${applications} kişi`, state: applications ? "ok" : "warn" },
-      { label: "Takvim embed", value: `${calendarLoaded} yükleme`, state: calendarLoaded ? "ok" : "warn" },
-      { label: "Teşekkür sayfası", value: `${thankyouViews} görüntüleme`, state: thankyouViews ? "ok" : "warn" },
-      { label: "GHL randevu webhook", value: booked ? `${booked} randevu` : "henüz sinyal yok", state: booked ? "ok" : "warn" },
+	    const trackingHealth = [
+	      { label: "Event akışı", value: `${events.length} olay`, state: events.length ? "ok" : "warn" },
+	      { label: "Lead akışı", value: `${leads.length} kayıt`, state: leads.length ? "ok" : "warn" },
+	      { label: "Opt-in → Supabase", value: `${optins} kişi`, state: optins ? "ok" : "warn" },
+	      { label: "Başvuru → Supabase", value: `${applications} kişi`, state: applications ? "ok" : "warn" },
+	      { label: "UTM yakalama", value: `${utmCaptured} kayıt`, state: utmCaptured ? "ok" : "warn" },
+	      { label: "Form iletişim adımı", value: `${formContact} kişi`, state: formContact ? "ok" : "warn" },
+	      { label: "Takvim embed", value: `${calendarLoaded} yükleme`, state: calendarLoaded ? "ok" : "warn" },
+	      { label: "Teşekkür sayfası", value: `${thankyouViews} görüntüleme`, state: thankyouViews ? "ok" : "warn" },
+	      { label: "GHL randevu webhook", value: booked ? `${booked} randevu` : "henüz sinyal yok", state: booked ? "ok" : "warn" },
     ] satisfies VslPanelData["trackingHealth"];
 
     return {
@@ -381,23 +522,34 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
         visits,
         popupOpens,
         optins,
-        plays,
-        watch5m,
-        applications,
-        calendarViews,
-        thankyouViews,
-        booked,
-        optinRate: pct(optins, visits),
-        applicationRate: pct(applications, optins),
-        bookedRate: pct(booked, applications),
-      },
-      funnel,
-      form,
-      video,
-      channels: [...channelMap.values()].sort((a, b) => b.applications - a.applications || b.optins - a.optins || b.visits - a.visits),
-      recentLeads,
-      trackingHealth,
-    };
+	        plays,
+	        watch5m,
+	        applications,
+	        qualifiedApplications,
+	        hotApplications,
+	        calendarViews,
+	        calendarLoaded,
+	        calendarExternalClicks,
+	        thankyouViews,
+	        thankyouVideoClicks,
+	        booked,
+	        utmCaptured,
+	        optinRate: pct(optins, visits),
+	        playRate: pct(plays, optins || visits),
+	        watch5Rate: pct(watch5m, plays),
+	        applicationRate: pct(applications, optins),
+	        calendarLoadRate: pct(calendarLoaded, calendarViews),
+	        bookedRate: pct(booked, applications),
+	        utmRate: pct(utmCaptured, optins + applications),
+	      },
+	      funnel,
+	      form,
+	      video,
+	      channels: [...channelMap.values()].sort((a, b) => b.applications - a.applications || b.optins - a.optins || b.visits - a.visits),
+	      questionBreakdown: answerBreakdown(applicationRows),
+	      recentLeads,
+	      trackingHealth,
+	    };
   } catch (e) {
     return { ...base, error: e instanceof Error ? e.message : "Panel verisi okunamadı." };
   }

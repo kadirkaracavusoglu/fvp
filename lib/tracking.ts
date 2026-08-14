@@ -40,11 +40,15 @@ const ATTR_KEY = "fvp_attribution";
 const ATTR_FIELDS = [
   "gclid",
   "fbclid",
+  "utm_id",
   "utm_source",
   "utm_medium",
   "utm_campaign",
   "utm_term",
   "utm_content",
+  "utm_source_platform",
+  "utm_creative_format",
+  "utm_marketing_tactic",
 ];
 
 export type Attribution = Record<string, string>;
@@ -54,6 +58,7 @@ export function captureAttribution() {
   if (typeof window === "undefined") return;
   try {
     const url = new URL(window.location.href);
+    const now = new Date().toISOString();
     const found: Attribution = {};
     ATTR_FIELDS.forEach((f) => {
       const v = url.searchParams.get(f);
@@ -64,8 +69,13 @@ export function captureAttribution() {
     const merged: Attribution = {
       ...existing,
       ...found,
-      first_seen: existing.first_seen || new Date().toISOString(),
-      landing_path: existing.landing_path || url.pathname,
+      first_seen: existing.first_seen || now,
+      first_landing_path: existing.first_landing_path || url.pathname,
+      first_landing_url: existing.first_landing_url || url.href,
+      landing_path: url.pathname,
+      landing_url: url.href,
+      last_seen: now,
+      referrer: existing.referrer || document.referrer || "",
     };
     localStorage.setItem(ATTR_KEY, JSON.stringify(merged));
   } catch {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { FUNNEL } from "@/lib/funnel";
+import { ghlAttributionPayload } from "@/lib/ghl";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
@@ -38,12 +39,20 @@ export async function POST(req: Request) {
 
     // 2) GHL'e (webhook tanımlıysa) — fire-and-forget, akışı bloklamaz
     if (FUNNEL.ghlWebhook) {
+      const ghlAttr = ghlAttributionPayload(attr);
       fetch(FUNNEL.ghlWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
-          email: mail, source: "VSL opt-in (/vsl)", ...(attr || {}),
+          email: mail,
+          source: "VSL opt-in (/vsl)",
+          formType: "vsl_optin",
+          leadStage: "video_unlocked",
+          funnel: "fvp_vsl",
+          pageUrl: `${SITE.url}/vsl`,
+          ...ghlAttr,
+          ...(attr || {}),
         }),
       }).catch(() => {});
     }

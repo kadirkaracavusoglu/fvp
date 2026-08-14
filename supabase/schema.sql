@@ -23,10 +23,10 @@ create table if not exists contacts (
 
 -- First-party olay ölçümü (VSL funnel + genel dönüşüm huniileri)
 -- Her satır = tek bir olay (video milestone, CTA tık, form adımı...).
--- Amaç: GA4'ün bucketladığı izleme süresini SANİYE bazında, kendi verimizde tutmak.
+-- Amaç: GA4'ün bucketladığı izleme süresini dakika milestone'larıyla kendi verimizde tutmak.
 create table if not exists events (
   id uuid primary key default gen_random_uuid(),
-  name text not null,              -- vsl_play, vsl_sn30, vsl_25, cta_click ...
+  name text not null,              -- vsl_play, vsl_min5, vsl_25, cta_click ...
   path text,                       -- /vsl
   session_id text,                 -- istemci üretir, oturum hunisi için
   video text,                      -- videoId (VSL olaylarında)

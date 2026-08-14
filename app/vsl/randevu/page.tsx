@@ -1,12 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import { FUNNEL } from "@/lib/funnel";
-import { track, trackServer } from "@/lib/tracking";
+import { getAttribution, track, trackServer } from "@/lib/tracking";
+
+const CALENDAR_UTM_FIELDS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "fbclid"];
 
 export default function VslRandevuPage() {
+  const [calendarUrl, setCalendarUrl] = useState<string>(FUNNEL.calendarUrl);
+
   useEffect(() => {
+    try {
+      const attr = getAttribution();
+      const url = new URL(FUNNEL.calendarUrl);
+      CALENDAR_UTM_FIELDS.forEach((field) => {
+        const value = attr[field];
+        if (value) url.searchParams.set(field, value);
+      });
+      setCalendarUrl(url.toString());
+    } catch {}
     track("vsl_calendar_view", { location: "vsl" });
     trackServer("vsl_calendar_view");
   }, []);
@@ -29,7 +42,7 @@ export default function VslRandevuPage() {
         <div className="overflow-hidden rounded-2xl border border-[#e6e8ea] bg-white shadow-xl">
           <iframe
             id="SSw6HZHR3j9veTWH8xTp_1786750718220"
-            src={FUNNEL.calendarUrl}
+            src={calendarUrl}
             allow="payment"
             scrolling="no"
             title="Online Koçluk Strateji Görüşmesi takvimi"
@@ -47,7 +60,7 @@ export default function VslRandevuPage() {
         <div className="mt-5 text-center text-sm text-gray-400">
           Takvim açılmazsa{" "}
           <a
-            href={FUNNEL.calendarUrl}
+            href={calendarUrl}
             target="_blank"
             rel="noreferrer"
             className="font-semibold text-[#0d204d] underline underline-offset-4"
