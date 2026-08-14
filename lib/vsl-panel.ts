@@ -138,7 +138,7 @@ async function fetchAll<T extends object>(
       .range(from, from + PAGE_SIZE - 1);
     if (error) throw new Error(`${table}: ${error.message}`);
     if (!data?.length) break;
-    all.push(...(data as T[]));
+    all.push(...(data as unknown as T[]));
     if (data.length < PAGE_SIZE) break;
   }
   return all;
