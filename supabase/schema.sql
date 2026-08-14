@@ -48,7 +48,7 @@ create table if not exists leads (
   last_name text,
   email text,
   phone text,
-  form_type text not null default 'vsl_optin',  -- vsl_optin | vsl_basvuru
+  form_type text not null default 'vsl_optin',  -- vsl_optin | vsl_basvuru | vsl_randevu
   cevaplar jsonb,                                -- başvuru formu cevapları (soru→değer)
   attribution jsonb,                             -- gclid / fbclid / utm_*
   source text,

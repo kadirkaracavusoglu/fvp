@@ -18,9 +18,9 @@ const AI_BOTS = [
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/studio", "/api"] },
+      { userAgent: "*", allow: "/", disallow: ["/studio", "/api", "/vsl/panel"] },
       // AI asistanları / arama botları — açıkça hoş geldin (kaynak gösterebilsinler)
-      ...AI_BOTS.map((bot) => ({ userAgent: bot, allow: "/", disallow: ["/studio", "/api"] })),
+      ...AI_BOTS.map((bot) => ({ userAgent: bot, allow: "/", disallow: ["/studio", "/api", "/vsl/panel"] })),
     ],
     sitemap: `${SITE.url}/sitemap.xml`,
   };

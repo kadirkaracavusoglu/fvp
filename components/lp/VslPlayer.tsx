@@ -7,7 +7,7 @@
 // - Facade: açılışta YouTube'dan hiçbir şey inmez → LCP korunur (poster LCP elemanı).
 // - Autoplay sessiz (tarayıcı zorunluluğu) → ortada "Sesi Aç" katmanı.
 // - controls=0 + kendi çubuğumuz → YouTube markası mümkün olduğunca gizli.
-// - Milestone'lar bir kez tetiklenir (saniye + yüzde) → track() ile GA4/dataLayer.
+// - Milestone'lar bir kez tetiklenir (dakika + yüzde) → track() ile GA4/dataLayer.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { track, trackServer } from "@/lib/tracking";
@@ -54,8 +54,8 @@ function loadYouTubeApi(): Promise<void> {
   return apiPromise;
 }
 
-// Saniye taşları — 26:57'lik video için (uzunsa uzat). Yüzdeler ayrı hesaplanır.
-const SECOND_MARKS = [10, 30, 60, 120, 300, 600, 900, 1200] as const;
+// Dakika taşları — 26:57'lik video için. Yüzdeler ayrı hesaplanır.
+const MINUTE_MARKS = [1, 3, 5, 10, 15, 20] as const;
 const PERCENT_MARKS = [25, 50, 75, 100] as const;
 
 function fmt(s: number): string {
@@ -105,8 +105,8 @@ export function VslPlayer({
       const d = p.getDuration?.() || 0;
       setCur(t);
       if (d && d !== dur) setDur(d);
-      SECOND_MARKS.forEach((m) => {
-        if (t >= m) fire(`vsl_sn${m}`);
+      MINUTE_MARKS.forEach((m) => {
+        if (t >= m * 60) fire(`vsl_min${m}`);
       });
       if (d > 0) {
         PERCENT_MARKS.forEach((m) => {
