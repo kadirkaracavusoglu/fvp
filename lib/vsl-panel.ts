@@ -64,6 +64,7 @@ export type VslPanelData = {
     watch5m: number;
     applications: number;
     calendarViews: number;
+    thankyouViews: number;
     booked: number;
     optinRate: number | null;
     applicationRate: number | null;
@@ -247,6 +248,7 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       watch5m: 0,
       applications: 0,
       calendarViews: 0,
+      thankyouViews: 0,
       booked: 0,
       optinRate: null,
       applicationRate: null,
@@ -286,6 +288,7 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
     const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
     const calendarViews = uniqueBy(events, "vsl_calendar_view");
     const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
+    const thankyouViews = uniqueBy(events, "vsl_thankyou_view");
     const bookedEvent = uniqueBy(events, "vsl_calendar_booked");
 
     const optins = uniqueLeadCount(leads, "vsl_optin");
@@ -301,6 +304,7 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       { key: "cta", label: "Başvuru CTA tıkladı", count: cta, pct: pct(cta, visits), pctPrev: pct(cta, watch5m) },
       { key: "apply", label: "Başvuruyu tamamladı", count: applications, pct: pct(applications, visits), pctPrev: pct(applications, cta || formStart) },
       { key: "calendar", label: "Takvimi gördü", count: calendarViews, pct: pct(calendarViews, visits), pctPrev: pct(calendarViews, applications) },
+      { key: "thankyou", label: "Teşekkür sayfasını gördü", count: thankyouViews, pct: pct(thankyouViews, visits), pctPrev: pct(thankyouViews, calendarViews) },
       { key: "booked", label: "Randevu aldı", count: booked, pct: pct(booked, visits), pctPrev: pct(booked, calendarViews) },
     ];
 
@@ -366,6 +370,7 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       { label: "Opt-in → Supabase", value: `${optins} kişi`, state: optins ? "ok" : "warn" },
       { label: "Başvuru → Supabase", value: `${applications} kişi`, state: applications ? "ok" : "warn" },
       { label: "Takvim embed", value: `${calendarLoaded} yükleme`, state: calendarLoaded ? "ok" : "warn" },
+      { label: "Teşekkür sayfası", value: `${thankyouViews} görüntüleme`, state: thankyouViews ? "ok" : "warn" },
       { label: "GHL randevu webhook", value: booked ? `${booked} randevu` : "henüz sinyal yok", state: booked ? "ok" : "warn" },
     ] satisfies VslPanelData["trackingHealth"];
 
@@ -380,6 +385,7 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
         watch5m,
         applications,
         calendarViews,
+        thankyouViews,
         booked,
         optinRate: pct(optins, visits),
         applicationRate: pct(applications, optins),

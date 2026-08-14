@@ -109,7 +109,7 @@ export function PanelView({ data, logout }: { data: VslPanelData; logout: () => 
               <Kpi label="Popup açan" value={String(data.kpi.popupOpens)} />
               <Kpi label="Video oynatan" value={String(data.kpi.plays)} />
               <Kpi label="5 dk izleyen" value={String(data.kpi.watch5m)} />
-              <Kpi label="Takvim gören" value={String(data.kpi.calendarViews)} />
+              <Kpi label="Takvim / teşekkür" value={`${data.kpi.calendarViews} / ${data.kpi.thankyouViews}`} />
             </div>
 
             <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
