@@ -10,7 +10,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AttributionCapture } from "@/components/AttributionCapture";
 import { CookieConsent } from "@/components/CookieConsent";
-import { Chrome } from "@/components/Chrome";
 import { ANALYTICS } from "@/lib/analytics";
 import { THEME } from "@/lib/theme";
 import { SITE } from "@/lib/site";
@@ -187,12 +186,10 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
           </noscript>
         )}
         <a href="#main" className="skip-link">İçeriğe geç</a>
-        <Chrome><Header /></Chrome>
+        <Header />
         <main id="main" className="flex-1">{children}</main>
-        <Chrome>
-          <Footer />
-          <NewsletterPopup />
-        </Chrome>
+        <Footer />
+        <NewsletterPopup />
         <CookieConsent />
         <ServiceWorker />
         <AttributionCapture />
