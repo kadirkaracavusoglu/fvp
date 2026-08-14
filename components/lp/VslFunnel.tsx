@@ -142,10 +142,12 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
           <p className="mt-2 max-w-lg text-sm text-white/75 sm:text-base">
             Ad, soyad ve e-posta bilgisini bırak; video hemen açılır.
           </p>
-          <button type="button" onClick={openModal} className="btn-primary mt-5 px-7 py-3 text-sm sm:text-base">
-            Videoyu aç
-          </button>
         </div>
+      </div>
+      <div className="mt-5 text-center">
+        <button type="button" onClick={openModal} className="btn-primary w-full px-8 py-4 text-base sm:w-auto">
+          Videoyu aç
+        </button>
       </div>
 
       {modalOpen && (
