@@ -1,0 +1,60 @@
+"use client";
+
+import { useEffect } from "react";
+import { FUNNEL } from "@/lib/funnel";
+import { track, trackServer } from "@/lib/tracking";
+
+export default function VslRandevuPage() {
+  useEffect(() => {
+    track("vsl_calendar_view", { location: "vsl" });
+    trackServer("vsl_calendar_view");
+  }, []);
+
+  return (
+    <div className="glow-bg min-h-screen px-5 py-10 sm:py-14">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-6 text-center">
+          <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
+            Son adım
+          </span>
+          <h1 className="mx-auto mt-5 max-w-3xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
+            Strateji görüşmeni seç
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
+            Başvurunu aldık. Uygun zamanı seç, görüşme detayları e-posta ile gelsin.
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl border border-[#e6e8ea] bg-white shadow-xl">
+          <iframe
+            src={FUNNEL.calendarUrl}
+            title="Online Koçluk Strateji Görüşmesi takvimi"
+            className="h-[760px] w-full"
+            loading="lazy"
+            onLoad={() => {
+              track("vsl_calendar_loaded", { location: "vsl" });
+              trackServer("vsl_calendar_loaded");
+            }}
+          />
+        </div>
+
+        <div className="mt-5 text-center text-sm text-gray-400">
+          Takvim açılmazsa{" "}
+          <a
+            href={FUNNEL.calendarUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-[#0d204d] underline underline-offset-4"
+            onClick={() => {
+              track("vsl_calendar_external_click", { location: "vsl" });
+              trackServer("vsl_calendar_external_click");
+            }}
+          >
+            buradan yeni sekmede aç
+          </a>
+          .
+        </div>
+      </div>
+    </div>
+  );
+}

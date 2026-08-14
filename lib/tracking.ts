@@ -10,6 +10,8 @@ const FB_MAP: Record<string, string> = {
   quiz_complete: "CompleteRegistration",
   contact_submit: "Contact",
   sponsorship_submit: "Contact",
+  vsl_optin_submit: "Lead",
+  vsl_basvuru_submit: "SubmitApplication",
 };
 
 /** GA4/GTM (dataLayer) + varsa Meta Pixel'e olay gönder */

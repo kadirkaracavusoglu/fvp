@@ -1,6 +1,6 @@
 import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
-import { VslPlayer } from "@/components/lp/VslPlayer";
+import { VslFunnel } from "@/components/lp/VslFunnel";
 
 // ⚙️ Konumlandırma/CTA Kadir tarafından yönlendirilecek. Video, başlık ve
 // alttaki çağrı tek yerden değiştirilir. Görünüm: sitenin açık teması (native).
@@ -32,10 +32,10 @@ export default function VslPage() {
         </div>
       </section>
 
-      {/* Video — sayfanın varış noktası (CTA Kadir tarafından yönlendirilecek) */}
+      {/* Opt-in kapısı → video → CTA */}
       <section className="mx-auto max-w-4xl px-5 pb-16">
         <Reveal delay={0.1}>
-          <VslPlayer videoId={VSL.videoId} autoplay />
+          <VslFunnel videoId={VSL.videoId} />
         </Reveal>
       </section>
     </>
