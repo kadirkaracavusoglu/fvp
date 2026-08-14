@@ -3,7 +3,7 @@
 
 export const FUNNEL = {
   // GHL "Online Koçluk Strateji Görüşmesi" — hazır, quiz funnel'ında da bu kullanılıyor
-  calendarUrl: "https://link.fitsistem.co/widget/bookings/SSw6HZHR3j9veTWH8xTp",
+  calendarUrl: "https://link.fitsistem.co/widget/booking/SSw6HZHR3j9veTWH8xTp",
   // Başvuru → GHL contact. Analiz quiz'inin mevcut FitSistem webhook'u kullanılır;
   // ileride ayrı VSL workflow'u açılırsa env ile override edilir.
   ghlWebhook:

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Script from "next/script";
 import { FUNNEL } from "@/lib/funnel";
 import { track, trackServer } from "@/lib/tracking";
 
@@ -27,15 +28,20 @@ export default function VslRandevuPage() {
 
         <div className="overflow-hidden rounded-2xl border border-[#e6e8ea] bg-white shadow-xl">
           <iframe
+            id="SSw6HZHR3j9veTWH8xTp_1786750718220"
             src={FUNNEL.calendarUrl}
+            allow="payment"
+            scrolling="no"
             title="Online Koçluk Strateji Görüşmesi takvimi"
-            className="h-[760px] w-full"
+            className="min-h-[760px] w-full"
             loading="lazy"
+            style={{ border: "none", overflow: "hidden" }}
             onLoad={() => {
               track("vsl_calendar_loaded", { location: "vsl" });
               trackServer("vsl_calendar_loaded");
             }}
           />
+          <Script src="https://link.fitsistem.co/js/form_embed.js" strategy="afterInteractive" />
         </div>
 
         <div className="mt-5 text-center text-sm text-gray-400">
