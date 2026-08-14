@@ -18,6 +18,7 @@ export default function BasvuruPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [instagram, setInstagram] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState("");
@@ -59,12 +60,13 @@ export default function BasvuruPage() {
     if (!firstName.trim() || !lastName.trim()) return setErr("Ad ve soyadınızı girin.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErr("Geçerli bir e-posta girin.");
     if (phone.trim().length < 7) return setErr("Telefon numaranızı girin.");
+    if (!instagram.trim()) return setErr("Instagram adresinizi girin.");
     setSending(true);
     try {
       const res = await fetch("/api/basvuru", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, phone, cevaplar: answers, website, attribution: getAttribution() }),
+        body: JSON.stringify({ firstName, lastName, email, phone, instagram, cevaplar: answers, website, attribution: getAttribution() }),
       });
       const data = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !data.ok) {
@@ -129,15 +131,15 @@ export default function BasvuruPage() {
               style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }} aria-hidden="true"
             />
             <div className="mt-6 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <input type="text" placeholder="Adınız" value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
-                <input type="text" placeholder="Soyadınız" value={lastName} onChange={(e) => setLastName(e.target.value)}
-                  className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
-              </div>
+              <input type="text" placeholder="Adınız" value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
+              <input type="text" placeholder="Soyadınız" value={lastName} onChange={(e) => setLastName(e.target.value)}
+                className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
               <input type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
               <input type="tel" placeholder="Telefon" value={phone} onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
+              <input type="text" placeholder="Instagram adresiniz" value={instagram} onChange={(e) => setInstagram(e.target.value)}
                 className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]" />
               {err && <p className="text-sm text-red-600">{err}</p>}
               <button type="submit" disabled={sending} className="btn-primary w-full px-6 py-4 text-base disabled:opacity-60">

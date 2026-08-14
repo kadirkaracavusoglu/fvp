@@ -122,12 +122,19 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
           <button
             type="button"
             onClick={openModal}
-            className="mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-white/30 bg-white/20 shadow-2xl backdrop-blur transition hover:scale-105 hover:bg-white/25"
+            className="relative mb-5 flex h-24 w-24 items-center justify-center rounded-full border border-white/35 bg-white/20 shadow-2xl shadow-black/30 backdrop-blur transition hover:scale-105 hover:bg-white/25"
             aria-label="Videoyu aç"
           >
-            <svg viewBox="0 0 24 24" className="ml-1 h-9 w-9 fill-white" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
+            <span className="absolute inset-2 rounded-full border border-white/20" aria-hidden="true" />
+            <svg viewBox="0 0 24 24" className="ml-1 h-10 w-10 fill-white drop-shadow" aria-hidden="true">
+              <path d="M8.5 5.75v12.5c0 .62.68 1 1.2.67l9.7-6.25a.8.8 0 0 0 0-1.34l-9.7-6.25a.8.8 0 0 0-1.2.67Z" />
             </svg>
+            <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#0d204d] shadow-lg" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-white stroke-[2.4]">
+                <path d="M7 11V8a5 5 0 0 1 9.7-1.7" strokeLinecap="round" />
+                <rect x="6" y="11" width="12" height="9" rx="2" />
+              </svg>
+            </span>
           </button>
           <h2 className="max-w-xl text-balance text-2xl font-bold leading-tight sm:text-3xl">
             Videoyu izlemek için kilidi aç

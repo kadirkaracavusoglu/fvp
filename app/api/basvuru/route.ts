@@ -11,7 +11,7 @@ function isValidEmail(email: string) {
 // VSL detaylı başvuru — opt-in sonrası zenginleştirme. Cevaplar + iletişim.
 export async function POST(req: Request) {
   try {
-    const { firstName, lastName, email, phone, cevaplar, website, attribution } = await req.json();
+    const { firstName, lastName, email, phone, instagram, cevaplar, website, attribution } = await req.json();
 
     if (isBot(website)) return NextResponse.json({ ok: true });
     if (!rateLimit(`basvuru:${clientIp(req)}`)) {
@@ -24,14 +24,16 @@ export async function POST(req: Request) {
     const fn = typeof firstName === "string" ? firstName.trim().slice(0, 80) : "";
     const ln = typeof lastName === "string" ? lastName.trim().slice(0, 80) : "";
     const tel = typeof phone === "string" ? phone.trim().slice(0, 40) : "";
+    const ig = typeof instagram === "string" ? instagram.trim().slice(0, 120) : "";
     const mail = email.toLowerCase().trim();
     const answers = cevaplar && typeof cevaplar === "object" ? cevaplar : null;
+    const enrichedAnswers = ig ? { ...(answers || {}), instagram: ig } : answers;
     const attr = attribution && Object.keys(attribution).length ? attribution : null;
 
     if (supabaseAdmin) {
       const row = {
         first_name: fn, last_name: ln, email: mail, phone: tel,
-        form_type: "vsl_basvuru", cevaplar: answers, attribution: attr, source: SITE.domain,
+        form_type: "vsl_basvuru", cevaplar: enrichedAnswers, attribution: attr, source: SITE.domain,
       };
       const { error } = await supabaseAdmin.from("leads").insert(row);
       if (error && !/relation .*leads.* does not exist|schema cache/i.test(error.message)) {
@@ -41,16 +43,16 @@ export async function POST(req: Request) {
 
     // GHL'e özet (webhook tanımlıysa). Cevaplar tek metinde de gider (satışçı okusun).
     if (FUNNEL.ghlWebhook) {
-      const ozet = answers
-        ? Object.entries(answers).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n")
+      const ozet = enrichedAnswers
+        ? Object.entries(enrichedAnswers).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n")
         : "";
       fetch(FUNNEL.ghlWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
-          email: mail, phone: tel, source: "VSL başvuru (/vsl/basvuru)",
-          problem: ozet, ...(answers || {}), ...(attr || {}),
+          email: mail, phone: tel, instagram: ig, source: "VSL başvuru (/vsl/basvuru)",
+          problem: ozet, ...(enrichedAnswers || {}), ...(attr || {}),
         }),
       }).catch(() => {});
     }
