@@ -80,3 +80,50 @@ export function getAttribution(): Attribution {
     return {};
   }
 }
+
+// ---- First-party olay ölçümü (VSL milestone'ları → /api/track → Supabase) ----
+// track() reklam pixel'lerine gider; trackServer() kendi verimize (teşhis/analiz).
+const SID_KEY = "fvp_sid";
+
+/** Oturum kimliği — huni analizi için (cihaz başına kalıcı, PII yok) */
+export function getSessionId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    let sid = localStorage.getItem(SID_KEY);
+    if (!sid) {
+      sid =
+        (crypto as { randomUUID?: () => string })?.randomUUID?.() ||
+        `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(SID_KEY, sid);
+    }
+    return sid;
+  } catch {
+    return "";
+  }
+}
+
+/** Olayı kendi sunucumuza gönder (sendBeacon → sekme kapansa bile ulaşır) */
+export function trackServer(
+  name: string,
+  opts: { path?: string; video?: string; meta?: Params } = {}
+) {
+  if (typeof window === "undefined") return;
+  try {
+    const payload = JSON.stringify({
+      name,
+      path: opts.path ?? window.location.pathname,
+      video: opts.video,
+      sessionId: getSessionId(),
+      attribution: getAttribution(),
+      meta: opts.meta,
+    });
+    const w = window as unknown as { navigator: Navigator };
+    if (w.navigator?.sendBeacon) {
+      w.navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+    } else {
+      fetch("/api/track", { method: "POST", body: payload, keepalive: true, headers: { "Content-Type": "application/json" } });
+    }
+  } catch {
+    /* ölçüm asla akışı bozmaz */
+  }
+}
