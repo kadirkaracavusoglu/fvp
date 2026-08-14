@@ -114,40 +114,28 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
       <div className="relative overflow-hidden rounded-2xl bg-black shadow-2xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={posterUrl} alt="Video kapağı" className="aspect-video w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#071331]/92 via-[#071331]/35 to-[#071331]/10" />
-        <div className="absolute left-4 top-4 rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-          Kilitli video
-        </div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071331]/45 via-[#071331]/10 to-transparent" />
+        <div className="absolute inset-0 flex items-center justify-center px-5 text-white">
           <button
             type="button"
             onClick={openModal}
-            className="relative mb-5 flex h-24 w-24 items-center justify-center rounded-full border border-white/35 bg-white/20 shadow-2xl shadow-black/30 backdrop-blur transition hover:scale-105 hover:bg-white/25"
+            className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/30 to-white/10 shadow-2xl shadow-black/25 backdrop-blur-sm transition hover:scale-105 hover:from-white/35 hover:to-white/15"
             aria-label="Videoyu aç"
           >
             <span className="absolute inset-2 rounded-full border border-white/20" aria-hidden="true" />
             <svg viewBox="0 0 24 24" className="ml-1 h-10 w-10 fill-white drop-shadow" aria-hidden="true">
               <path d="M8.5 5.75v12.5c0 .62.68 1 1.2.67l9.7-6.25a.8.8 0 0 0 0-1.34l-9.7-6.25a.8.8 0 0 0-1.2.67Z" />
             </svg>
-            <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#0d204d] shadow-lg" aria-hidden="true">
-              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-white stroke-[2.4]">
-                <path d="M7 11V8a5 5 0 0 1 9.7-1.7" strokeLinecap="round" />
-                <rect x="6" y="11" width="12" height="9" rx="2" />
-              </svg>
-            </span>
           </button>
-          <h2 className="max-w-xl text-balance text-2xl font-bold leading-tight sm:text-3xl">
-            Videoyu izlemek için kilidi aç
-          </h2>
-          <p className="mt-2 max-w-lg text-sm text-white/75 sm:text-base">
-            Ad, soyad ve e-posta bilgisini bırak; video hemen açılır.
-          </p>
         </div>
       </div>
       <div className="mt-5 text-center">
         <button type="button" onClick={openModal} className="btn-primary w-full px-8 py-4 text-base sm:w-auto">
           Videoyu aç
         </button>
+        <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
+          Ad, soyad ve e-posta bilgisini bırak; video hemen açılır.
+        </p>
       </div>
 
       {modalOpen && (
