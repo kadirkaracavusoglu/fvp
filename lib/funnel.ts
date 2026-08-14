@@ -4,9 +4,11 @@
 export const FUNNEL = {
   // GHL "Online Koçluk Strateji Görüşmesi" — hazır, quiz funnel'ında da bu kullanılıyor
   calendarUrl: "https://link.fitsistem.co/widget/bookings/analizongorusmesi",
-  // Başvuru → GHL contact. Boşsa GHL'e gönderilmez (Supabase yine kaydeder).
-  // Kadir GHL'de "VSL Başvuru" workflow+webhook kurunca bu env doldurulur.
-  ghlWebhook: process.env.GHL_VSL_WEBHOOK || "",
+  // Başvuru → GHL contact. Analiz quiz'inin mevcut FitSistem webhook'u kullanılır;
+  // ileride ayrı VSL workflow'u açılırsa env ile override edilir.
+  ghlWebhook:
+    process.env.GHL_VSL_WEBHOOK ||
+    "https://services.leadconnectorhq.com/hooks/ui4C7FNVHfgWeZk9DQpB/webhook-trigger/58d9ee4e-3545-42fe-8282-a00532da031c",
 } as const;
 
 export const VSL_OPTIN_CONTACT_KEY = "fvp_vsl_contact";
