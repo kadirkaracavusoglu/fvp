@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { BASVURU_LABELS, FUNNEL, scoreApplication, type BasvuruCevaplar } from "@/lib/funnel";
 import { ghlAttributionPayload } from "@/lib/ghl";
+import { upsertGhlContact } from "@/lib/ghl-contact";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
@@ -82,9 +83,24 @@ export async function POST(req: Request) {
       }
     }
 
-    // GHL'e özet (webhook tanımlıysa). Cevaplar tek metinde de gider (satışçı okusun).
+    // GHL'e doğrudan upsert — tüm custom field'lar id ile dolar (workflow gerekmez).
+    const ozet = answerSummary(answers);
+    upsertGhlContact({
+      firstName: fn, lastName: ln, email: mail, phone: tel,
+      tags: ["vsl-basvuru"],
+      source: "VSL başvuru (/vsl/basvuru)",
+      funnelStage: "application_submitted",
+      instagram: ig,
+      businessName: business,
+      websiteUrl: web,
+      answers,
+      lead: { score: score.score, segment: score.segment, reasons: score.reasons },
+      applicationSummary: ozet,
+      attribution: attr,
+    }).catch(() => {});
+
+    // Ek VSL webhook (yalnız env ile açıksa). Cevaplar tek metinde de gider.
     if (FUNNEL.ghlWebhook) {
-      const ozet = answerSummary(answers);
       const ghlAttr = ghlAttributionPayload(attr);
       fetch(FUNNEL.ghlWebhook, {
         method: "POST",

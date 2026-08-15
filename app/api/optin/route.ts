@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { FUNNEL } from "@/lib/funnel";
 import { ghlAttributionPayload } from "@/lib/ghl";
+import { upsertGhlContact } from "@/lib/ghl-contact";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
@@ -37,7 +38,16 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2) GHL'e (webhook tanımlıysa) — fire-and-forget, akışı bloklamaz
+    // 2) GHL'e doğrudan upsert (early lead + vsl-optin tag) — env key varsa
+    upsertGhlContact({
+      firstName: fn, lastName: ln, email: mail,
+      tags: ["vsl-optin"],
+      source: "VSL opt-in (/vsl)",
+      funnelStage: "video_unlocked",
+      attribution: attr,
+    }).catch(() => {});
+
+    // 3) Ek VSL webhook (yalnız env ile açıksa) — fire-and-forget
     if (FUNNEL.ghlWebhook) {
       const ghlAttr = ghlAttributionPayload(attr);
       fetch(FUNNEL.ghlWebhook, {
