@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { BASVURU_LABELS, FUNNEL, scoreApplication, type BasvuruCevaplar } from "@/lib/funnel";
 import { ghlAttributionPayload } from "@/lib/ghl";
-import { upsertGhlContact } from "@/lib/ghl-contact";
+import { upsertGhlContact, ensureOpportunity } from "@/lib/ghl-contact";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     // GHL'e doğrudan upsert — tüm custom field'lar id ile dolar (workflow gerekmez).
     const ozet = answerSummary(answers);
     // AWAIT — serverless yanıt dönünce GHL isteğini kesmesin
-    await upsertGhlContact({
+    const ghlRes = await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail, phone: tel,
       tags: ["vsl-basvuru"],
       source: "VSL başvuru (/vsl/basvuru)",
@@ -99,6 +99,12 @@ export async function POST(req: Request) {
       applicationSummary: ozet,
       attribution: attr,
     });
+
+    // Sales Pipeline'da opportunity aç (Yeni Başvuru). WF-01 buradan tetiklenir.
+    // Mükerrer açmaz; contactId yoksa (upsert no-op/hatası) atlar.
+    if (ghlRes.ok && ghlRes.id) {
+      await ensureOpportunity({ contactId: ghlRes.id, name: `${fn} ${ln}`.trim() || mail });
+    }
 
     // Ek VSL webhook — AWAIT. Cevaplar tek metinde de gider.
     if (FUNNEL.ghlWebhook) {

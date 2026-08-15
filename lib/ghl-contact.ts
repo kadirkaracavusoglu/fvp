@@ -11,6 +11,11 @@ const GHL_BASE = "https://services.leadconnectorhq.com";
 const LOCATION_ID = process.env.GHL_LOCATION_ID || "ui4C7FNVHfgWeZk9DQpB";
 const LOCATION_KEY = process.env.GHL_LOCATION_KEY || "";
 
+// Sales Pipeline — başvuru opportunity'si burada "Yeni Başvuru" aşamasında açılır.
+// (GHL uygulama dokümanı: WF-01 "Opportunity Created" ile tetikleniyor.)
+const SALES_PIPELINE_ID = "U97w7H09T0DqU58ZyKT7";
+const STAGE_YENI_BASVURU = "2146119b-0b73-439f-9c2a-ff47b4fc09cd";
+
 export const ghlContactEnabled = Boolean(LOCATION_KEY);
 
 // API ile oluşturulan custom field id'leri (2026-08-15). Anahtar = başvuru cevabı key'i.
@@ -126,6 +131,59 @@ export async function upsertGhlContact(input: GhlUpsertInput): Promise<{ ok: boo
     return { ok: true, id: data.contact?.id };
   } catch (e) {
     console.error("ghl upsert error:", e instanceof Error ? e.message : e);
+    return { ok: false };
+  }
+}
+
+/**
+ * Başvuru sonrası: contact için Sales Pipeline'da AÇIK opportunity yoksa
+ * "Yeni Başvuru" aşamasında oluşturur. Mükerrer opportunity açmaz (doküman kuralı:
+ * "aynı kişi için yeni ve mükerrer opportunity oluşturulmayacak").
+ */
+export async function ensureOpportunity(input: {
+  contactId: string;
+  name: string;
+}): Promise<{ ok: boolean; id?: string; existed?: boolean; skipped?: boolean }> {
+  if (!LOCATION_KEY) return { ok: false, skipped: true };
+  const headers = {
+    Authorization: `Bearer ${LOCATION_KEY}`,
+    Version: "2021-07-28",
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  try {
+    // 1) Mevcut açık opportunity var mı? (mükerreri engelle)
+    const searchUrl =
+      `${GHL_BASE}/opportunities/search?location_id=${LOCATION_ID}` +
+      `&contact_id=${encodeURIComponent(input.contactId)}` +
+      `&pipeline_id=${SALES_PIPELINE_ID}&status=open`;
+    const sres = await fetch(searchUrl, { headers });
+    if (sres.ok) {
+      const sdata = (await sres.json()) as { opportunities?: Array<{ id?: string }> };
+      const existing = sdata.opportunities?.[0]?.id;
+      if (existing) return { ok: true, id: existing, existed: true };
+    }
+    // 2) Yoksa oluştur — Yeni Başvuru aşaması
+    const res = await fetch(`${GHL_BASE}/opportunities/`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        pipelineId: SALES_PIPELINE_ID,
+        pipelineStageId: STAGE_YENI_BASVURU,
+        locationId: LOCATION_ID,
+        name: input.name,
+        status: "open",
+        contactId: input.contactId,
+      }),
+    });
+    if (!res.ok) {
+      console.error("ghl opportunity create failed:", res.status, (await res.text()).slice(0, 200));
+      return { ok: false };
+    }
+    const data = (await res.json()) as { opportunity?: { id?: string } };
+    return { ok: true, id: data.opportunity?.id };
+  } catch (e) {
+    console.error("ghl opportunity error:", e instanceof Error ? e.message : e);
     return { ok: false };
   }
 }
