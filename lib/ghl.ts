@@ -67,10 +67,10 @@ export function ghlAttributionPayload(attr: Attr) {
     fbc,
     // sayfa/iniş bilgisi
     landingPath: str(attr?.landing_path),
-    landingUrl_snake: landingUrl,
+    landing_url: landingUrl,
     page_url: pageUrl,
     firstLandingPath: str(attr?.first_landing_path),
-    firstLandingUrl,
+    first_landing_url: firstLandingUrl,
     firstSeen: str(attr?.first_seen),
     lastSeen: str(attr?.last_seen),
     referrer: str(attr?.referrer),
