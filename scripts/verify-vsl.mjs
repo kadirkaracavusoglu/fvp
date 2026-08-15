@@ -141,8 +141,8 @@ assertIncludes(
 );
 assertIncludes(
   "components/lp/VslFunnel.tsx",
-  "translate-y-12",
-  "Opt-in video play butonu merkezin hafif altında durmalı",
+  "translate-y-7",
+  "Opt-in video play butonu çene hizasının hafif altında durmalı",
 );
 assertIncludes(
   "components/lp/VslFunnel.tsx",

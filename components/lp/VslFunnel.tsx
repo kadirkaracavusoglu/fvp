@@ -157,7 +157,7 @@ export function VslFunnel({
           <button
             type="button"
             onClick={openModal}
-            className="relative flex h-12 w-12 translate-y-12 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/25 to-white/10 shadow-xl shadow-black/20 backdrop-blur-sm transition hover:scale-105 hover:from-white/30 hover:to-white/15 sm:h-14 sm:w-14 sm:translate-y-14"
+            className="relative flex h-12 w-12 translate-y-7 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/25 to-white/10 shadow-xl shadow-black/20 backdrop-blur-sm transition hover:scale-105 hover:from-white/30 hover:to-white/15 sm:h-14 sm:w-14 sm:translate-y-8"
             aria-label="Videoyu aç"
           >
             <svg
