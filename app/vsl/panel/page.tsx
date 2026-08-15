@@ -8,7 +8,7 @@ import { login, logout } from "./actions";
 import { PanelView } from "./PanelView";
 
 export const metadata = {
-  title: "VSL Panel",
+  title: "Panel",
   robots: { index: false, follow: false },
 };
 
@@ -43,7 +43,7 @@ export default async function VslPanelPage({
     return (
       <div className="glow-bg flex min-h-screen items-center justify-center px-5">
         <div className="w-full max-w-sm rounded-2xl border border-[#e6e8ea] bg-white p-6 shadow-xl">
-          <h1 className="text-2xl font-bold text-[#0d204d]">VSL Panel</h1>
+          <h1 className="text-2xl font-bold text-[#0d204d]">Panel</h1>
           <p className="mt-2 text-sm text-gray-400">
             Bu alan yalnızca yöneticiye özeldir.
           </p>

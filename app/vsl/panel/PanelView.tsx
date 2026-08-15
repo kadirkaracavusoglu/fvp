@@ -16,11 +16,6 @@ function pct(value: number | null) {
   return value == null ? "—" : `%${value.toLocaleString("tr-TR")}`;
 }
 
-function short(value: string, max = 90) {
-  if (!value) return "—";
-  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
-}
-
 function Kpi({
   label,
   value,
@@ -31,11 +26,11 @@ function Kpi({
   sub?: string;
 }) {
   return (
-    <div className="rounded-xl border border-[#e6e8ea] bg-white p-4">
+    <div className="rounded-xl border border-[#e6e8ea] bg-white p-4 shadow-[0_10px_30px_rgba(13,32,77,0.04)]">
       <div className="text-xs font-semibold uppercase tracking-wide text-gray-400">
         {label}
       </div>
-      <div className="mt-1 text-3xl font-bold tabular-nums text-[#0d204d]">
+      <div className="mt-1 text-3xl font-black tabular-nums text-[#0d204d]">
         {value}
       </div>
       {sub && <div className="mt-1 text-xs text-gray-400">{sub}</div>}
@@ -109,10 +104,12 @@ export function PanelView({
       <div className="mx-auto max-w-6xl">
         <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">FvP VSL Panel</h1>
+            <h1 className="text-2xl font-black text-[#0d204d]">
+              Komuta Merkezi
+            </h1>
             <p className="mt-1 text-sm text-gray-400">
-              {data.startDate} → {data.endDate} · son güncelleme{" "}
-              {fmtDate(data.generatedAt)}
+              Fitness ve Pazarlama · {data.startDate} → {data.endDate} · son
+              güncelleme {fmtDate(data.generatedAt)}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -144,11 +141,15 @@ export function PanelView({
           </div>
         ) : (
           <>
-            <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <p className="mb-3 text-xs text-gray-400">
+              Ana KPI&apos;lar FvP başvuru sistemindeki gerçek karar adımlarını
+              gösterir.
+            </p>
+            <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
               <Kpi
-                label="VSL ziyaret"
+                label="Ziyaret"
                 value={String(data.kpi.visits)}
-                sub="vsl_optin_view"
+                sub="sayfayı gördü"
               />
               <Kpi
                 label="Opt-in"
@@ -161,21 +162,26 @@ export function PanelView({
                 sub={`opt-in → başvuru ${pct(data.kpi.applicationRate)}`}
               />
               <Kpi
+                label="Nitelikli"
+                value={String(data.kpi.qualifiedApplications)}
+                sub="orta + yüksek öncelik"
+              />
+              <Kpi
+                label="Sıcak"
+                value={String(data.kpi.hotApplications)}
+                sub="yüksek öncelik"
+              />
+              <Kpi
                 label="Randevu"
                 value={String(data.kpi.booked)}
                 sub={`başvuru → randevu ${pct(data.kpi.bookedRate)}`}
               />
             </div>
-            <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
               <Kpi
-                label="Qualified"
-                value={String(data.kpi.qualifiedApplications)}
-                sub="orta + yüksek öncelik"
-              />
-              <Kpi
-                label="Hot"
-                value={String(data.kpi.hotApplications)}
-                sub="yüksek öncelik"
+                label="Video kilidi"
+                value={String(data.kpi.popupOpens)}
+                sub="CTA ile açmak istedi"
               />
               <Kpi
                 label="Video play"
@@ -183,59 +189,26 @@ export function PanelView({
                 sub={`opt-in → play ${pct(data.kpi.playRate)}`}
               />
               <Kpi
-                label="UTM yakalanan"
-                value={String(data.kpi.utmCaptured)}
-                sub={`lead UTM ${pct(data.kpi.utmRate)}`}
-              />
-            </div>
-            <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <Kpi label="Popup açan" value={String(data.kpi.popupOpens)} />
-              <Kpi
-                label="5 dk izleyen"
+                label="5 dk izleme"
                 value={String(data.kpi.watch5m)}
                 sub={`play → 5 dk ${pct(data.kpi.watch5Rate)}`}
               />
               <Kpi
-                label="Takvim yükleme"
+                label="Takvim"
                 value={`${data.kpi.calendarLoaded}/${data.kpi.calendarViews}`}
-                sub={`load oranı ${pct(data.kpi.calendarLoadRate)}`}
+                sub={`yükleme / görüntüleme ${pct(data.kpi.calendarLoadRate)}`}
               />
               <Kpi
-                label="Teşekkür video"
-                value={`${data.kpi.thankyouVideoClicks}/${data.kpi.thankyouViews}`}
-                sub="YouTube tıklama / görüntüleme"
+                label="UTM yakalama"
+                value={String(data.kpi.utmCaptured)}
+                sub={`lead UTM ${pct(data.kpi.utmRate)}`}
               />
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
-              <FunnelCard title="VSL Huni" steps={data.funnel} />
+            <div className="mb-4 grid gap-4 lg:grid-cols-[1.25fr_1fr]">
+              <FunnelCard title="Ana Huni" steps={data.funnel} />
               <FunnelCard title="Başvuru Formu" steps={data.form} />
               <FunnelCard title="Video Derinliği" steps={data.video} />
-
-              <section className="rounded-xl border border-[#e6e8ea] bg-white p-5">
-                <h2 className="text-sm font-bold uppercase tracking-wide">
-                  Takip Sağlığı
-                </h2>
-                <div className="mt-4 space-y-2">
-                  {data.trackingHealth.map((item) => (
-                    <div
-                      key={item.label}
-                      className="flex items-center justify-between gap-3 rounded-lg bg-[#f4f6f9] px-3 py-2 text-sm"
-                    >
-                      <span>{item.label}</span>
-                      <span
-                        className={
-                          item.state === "ok"
-                            ? "font-semibold text-[#157347]"
-                            : "font-semibold text-[#b45309]"
-                        }
-                      >
-                        {item.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
             </div>
 
             <section className="mt-4 rounded-xl border border-[#e6e8ea] bg-white p-5">
@@ -275,113 +248,6 @@ export function PanelView({
                         </td>
                       </tr>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <section className="mt-4 rounded-xl border border-[#e6e8ea] bg-white p-5">
-              <h2 className="text-sm font-bold uppercase tracking-wide">
-                Başvuru Cevap Kırılımı
-              </h2>
-              {data.questionBreakdown.length ? (
-                <div className="mt-4 grid gap-3 lg:grid-cols-2">
-                  {data.questionBreakdown.map((row) => (
-                    <div key={row.key} className="rounded-lg bg-[#f4f6f9] p-4">
-                      <div className="text-sm font-semibold text-[#0d204d]">
-                        {row.label}
-                      </div>
-                      <div className="mt-3 space-y-2">
-                        {row.answers.map((answer) => (
-                          <div
-                            key={answer.label}
-                            className="flex items-center justify-between gap-3 text-sm"
-                          >
-                            <span className="text-gray-400">
-                              {answer.label}
-                            </span>
-                            <span className="font-semibold tabular-nums text-[#0d204d]">
-                              {answer.count}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-5 rounded-lg bg-[#f4f6f9] px-4 py-6 text-center text-sm text-gray-400">
-                  Henüz cevap kırılımı yok.
-                </p>
-              )}
-            </section>
-
-            <section className="mt-4 rounded-xl border border-[#e6e8ea] bg-white p-5">
-              <h2 className="text-sm font-bold uppercase tracking-wide">
-                Son Başvurular
-              </h2>
-              <div className="mt-4 overflow-x-auto">
-                <table className="w-full min-w-[1280px] text-left text-sm">
-                  <thead className="text-xs uppercase tracking-wide text-gray-400">
-                    <tr>
-                      <th className="pb-2">Kişi</th>
-                      <th className="pb-2">Skor</th>
-                      <th className="pb-2">Segment</th>
-                      <th className="pb-2">E-posta</th>
-                      <th className="pb-2">Telefon</th>
-                      <th className="pb-2">Instagram</th>
-                      <th className="pb-2">Hedef</th>
-                      <th className="pb-2">Darboğaz</th>
-                      <th className="pb-2">UTM</th>
-                      <th className="pb-2">Tip</th>
-                      <th className="pb-2">Kanal</th>
-                      <th className="pb-2">Tarih</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.recentLeads.length ? (
-                      data.recentLeads.map((lead) => (
-                        <tr
-                          key={`${lead.email}-${lead.createdAt}`}
-                          className="border-t border-[#e6e8ea]"
-                        >
-                          <td className="py-3 font-semibold">{lead.name}</td>
-                          <td className="py-3 tabular-nums">
-                            {lead.score ?? "—"}
-                          </td>
-                          <td className="py-3">{lead.segment || "—"}</td>
-                          <td className="py-3">{lead.email || "—"}</td>
-                          <td className="py-3">{lead.phone || "—"}</td>
-                          <td className="py-3">{lead.instagram || "—"}</td>
-                          <td className="py-3">{short(lead.goal)}</td>
-                          <td className="py-3">{short(lead.bottlenecks)}</td>
-                          <td className="py-3">
-                            {short(
-                              [
-                                lead.utmSource,
-                                lead.utmCampaign,
-                                lead.utmContent,
-                              ]
-                                .filter(Boolean)
-                                .join(" / "),
-                              70,
-                            )}
-                          </td>
-                          <td className="py-3">{lead.formType}</td>
-                          <td className="py-3">{lead.channel}</td>
-                          <td className="py-3">{fmtDate(lead.createdAt)}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          className="py-6 text-center text-gray-400"
-                          colSpan={12}
-                        >
-                          Bu aralıkta başvuru yok.
-                        </td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>

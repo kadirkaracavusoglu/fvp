@@ -179,7 +179,6 @@ for (const field of [
   "qualifiedApplications",
   "hotApplications",
   "utmCaptured",
-  "questionBreakdown",
 ]) {
   assertIncludes(
     "lib/vsl-panel.ts",
@@ -192,6 +191,38 @@ for (const field of [
     `Panel UI ${field} alanını göstermeli`,
   );
 }
+
+for (const text of [
+  "Komuta Merkezi",
+  "Ana KPI",
+  "Ana Huni",
+  "Kanal Kırılımı",
+]) {
+  assertIncludes(
+    "app/vsl/panel/PanelView.tsx",
+    text,
+    `Panel UI ${text} alanını göstermeli`,
+  );
+}
+
+for (const text of [
+  "FvP VSL Panel",
+  "Başvuru Cevap Kırılımı",
+  "Son Başvurular",
+  "Takip Sağlığı",
+]) {
+  assertNotIncludes(
+    "app/vsl/panel/PanelView.tsx",
+    text,
+    `Panel UI ${text} bölümünü göstermemeli`,
+  );
+}
+
+assertNotIncludes(
+  "app/vsl/panel/page.tsx",
+  "VSL Panel",
+  "Panel giriş ekranı genel panel adı kullanmalı",
+);
 
 for (const file of ["app/vsl/panel/page.tsx", "app/vsl/panel/actions.ts"]) {
   assertIncludes(
