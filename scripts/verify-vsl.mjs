@@ -187,6 +187,12 @@ for (const field of [
   "roas",
   "reachRate",
   "closeRate",
+  "leadToAppointmentMinutes",
+  "leadToAppointmentAvgMinutes",
+  "leadToAppointmentMeasured",
+  "leadToSaleMinutes",
+  "leadToSaleAvgMinutes",
+  "leadToSaleMeasured",
 ]) {
   assertIncludes(
     "lib/vsl-panel.ts",
@@ -213,6 +219,8 @@ for (const text of [
   "Close rate",
   "CPA",
   "ROAS",
+  "Lead → randevu süresi",
+  "Lead → satış süresi",
 ]) {
   assertIncludes(
     "app/vsl/panel/PanelView.tsx",
@@ -250,6 +258,13 @@ assertIncludes(
   "vsl_sale",
   "GHL durum webhook'u satış sinyalini yazmalı",
 );
+for (const field of ["contactId", "opportunityId", "contactEmail"]) {
+  assertIncludes(
+    "app/api/ghl/vsl-booking/route.ts",
+    field,
+    `GHL booking webhook'u ${field} kimliğini saklamalı`,
+  );
+}
 assertIncludes(
   "lib/meta-insights.ts",
   "META_ACCESS_TOKEN_FVP",

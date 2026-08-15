@@ -14,8 +14,16 @@ function pickString(obj: Record<string, unknown>, keys: string[]): string {
 function safeBookingMeta(body: Record<string, unknown>) {
   return {
     appointmentId: pickString(body, ["appointmentId", "appointment_id", "id"]),
+    contactId: pickString(body, ["contactId", "contact_id"]),
+    opportunityId: pickString(body, ["opportunityId", "opportunity_id"]),
+    email: pickString(body, ["email", "contactEmail"]).toLowerCase(),
+    phone: pickString(body, ["phone", "contactPhone"]),
     calendarId: pickString(body, ["calendarId", "calendar_id"]),
-    startTime: pickString(body, ["startTime", "start_time", "appointmentStartTime"]),
+    startTime: pickString(body, [
+      "startTime",
+      "start_time",
+      "appointmentStartTime",
+    ]),
     status: pickString(body, ["status", "appointmentStatus"]),
     source: "GHL VSL booking webhook",
   };
@@ -25,7 +33,8 @@ export async function POST(req: Request) {
   try {
     const expected = process.env.GHL_BOOKING_WEBHOOK_SECRET || "";
     const url = new URL(req.url);
-    const provided = req.headers.get("x-fvp-secret") || url.searchParams.get("secret") || "";
+    const provided =
+      req.headers.get("x-fvp-secret") || url.searchParams.get("secret") || "";
     if (!expected || provided !== expected) {
       return NextResponse.json({ ok: false }, { status: 401 });
     }
@@ -34,7 +43,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+    const body = (await req.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    >;
     const firstName = pickString(body, ["firstName", "first_name"]);
     const lastName = pickString(body, ["lastName", "last_name"]);
     const name = pickString(body, ["name", "fullName", "contactName"]);

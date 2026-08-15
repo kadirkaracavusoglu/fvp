@@ -25,6 +25,17 @@ function multiple(value: number | null) {
   return value == null ? "—" : `${value.toLocaleString("tr-TR")}x`;
 }
 
+function durationMinutes(value: number | null) {
+  if (value == null) return "—";
+  if (value < 60) return `${value} dk`;
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+  if (hours < 24) return minutes ? `${hours} sa ${minutes} dk` : `${hours} sa`;
+  const days = Math.floor(hours / 24);
+  const remHours = hours % 24;
+  return remHours ? `${days} gün ${remHours} sa` : `${days} gün`;
+}
+
 function Kpi({
   label,
   value,
@@ -216,6 +227,18 @@ export function PanelView({
                 label="ROAS"
                 value={multiple(data.kpi.roas)}
                 sub={`ciro ${money(data.kpi.revenue)}`}
+              />
+            </div>
+            <div className="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+              <Kpi
+                label="Lead → randevu süresi"
+                value={durationMinutes(data.kpi.leadToAppointmentMinutes)}
+                sub={`${data.kpi.leadToAppointmentMeasured} ölçüm · ort. ${durationMinutes(data.kpi.leadToAppointmentAvgMinutes)}`}
+              />
+              <Kpi
+                label="Lead → satış süresi"
+                value={durationMinutes(data.kpi.leadToSaleMinutes)}
+                sub={`${data.kpi.leadToSaleMeasured} ölçüm · ort. ${durationMinutes(data.kpi.leadToSaleAvgMinutes)}`}
               />
             </div>
             <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">

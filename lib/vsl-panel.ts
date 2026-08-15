@@ -108,6 +108,12 @@ export type VslPanelData = {
     roas: number | null;
     reachRate: number | null;
     closeRate: number | null;
+    leadToAppointmentMinutes: number | null;
+    leadToAppointmentAvgMinutes: number | null;
+    leadToAppointmentMeasured: number;
+    leadToSaleMinutes: number | null;
+    leadToSaleAvgMinutes: number | null;
+    leadToSaleMeasured: number;
     utmRate: number | null;
   };
   funnel: FunnelStep[];
@@ -312,6 +318,147 @@ function eventRevenue(row: EventRow): number {
   return 0;
 }
 
+function addIdentityKey(keys: Set<string>, prefix: string, value: unknown) {
+  if (typeof value !== "string") return;
+  const cleaned = value.trim().toLowerCase();
+  if (!cleaned) return;
+  keys.add(`${prefix}:${cleaned}`);
+}
+
+function addPhoneKey(keys: Set<string>, value: unknown) {
+  if (typeof value !== "string") return;
+  const digits = value.replace(/\D/g, "");
+  if (digits.length >= 7) keys.add(`phone:${digits}`);
+}
+
+function recordIdentityKeys(record?: Record<string, unknown> | null): string[] {
+  const keys = new Set<string>();
+  if (!record) return [];
+  for (const key of [
+    "contactId",
+    "contact_id",
+    "ghlContactId",
+    "_ghl_contact_id",
+  ]) {
+    addIdentityKey(keys, "contact", record[key]);
+  }
+  for (const key of ["opportunityId", "opportunity_id"]) {
+    addIdentityKey(keys, "opportunity", record[key]);
+  }
+  for (const key of ["appointmentId", "appointment_id"]) {
+    addIdentityKey(keys, "appointment", record[key]);
+  }
+  for (const key of ["email", "contactEmail"]) {
+    addIdentityKey(keys, "email", record[key]);
+  }
+  for (const key of ["phone", "contactPhone"]) {
+    addPhoneKey(keys, record[key]);
+  }
+  return [...keys];
+}
+
+function leadIdentityKeys(row: LeadRow): string[] {
+  const keys = new Set<string>();
+  addIdentityKey(keys, "email", row.email);
+  addPhoneKey(keys, row.phone);
+  for (const key of recordIdentityKeys(row.cevaplar)) keys.add(key);
+  return [...keys];
+}
+
+function eventIdentityKeys(row: EventRow): string[] {
+  return recordIdentityKeys(row.meta);
+}
+
+function ms(value: string): number | null {
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+type TimedSignal = {
+  at: number;
+  keys: string[];
+};
+
+function leadSignal(row: LeadRow): TimedSignal | null {
+  const at = ms(row.created_at);
+  const keys = leadIdentityKeys(row);
+  if (at == null || !keys.length) return null;
+  return { at, keys };
+}
+
+function eventSignal(row: EventRow): TimedSignal | null {
+  const at = ms(row.created_at);
+  const keys = eventIdentityKeys(row);
+  if (at == null || !keys.length) return null;
+  return { at, keys };
+}
+
+function uniquePersonLeads(rows: LeadRow[], formTypes: string[]): LeadRow[] {
+  const wanted = new Set(formTypes);
+  const seen = new Set<string>();
+  const out: LeadRow[] = [];
+  for (const row of rows) {
+    if (!wanted.has(row.form_type || "")) continue;
+    const keys = leadIdentityKeys(row);
+    const id =
+      keys.find((key) => key.startsWith("email:")) ||
+      keys.find((key) => key.startsWith("phone:")) ||
+      `${row.form_type}:${row.created_at}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push(row);
+  }
+  return out;
+}
+
+function median(values: number[]): number | null {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2) return sorted[mid];
+  return Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+}
+
+function average(values: number[]): number | null {
+  if (!values.length) return null;
+  return Math.round(
+    values.reduce((sum, value) => sum + value, 0) / values.length,
+  );
+}
+
+function conversionTiming(leads: LeadRow[], signals: TimedSignal[]) {
+  const signalMap = new Map<string, TimedSignal[]>();
+  for (const signal of signals) {
+    for (const key of signal.keys) {
+      const list = signalMap.get(key) || [];
+      list.push(signal);
+      signalMap.set(key, list);
+    }
+  }
+  for (const list of signalMap.values()) list.sort((a, b) => a.at - b.at);
+
+  const minutes: number[] = [];
+  for (const lead of leads) {
+    const leadAt = ms(lead.created_at);
+    if (leadAt == null) continue;
+    let matchedAt: number | null = null;
+    for (const key of leadIdentityKeys(lead)) {
+      const list = signalMap.get(key) || [];
+      const match = list.find((signal) => signal.at >= leadAt);
+      if (!match) continue;
+      matchedAt = matchedAt == null ? match.at : Math.min(matchedAt, match.at);
+    }
+    if (matchedAt == null) continue;
+    minutes.push(Math.max(0, Math.round((matchedAt - leadAt) / 60000)));
+  }
+
+  return {
+    measured: minutes.length,
+    medianMinutes: median(minutes),
+    avgMinutes: average(minutes),
+  };
+}
+
 function channelKey(attr?: Record<string, string> | null): string {
   const source = (attr?.utm_source || "").toLowerCase();
   const medium = (attr?.utm_medium || "").toLowerCase();
@@ -488,6 +635,12 @@ export async function getVslPanelData(
       roas: null,
       reachRate: null,
       closeRate: null,
+      leadToAppointmentMinutes: null,
+      leadToAppointmentAvgMinutes: null,
+      leadToAppointmentMeasured: 0,
+      leadToSaleMinutes: null,
+      leadToSaleAvgMinutes: null,
+      leadToSaleMeasured: 0,
       utmRate: null,
     },
     funnel: [],
@@ -567,8 +720,30 @@ export async function getVslPanelData(
 
     const optins = uniqueLeadCount(leads, "vsl_optin");
     const applicationRows = uniqueLeadRows(leads, "vsl_basvuru");
+    const timingLeadRows = uniquePersonLeads(leads, [
+      "vsl_optin",
+      "vsl_basvuru",
+    ]);
+    const appointmentSignals = [
+      ...leads
+        .filter((row) => row.form_type === "vsl_randevu")
+        .map(leadSignal)
+        .filter((signal): signal is TimedSignal => Boolean(signal)),
+      ...events
+        .filter((row) => row.name === "vsl_calendar_booked")
+        .map(eventSignal)
+        .filter((signal): signal is TimedSignal => Boolean(signal)),
+    ];
+    const saleSignals = saleRows
+      .map(eventSignal)
+      .filter((signal): signal is TimedSignal => Boolean(signal));
+    const leadToAppointment = conversionTiming(
+      timingLeadRows,
+      appointmentSignals,
+    );
+    const leadToSale = conversionTiming(timingLeadRows, saleSignals);
     const applications = applicationRows.length;
-    const booked = uniqueLeadCount(leads, "vsl_randevu") || bookedEvent;
+    const booked = Math.max(uniqueLeadCount(leads, "vsl_randevu"), bookedEvent);
     const qualifiedApplications = applicationRows.filter((row) => {
       const score = leadScore(row) || 0;
       return score >= 5 || /Yüksek|Orta/.test(leadSegment(row));
@@ -898,6 +1073,12 @@ export async function getVslPanelData(
             : null,
         reachRate: ratio(reached, applications),
         closeRate: ratio(sales, reached),
+        leadToAppointmentMinutes: leadToAppointment.medianMinutes,
+        leadToAppointmentAvgMinutes: leadToAppointment.avgMinutes,
+        leadToAppointmentMeasured: leadToAppointment.measured,
+        leadToSaleMinutes: leadToSale.medianMinutes,
+        leadToSaleAvgMinutes: leadToSale.avgMinutes,
+        leadToSaleMeasured: leadToSale.measured,
         utmRate: pct(utmCaptured, optins + applications),
       },
       funnel,
