@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Script from "next/script";
 import { FUNNEL } from "@/lib/funnel";
-import { getAttribution, track, trackServer } from "@/lib/tracking";
+import { captureAttribution, getAttribution, track, trackServer } from "@/lib/tracking";
 
 const CALENDAR_UTM_FIELDS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "fbclid"];
 
@@ -12,10 +12,12 @@ export default function VslRandevuPage() {
 
   useEffect(() => {
     try {
+      captureAttribution();
       const attr = getAttribution();
+      const query = new URLSearchParams(window.location.search);
       const url = new URL(FUNNEL.calendarUrl);
       CALENDAR_UTM_FIELDS.forEach((field) => {
-        const value = attr[field];
+        const value = query.get(field) || attr[field];
         if (value) url.searchParams.set(field, value);
       });
       setCalendarUrl(url.toString());

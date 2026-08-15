@@ -121,6 +121,7 @@ export function trackServer(
 ) {
   if (typeof window === "undefined") return;
   try {
+    captureAttribution();
     const payload = JSON.stringify({
       name,
       path: opts.path ?? window.location.pathname,
