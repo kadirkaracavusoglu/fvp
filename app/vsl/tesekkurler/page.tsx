@@ -24,14 +24,14 @@ export default function VslTesekkurlerPage() {
         {/* 1. ONAY */}
         <div className="text-center">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            Randevun alındı
+            Hazırsınız
           </span>
           <h1 className="mx-auto mt-5 max-w-2xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Görüşmene sayılı gün kaldı
+            Her şey tamam. Görüşmede görüşürüz.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Seçtiğin saat takvime eklendi. Aşağıda görüşmeye kadar ne yapman
-            gerektiğini bıraktık — birlikte hazırlıklı başlayalım.
+            Seçtiğiniz saat takvime eklendi. Aşağıda, görüşmeye kadar ne
+            yapmanız gerektiğini basitçe bıraktık.
           </p>
         </div>
 
@@ -43,24 +43,23 @@ export default function VslTesekkurlerPage() {
               <span className="font-bold text-[#0d204d]">1.</span>
               <span>
                 Takvim daveti ve görüşme linki{" "}
-                <strong className="text-[#0d204d]">e-postana gönderildi</strong>.
-                Gelmediyse tanıtım/spam klasörüne de bak.
+                <strong className="text-[#0d204d]">e-postanıza gitti</strong>.
+                Göremezseniz spam/tanıtım klasörüne bakın.
               </span>
             </li>
             <li className="flex gap-3">
               <span className="font-bold text-[#0d204d]">2.</span>
               <span>
-                Görüşme <strong className="text-[#0d204d]">Google Meet</strong>{" "}
-                üzerinden. Seçtiğin saatte davetteki linke tıklaman yeterli —
-                kurulum yok.
+                Görüşme günü, e-postadaki linke tıklayın —{" "}
+                <strong className="text-[#0d204d]">Google Meet</strong>, kurulum
+                yok.
               </span>
             </li>
             <li className="flex gap-3">
               <span className="font-bold text-[#0d204d]">3.</span>
               <span>
-                Sakin bir ortamda, mevcut durumunu ve hedefini{" "}
-                <strong className="text-[#0d204d]">netçe düşünmüş</strong> olarak
-                gel. Görüşmeyi böyle çok daha verimli geçiririz.
+                Sakin bir yerden bağlanın; işinizi ve hedefinizi{" "}
+                <strong className="text-[#0d204d]">düşünmüş olun</strong>.
               </span>
             </li>
           </ul>
@@ -69,10 +68,10 @@ export default function VslTesekkurlerPage() {
         {/* 3. GÖRÜŞMEYE KADAR İZLE */}
         <div className="mt-10 text-center">
           <h2 className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-            Görüşmeye kadar bu videoyu izle
+            Görüşmeye kadar bu videoyu izleyin
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm text-gray-400">
-            Görüşmeye daha hazırlıklı gelmen için önce bu videoyu izlemeni
+            Görüşmeye daha hazırlıklı gelmeniz için önce bu videoyu izlemenizi
             öneririm.
           </p>
           <div className="mt-6 overflow-hidden rounded-2xl border border-[#e6e8ea] bg-black shadow-2xl">

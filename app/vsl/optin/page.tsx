@@ -5,7 +5,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SITE } from "@/lib/site";
 import { VSL_VIDEO, VSL_UNLOCK_KEY, VSL_CTA_KEY, VSL_OPTIN_CONTACT_KEY } from "@/lib/funnel";
 import {
   captureAttribution,
@@ -109,13 +108,15 @@ export default function VslOptinPage() {
       <section className="glow-bg">
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            {SITE.belief}
+            1. Adım — Videoyu açın
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            {VSL_VIDEO.headline}
+            Bir fitness koçunun işini 10 ayda 9 milyon TL yaptık. Nasıl
+            yaptığımızı size göstereceğim.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            {VSL_VIDEO.sub}
+            İşi şansa bırakmadık; bir düzene, bir sisteme oturttuk. Buna
+            FitSistem diyorum. Videoda tek tek anlatıyorum.
           </p>
         </div>
       </section>
@@ -152,7 +153,13 @@ export default function VslOptinPage() {
             Videoyu aç
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Ad, soyad ve e-posta bilgisini bırak; video açılır.
+            Videoyu açmak için adınızı ve e-postanızı yazın. Hemen açılır.
+          </p>
+          <p className="mx-auto mt-6 max-w-xl text-sm text-gray-400">
+            Sırayla şunları yapacaksınız: <b className="text-[#0d204d]">1)</b>{" "}
+            Videoyu açın · <b className="text-[#0d204d]">2)</b> İzleyin ·{" "}
+            <b className="text-[#0d204d]">3)</b> Kısa bir form doldurun ·{" "}
+            <b className="text-[#0d204d]">4)</b> Size uygun görüşme saatini seçin.
           </p>
         </div>
       </section>
@@ -182,7 +189,7 @@ export default function VslOptinPage() {
               Videoyu hemen açalım
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Bilgilerini bırak, video açılsın.
+              Bilgilerinizi bırakın, video açılsın.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}

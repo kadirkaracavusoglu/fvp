@@ -188,6 +188,9 @@ export default function BasvuruPage() {
       </div>
 
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-5 py-16">
+        <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-400">
+          3. Adım — Formu doldurun
+        </p>
         <div className="mb-4 flex items-center justify-between gap-3 text-xs font-medium text-gray-400">
           <div className="flex items-center gap-3">
             {step > 0 && (
@@ -292,11 +295,11 @@ export default function BasvuruPage() {
         ) : (
           <form onSubmit={submit}>
             <h1 className="text-2xl font-bold leading-tight text-[#0d204d] sm:text-3xl">
-              Son adım — size nasıl ulaşalım?
+              Son bir şey — size nasıl ulaşalım?
             </h1>
             <p className="mt-2 text-sm text-gray-400">
-              Görüşme detaylarını buraya göndereceğiz. Marka/site alanları
-              opsiyonel.
+              Görüşme bağlantısını buraya göndereceğiz. Bittiğinde görüşme
+              saatinizi seçeceksiniz. Marka/site alanları opsiyonel.
             </p>
             <input
               type="text"
@@ -395,7 +398,7 @@ export default function BasvuruPage() {
                 disabled={sending}
                 className="btn-primary w-full px-6 py-4 text-base disabled:opacity-60"
               >
-                {sending ? "Gönderiliyor…" : "Başvuruyu Gönder →"}
+                {sending ? "Gönderiliyor…" : "Formu bitir, saat seçmeye geç →"}
               </button>
             </div>
           </form>

@@ -51,14 +51,15 @@ export default function VslRandevuPage() {
             className="chip inline-block px-4 py-1 text-xs"
             data-active="true"
           >
-            Son adım
+            4. Adım — Görüşme saatinizi seçin
           </span>
           <h1 className="mx-auto mt-5 max-w-3xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Strateji görüşmeni seç
+            Son adım: size uygun saati seçin.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Başvurunu aldık. Uygun zamanı seç, görüşme detayları e-posta ile
-            gelsin.
+            Formunuzu aldık. Aşağıdan boş bir gün ve saat seçin. Görüşme
+            internetten (Google Meet), yaklaşık 30 dakika. Seçtiğiniz anda
+            bağlantı e-postanıza gelir.
           </p>
           <a
             href={calendarUrl}

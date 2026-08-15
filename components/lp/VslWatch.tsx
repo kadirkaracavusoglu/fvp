@@ -54,6 +54,9 @@ export function VslWatch({ videoId }: { videoId: string }) {
       {/* CTA — yalnız 5 dk izlendikten sonra görünür (adım 2: detaylı başvuru) */}
       {ctaReady && (
         <div className="mt-8 text-center">
+          <p className="mb-4 text-sm text-gray-400">
+            Videoyu izlediniz. Sıradaki adım: kısa bir form.
+          </p>
           <Link
             href="/vsl/basvuru"
             className="btn-primary inline-block px-8 py-4 text-base"
@@ -62,11 +65,8 @@ export function VslWatch({ videoId }: { videoId: string }) {
               trackServer("cta_click", { video: videoId });
             }}
           >
-            Yol haritanı birlikte konuşalım →
+            Devam et — formu doldur →
           </Link>
-          <p className="mt-3 text-sm text-gray-400">
-            Kısa bir başvuru + ücretsiz strateji görüşmesi.
-          </p>
         </div>
       )}
     </div>

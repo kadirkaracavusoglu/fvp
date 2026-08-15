@@ -1,4 +1,3 @@
-import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 import { VslWatch } from "@/components/lp/VslWatch";
 import { VSL_VIDEO } from "@/lib/funnel";
@@ -15,16 +14,20 @@ export default function VslPage() {
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <Reveal>
             <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-              {SITE.belief}
+              2. Adım — Videoyu izleyin
             </span>
           </Reveal>
           <Reveal delay={0.08}>
             <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-              {VSL_VIDEO.headline}
+              Şimdi videoyu izleyin.
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">{VSL_VIDEO.sub}</p>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
+              Bir koçun işini FitSistem ile 10 ayda 9 milyona nasıl taşıdığımızı
+              ve aynısını kendi işinize nasıl kuracağınızı anlatıyorum. Baştan
+              sona izleyin; en çok işe yarayan kısımlar ortada ve sonda.
+            </p>
           </Reveal>
         </div>
       </section>
