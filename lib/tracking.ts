@@ -37,9 +37,14 @@ export function track(event: string, params: Params = {}) {
 
 // ---- Attribution (reklam tıklama kimlikleri) ----
 const ATTR_KEY = "fvp_attribution";
+// URL parametresinden yakalanan alanlar (tüm click-id'ler + utm)
 const ATTR_FIELDS = [
   "gclid",
-  "fbclid",
+  "gbraid",       // Google iOS web-to-app
+  "wbraid",       // Google iOS app-to-web
+  "fbclid",       // Meta
+  "ttclid",       // TikTok
+  "msclkid",      // Microsoft/Bing
   "utm_id",
   "utm_source",
   "utm_medium",
@@ -53,29 +58,54 @@ const ATTR_FIELDS = [
 
 export type Attribution = Record<string, string>;
 
-/** Sayfa açılışında URL'deki reklam ID'lerini yakala, ilk dokunuşu koru (localStorage) */
+/** Belirli bir çerezi oku (SSR güvenli) */
+function getCookie(name: string): string {
+  if (typeof document === "undefined") return "";
+  const esc = name.replace(/([.$?*|{}()[\]\\/+^])/g, "\\$1");
+  const m = document.cookie.match(new RegExp("(?:^|; )" + esc + "=([^;]*)"));
+  return m ? decodeURIComponent(m[1]) : "";
+}
+
+/** Sayfa açılışında URL + çerezlerden kimlikleri yakala; ilk dokunuşu koru (localStorage).
+ * Not: organik ziyaretçi de yakalanır (ga_client_id / referrer / landing) — erken return YOK. */
 export function captureAttribution() {
   if (typeof window === "undefined") return;
   try {
     const url = new URL(window.location.href);
     const now = new Date().toISOString();
+    const existing = getAttribution();
+
     const found: Attribution = {};
     ATTR_FIELDS.forEach((f) => {
       const v = url.searchParams.get(f);
       if (v) found[f] = v;
     });
-    if (Object.keys(found).length === 0) return;
-    const existing = getAttribution();
+    const hasCampaign = Object.keys(found).length > 0;
+
+    // GA4 client id (_ga çerezi: "GA1.1.X.Y" → "X.Y")
+    const ga = getCookie("_ga");
+    const gaClientId = ga ? ga.split(".").slice(-2).join(".") : existing.ga_client_id || "";
+    // Meta fbp / fbc (CAPI dedup için)
+    const fbp = getCookie("_fbp") || existing.fbp || "";
+    let fbc = getCookie("_fbc") || existing.fbc || "";
+    const fbclid = found.fbclid || existing.fbclid || "";
+    if (!fbc && fbclid) fbc = `fb.1.${Date.now()}.${fbclid}`;
+
     const merged: Attribution = {
       ...existing,
       ...found,
       first_seen: existing.first_seen || now,
       first_landing_path: existing.first_landing_path || url.pathname,
       first_landing_url: existing.first_landing_url || url.href,
-      landing_path: url.pathname,
-      landing_url: url.href,
+      // landing_* = kampanyalı son dokunuşun iniş sayfası (ilk yoksa şimdiki)
+      landing_path: hasCampaign ? url.pathname : existing.landing_path || url.pathname,
+      landing_url: hasCampaign ? url.href : existing.landing_url || url.href,
+      page_url: url.href,            // her zaman güncel sayfa
       last_seen: now,
       referrer: existing.referrer || document.referrer || "",
+      ...(gaClientId ? { ga_client_id: gaClientId } : {}),
+      ...(fbp ? { fbp } : {}),
+      ...(fbc ? { fbc } : {}),
     };
     localStorage.setItem(ATTR_KEY, JSON.stringify(merged));
   } catch {
