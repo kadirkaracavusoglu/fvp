@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     // GHL'e doğrudan upsert — tüm custom field'lar id ile dolar (workflow gerekmez).
     const ozet = answerSummary(answers);
     // AWAIT — serverless yanıt dönünce GHL isteğini kesmesin
-    const ghlRes = await upsertGhlContact({
+    await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail, phone: tel,
       tags: ["vsl-basvuru"],
       source: "VSL başvuru (/vsl/basvuru)",
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
       }).catch(() => {});
     }
 
-    return NextResponse.json({ ok: true, _ghl: ghlRes });
+    return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ ok: false, error: "Beklenmeyen bir hata." }, { status: 500 });
   }

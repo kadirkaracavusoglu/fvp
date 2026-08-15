@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     // 2) GHL'e doğrudan upsert — AWAIT (serverless yanıt dönünce isteği kesmesin)
-    const ghlRes = await upsertGhlContact({
+    await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail,
       tags: ["vsl-optin"],
       source: "VSL opt-in (/vsl)",
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       }).catch(() => {});
     }
 
-    return NextResponse.json({ ok: true, _ghl: ghlRes });
+    return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ ok: false, error: "Beklenmeyen bir hata oluştu." }, { status: 500 });
   }
