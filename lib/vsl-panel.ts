@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { BASVURU_SORULARI } from "@/lib/funnel";
+import { getMetaSpend } from "@/lib/meta-insights";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch";
 
@@ -89,12 +90,24 @@ export type VslPanelData = {
     thankyouVideoClicks: number;
     booked: number;
     utmCaptured: number;
+    spend: number | null;
+    sales: number;
+    revenue: number;
+    reached: number;
     optinRate: number | null;
     playRate: number | null;
     watch5Rate: number | null;
+    visitToApplicationRate: number | null;
     applicationRate: number | null;
     calendarLoadRate: number | null;
     bookedRate: number | null;
+    leadCost: number | null;
+    appointmentCost: number | null;
+    salesConversionRate: number | null;
+    cpa: number | null;
+    roas: number | null;
+    reachRate: number | null;
+    closeRate: number | null;
     utmRate: number | null;
   };
   funnel: FunnelStep[];
@@ -235,6 +248,68 @@ function uniqueLeadCount(rows: LeadRow[], formType: string): number {
 function pct(part: number, whole: number): number | null {
   if (!whole) return null;
   return Math.round((part / whole) * 1000) / 10;
+}
+
+function cost(total: number | null, count: number): number | null {
+  if (total == null || total <= 0 || count <= 0) return null;
+  return Math.round(total / count);
+}
+
+function ratio(part: number, whole: number): number | null {
+  return pct(part, whole);
+}
+
+function num(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/[^\d.,-]/g, "").replace(",", ".");
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
+function identity(row: EventRow): string {
+  const meta = row.meta || {};
+  for (const key of [
+    "opportunityId",
+    "opportunity_id",
+    "appointmentId",
+    "appointment_id",
+    "contactId",
+    "contact_id",
+    "email",
+    "phone",
+  ]) {
+    const value = meta[key];
+    if (typeof value === "string" && value.trim()) {
+      return `${key}:${value.trim().toLowerCase()}`;
+    }
+  }
+  return row.session_id || `${row.name}:${row.created_at}`;
+}
+
+function uniqueEvents(rows: EventRow[], names: string[]): EventRow[] {
+  const wanted = new Set(names);
+  const seen = new Set<string>();
+  const out: EventRow[] = [];
+  for (const row of rows) {
+    if (!wanted.has(row.name)) continue;
+    const id = identity(row);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push(row);
+  }
+  return out;
+}
+
+function eventRevenue(row: EventRow): number {
+  const meta = row.meta || {};
+  for (const key of ["revenue", "amount", "value", "saleValue", "price"]) {
+    const value = num(meta[key]);
+    if (value > 0) return value;
+  }
+  return 0;
 }
 
 function channelKey(attr?: Record<string, string> | null): string {
@@ -395,12 +470,24 @@ export async function getVslPanelData(
       thankyouVideoClicks: 0,
       booked: 0,
       utmCaptured: 0,
+      spend: null,
+      sales: 0,
+      revenue: 0,
+      reached: 0,
       optinRate: null,
       playRate: null,
       watch5Rate: null,
+      visitToApplicationRate: null,
       applicationRate: null,
       calendarLoadRate: null,
       bookedRate: null,
+      leadCost: null,
+      appointmentCost: null,
+      salesConversionRate: null,
+      cpa: null,
+      roas: null,
+      reachRate: null,
+      closeRate: null,
       utmRate: null,
     },
     funnel: [],
@@ -470,6 +557,13 @@ export async function getVslPanelData(
     const thankyouViews = uniqueBy(events, "vsl_thankyou_view");
     const thankyouVideoClicks = uniqueBy(events, "vsl_thankyou_video_click");
     const bookedEvent = uniqueBy(events, "vsl_calendar_booked");
+    const reachedRows = uniqueEvents(events, ["vsl_reached"]);
+    const saleRows = uniqueEvents(events, ["vsl_sale", "vsl_closed_won"]);
+    const reached = reachedRows.length;
+    const sales = saleRows.length;
+    const revenue = saleRows.reduce((sum, row) => sum + eventRevenue(row), 0);
+    const metaSpend = await getMetaSpend(r.startDate, r.endDate);
+    const spend = metaSpend.ok ? metaSpend.spend : null;
 
     const optins = uniqueLeadCount(leads, "vsl_optin");
     const applicationRows = uniqueLeadRows(leads, "vsl_basvuru");
@@ -783,12 +877,27 @@ export async function getVslPanelData(
         thankyouVideoClicks,
         booked,
         utmCaptured,
+        spend,
+        sales,
+        revenue,
+        reached,
         optinRate: pct(optins, visits),
         playRate: pct(plays, optins || visits),
         watch5Rate: pct(watch5m, plays),
+        visitToApplicationRate: pct(applications, visits),
         applicationRate: pct(applications, optins),
         calendarLoadRate: pct(calendarLoaded, calendarViews),
         bookedRate: pct(booked, applications),
+        leadCost: cost(spend, applications),
+        appointmentCost: cost(spend, booked),
+        salesConversionRate: ratio(sales, applications),
+        cpa: cost(spend, sales),
+        roas:
+          spend != null && spend > 0 && revenue > 0
+            ? Math.round((revenue / spend) * 100) / 100
+            : null,
+        reachRate: ratio(reached, applications),
+        closeRate: ratio(sales, reached),
         utmRate: pct(utmCaptured, optins + applications),
       },
       funnel,

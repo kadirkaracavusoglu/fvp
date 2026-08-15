@@ -179,6 +179,14 @@ for (const field of [
   "qualifiedApplications",
   "hotApplications",
   "utmCaptured",
+  "visitToApplicationRate",
+  "leadCost",
+  "appointmentCost",
+  "salesConversionRate",
+  "cpa",
+  "roas",
+  "reachRate",
+  "closeRate",
 ]) {
   assertIncludes(
     "lib/vsl-panel.ts",
@@ -197,6 +205,14 @@ for (const text of [
   "Ana KPI",
   "Ana Huni",
   "Kanal Kırılımı",
+  "Conv. page %",
+  "CPL",
+  "Randevu maliyeti",
+  "Ulaşılma oranı",
+  "Satış dönüşüm",
+  "Close rate",
+  "CPA",
+  "ROAS",
 ]) {
   assertIncludes(
     "app/vsl/panel/PanelView.tsx",
@@ -222,6 +238,27 @@ assertNotIncludes(
   "app/vsl/panel/page.tsx",
   "VSL Panel",
   "Panel giriş ekranı genel panel adı kullanmalı",
+);
+
+assertIncludes(
+  "app/api/ghl/vsl-status/route.ts",
+  "vsl_reached",
+  "GHL durum webhook'u ulaşılma sinyalini yazmalı",
+);
+assertIncludes(
+  "app/api/ghl/vsl-status/route.ts",
+  "vsl_sale",
+  "GHL durum webhook'u satış sinyalini yazmalı",
+);
+assertIncludes(
+  "lib/meta-insights.ts",
+  "META_ACCESS_TOKEN_FVP",
+  "Meta harcama okuyucu FVP token env'ini desteklemeli",
+);
+assertIncludes(
+  "lib/meta-insights.ts",
+  "graph.facebook.com/v26.0",
+  "Meta harcama okuyucu güncel Graph API versiyonunu kullanmalı",
 );
 
 for (const file of ["app/vsl/panel/page.tsx", "app/vsl/panel/actions.ts"]) {

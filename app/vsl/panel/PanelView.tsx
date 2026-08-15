@@ -16,6 +16,15 @@ function pct(value: number | null) {
   return value == null ? "—" : `%${value.toLocaleString("tr-TR")}`;
 }
 
+function money(value: number | null) {
+  if (value == null) return "—";
+  return `${Math.round(value).toLocaleString("tr-TR")} TL`;
+}
+
+function multiple(value: number | null) {
+  return value == null ? "—" : `${value.toLocaleString("tr-TR")}x`;
+}
+
 function Kpi({
   label,
   value,
@@ -142,25 +151,76 @@ export function PanelView({
         ) : (
           <>
             <p className="mb-3 text-xs text-gray-400">
-              Ana KPI&apos;lar FvP başvuru sistemindeki gerçek karar adımlarını
-              gösterir.
+              Ana KPI&apos;lar trafik → lead → randevu → satış → para sırasıyla
+              okunur.
             </p>
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
               <Kpi
                 label="Ziyaret"
                 value={String(data.kpi.visits)}
-                sub="sayfayı gördü"
+                sub="VSL sayfasını gördü"
               />
               <Kpi
-                label="Opt-in"
-                value={String(data.kpi.optins)}
-                sub={`ziyaret → opt-in ${pct(data.kpi.optinRate)}`}
+                label="Conv. page %"
+                value={pct(data.kpi.visitToApplicationRate)}
+                sub="ziyaret → başvuru"
               />
               <Kpi
-                label="Başvuru"
+                label="Lead"
                 value={String(data.kpi.applications)}
-                sub={`opt-in → başvuru ${pct(data.kpi.applicationRate)}`}
+                sub="başvuru formu"
               />
+              <Kpi
+                label="CPL"
+                value={money(data.kpi.leadCost)}
+                sub="harcama ÷ lead"
+              />
+              <Kpi
+                label="Randevu"
+                value={String(data.kpi.booked)}
+                sub={`başvuru → randevu ${pct(data.kpi.bookedRate)}`}
+              />
+              <Kpi
+                label="Randevu maliyeti"
+                value={money(data.kpi.appointmentCost)}
+                sub="harcama ÷ randevu"
+              />
+            </div>
+            <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <Kpi
+                label="Ulaşılma oranı"
+                value={pct(data.kpi.reachRate)}
+                sub={`${data.kpi.reached}/${data.kpi.applications} lead`}
+              />
+              <Kpi
+                label="Satış"
+                value={String(data.kpi.sales)}
+                sub="GHL won sinyali"
+              />
+              <Kpi
+                label="Satış dönüşüm"
+                value={pct(data.kpi.salesConversionRate)}
+                sub="lead → satış"
+              />
+              <Kpi
+                label="Close rate"
+                value={pct(data.kpi.closeRate)}
+                sub="ulaşılan → satış"
+              />
+              <Kpi
+                label="CPA"
+                value={money(data.kpi.cpa)}
+                sub="harcama ÷ satış"
+              />
+              <Kpi
+                label="ROAS"
+                value={multiple(data.kpi.roas)}
+                sub={`ciro ${money(data.kpi.revenue)}`}
+              />
+            </div>
+            <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
+              <Kpi label="Harcama" value={money(data.kpi.spend)} sub="Meta" />
+              <Kpi label="Ciro" value={money(data.kpi.revenue)} sub="GHL won" />
               <Kpi
                 label="Nitelikli"
                 value={String(data.kpi.qualifiedApplications)}
@@ -172,18 +232,6 @@ export function PanelView({
                 sub="yüksek öncelik"
               />
               <Kpi
-                label="Randevu"
-                value={String(data.kpi.booked)}
-                sub={`başvuru → randevu ${pct(data.kpi.bookedRate)}`}
-              />
-            </div>
-            <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
-              <Kpi
-                label="Video kilidi"
-                value={String(data.kpi.popupOpens)}
-                sub="CTA ile açmak istedi"
-              />
-              <Kpi
                 label="Video play"
                 value={String(data.kpi.plays)}
                 sub={`opt-in → play ${pct(data.kpi.playRate)}`}
@@ -192,11 +240,6 @@ export function PanelView({
                 label="5 dk izleme"
                 value={String(data.kpi.watch5m)}
                 sub={`play → 5 dk ${pct(data.kpi.watch5Rate)}`}
-              />
-              <Kpi
-                label="Takvim"
-                value={`${data.kpi.calendarLoaded}/${data.kpi.calendarViews}`}
-                sub={`yükleme / görüntüleme ${pct(data.kpi.calendarLoadRate)}`}
               />
               <Kpi
                 label="UTM yakalama"
