@@ -16,6 +16,7 @@ import {
 } from "@/lib/tracking";
 
 const UNLOCK_KEY = "fvp_vsl_unlocked";
+const CTA_KEY = "fvp_vsl_cta"; // 5 dk izleyip CTA'yı hak edince → geri gelince tekrar bekletme
 
 export function VslFunnel({
   videoId,
@@ -25,6 +26,7 @@ export function VslFunnel({
   poster?: string;
 }) {
   const [unlocked, setUnlocked] = useState(false);
+  const [ctaReady, setCtaReady] = useState(false); // CTA yalnız 5 dk izlenince açılır
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -41,6 +43,7 @@ export function VslFunnel({
     captureAttribution();
     try {
       if (localStorage.getItem(UNLOCK_KEY)) setUnlocked(true);
+      if (localStorage.getItem(CTA_KEY)) setCtaReady(true); // daha önce 5 dk izlemiş
     } catch {}
     setReady(true);
     trackServer("vsl_optin_view");
@@ -121,23 +124,38 @@ export function VslFunnel({
   if (unlocked) {
     return (
       <div>
-        <VslPlayer videoId={videoId} poster={poster} autoplay />
-        {/* CTA — video sonrası detaylı başvuru (adım 2) */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/vsl/basvuru"
-            className="btn-primary inline-block px-8 py-4 text-base"
-            onClick={() => {
-              track("cta_click", { location: "vsl" });
-              trackServer("cta_click", { video: videoId });
-            }}
-          >
-            Yol haritanı birlikte konuşalım →
-          </Link>
-          <p className="mt-3 text-sm text-gray-400">
-            Kısa bir başvuru + ücretsiz strateji görüşmesi.
-          </p>
-        </div>
+        <VslPlayer
+          videoId={videoId}
+          poster={poster}
+          autoplay
+          onMilestone={(name) => {
+            // CTA yalnız 5 dakika izlendikten sonra açılır (Kadir: time-on-brand).
+            if (name === "vsl_min5") {
+              setCtaReady(true);
+              try {
+                localStorage.setItem(CTA_KEY, "1");
+              } catch {}
+            }
+          }}
+        />
+        {/* CTA — yalnız 5 dk izlendikten sonra görünür (adım 2: detaylı başvuru) */}
+        {ctaReady && (
+          <div className="mt-8 text-center">
+            <Link
+              href="/vsl/basvuru"
+              className="btn-primary inline-block px-8 py-4 text-base"
+              onClick={() => {
+                track("cta_click", { location: "vsl" });
+                trackServer("cta_click", { video: videoId });
+              }}
+            >
+              Yol haritanı birlikte konuşalım →
+            </Link>
+            <p className="mt-3 text-sm text-gray-400">
+              Kısa bir başvuru + ücretsiz strateji görüşmesi.
+            </p>
+          </div>
+        )}
       </div>
     );
   }
