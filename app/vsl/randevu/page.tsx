@@ -62,7 +62,7 @@ export default function VslRandevuPage() {
           <iframe
             id="SSw6HZHR3j9veTWH8xTp_1786750718220"
             src={calendarUrl}
-            allow="payment"
+            allow="payment; private-state-token-issuance; private-state-token-redemption"
             scrolling="yes"
             title="Online Koçluk Strateji Görüşmesi takvimi"
             className="h-[calc(100vh-96px)] min-h-[1040px] w-full"

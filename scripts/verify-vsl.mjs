@@ -67,6 +67,16 @@ assertIncludes(
   'overflow: "auto"',
   "Randevu iframe'i iç form taşınca scroll edilebilir olmalı",
 );
+for (const permission of [
+  "private-state-token-issuance",
+  "private-state-token-redemption",
+]) {
+  assertIncludes(
+    "app/vsl/randevu/page.tsx",
+    permission,
+    `Randevu iframe'i Turnstile ${permission} iznini taşımalı`,
+  );
+}
 
 assertIncludes(
   "app/vsl/tesekkurler/page.tsx",
