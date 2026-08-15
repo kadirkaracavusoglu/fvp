@@ -46,7 +46,8 @@ export function ghlAttributionPayload(attr: Attr) {
     gaClientId,
     landingUrl,
     firstLandingUrl,
-    pageUrl,
+    // not: camelCase pageUrl YOK — route açık `pageUrl` (funnel sayfası) ile çakışmasın.
+    // Ziyaretçinin bulunduğu sayfa aşağıda `page_url` (snake) olarak gider.
     // snake_case (workflow eşlemesi kolay olsun diye ikisi de)
     utm_source: utmSource,
     utm_medium: utmMedium,
