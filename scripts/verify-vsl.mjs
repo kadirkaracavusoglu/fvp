@@ -136,8 +136,13 @@ for (const field of ['name="firstName"', 'name="lastName"', 'name="email"']) {
 }
 assertIncludes(
   "components/lp/VslFunnel.tsx",
-  "h-16 w-16",
+  "h-14 w-14",
   "Opt-in video play butonu yüzü kapatmayacak kadar küçük olmalı",
+);
+assertIncludes(
+  "components/lp/VslFunnel.tsx",
+  "items-end justify-center",
+  "Opt-in video play butonu yüz hizasında merkezde durmamalı",
 );
 assertNotIncludes(
   "components/lp/VslFunnel.tsx",
