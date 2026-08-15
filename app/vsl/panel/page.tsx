@@ -1,5 +1,9 @@
 import { cookies } from "next/headers";
-import { getVslPanelData, PANEL_RANGES, type PanelRange } from "@/lib/vsl-panel";
+import {
+  getVslPanelData,
+  PANEL_RANGES,
+  type PanelRange,
+} from "@/lib/vsl-panel";
 import { login, logout } from "./actions";
 import { PanelView } from "./PanelView";
 
@@ -50,9 +54,19 @@ export default async function VslPanelPage({
               placeholder="Erişim anahtarı"
               className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-[#0d204d] outline-none focus:border-[#0d204d]"
             />
-            {sp.e && <p className="text-sm font-semibold text-red-600">Anahtar hatalı veya tanımlı değil.</p>}
-            {keyMissing && <p className="text-xs text-gray-400">Prod için `FVP_PANEL_KEY` veya `PANEL_KEY` env tanımlanmalı.</p>}
-            <button className="btn-primary w-full px-6 py-3 text-sm">Giriş</button>
+            {sp.e && (
+              <p className="text-sm font-semibold text-red-600">
+                Anahtar hatalı veya tanımlı değil.
+              </p>
+            )}
+            {keyMissing && (
+              <p className="text-xs text-gray-400">
+                Prod için `FVP_PANEL_KEY` veya `PANEL_KEY` env tanımlanmalı.
+              </p>
+            )}
+            <button className="btn-primary w-full px-6 py-3 text-sm">
+              Giriş
+            </button>
           </form>
         </div>
       </div>

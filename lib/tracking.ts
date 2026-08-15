@@ -40,11 +40,11 @@ const ATTR_KEY = "fvp_attribution";
 // URL parametresinden yakalanan alanlar (tüm click-id'ler + utm)
 const ATTR_FIELDS = [
   "gclid",
-  "gbraid",       // Google iOS web-to-app
-  "wbraid",       // Google iOS app-to-web
-  "fbclid",       // Meta
-  "ttclid",       // TikTok
-  "msclkid",      // Microsoft/Bing
+  "gbraid", // Google iOS web-to-app
+  "wbraid", // Google iOS app-to-web
+  "fbclid", // Meta
+  "ttclid", // TikTok
+  "msclkid", // Microsoft/Bing
   "utm_id",
   "utm_source",
   "utm_medium",
@@ -84,7 +84,9 @@ export function captureAttribution() {
 
     // GA4 client id (_ga çerezi: "GA1.1.X.Y" → "X.Y")
     const ga = getCookie("_ga");
-    const gaClientId = ga ? ga.split(".").slice(-2).join(".") : existing.ga_client_id || "";
+    const gaClientId = ga
+      ? ga.split(".").slice(-2).join(".")
+      : existing.ga_client_id || "";
     // Meta fbp / fbc (CAPI dedup için)
     const fbp = getCookie("_fbp") || existing.fbp || "";
     let fbc = getCookie("_fbc") || existing.fbc || "";
@@ -98,9 +100,11 @@ export function captureAttribution() {
       first_landing_path: existing.first_landing_path || url.pathname,
       first_landing_url: existing.first_landing_url || url.href,
       // landing_* = kampanyalı son dokunuşun iniş sayfası (ilk yoksa şimdiki)
-      landing_path: hasCampaign ? url.pathname : existing.landing_path || url.pathname,
+      landing_path: hasCampaign
+        ? url.pathname
+        : existing.landing_path || url.pathname,
       landing_url: hasCampaign ? url.href : existing.landing_url || url.href,
-      page_url: url.href,            // her zaman güncel sayfa
+      page_url: url.href, // her zaman güncel sayfa
       last_seen: now,
       referrer: existing.referrer || document.referrer || "",
       ...(gaClientId ? { ga_client_id: gaClientId } : {}),
@@ -147,7 +151,7 @@ export function getSessionId(): string {
 /** Olayı kendi sunucumuza gönder (sendBeacon → sekme kapansa bile ulaşır) */
 export function trackServer(
   name: string,
-  opts: { path?: string; video?: string; meta?: Params } = {}
+  opts: { path?: string; video?: string; meta?: Params } = {},
 ) {
   if (typeof window === "undefined") return;
   try {
@@ -162,9 +166,17 @@ export function trackServer(
     });
     const w = window as unknown as { navigator: Navigator };
     if (w.navigator?.sendBeacon) {
-      w.navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+      w.navigator.sendBeacon(
+        "/api/track",
+        new Blob([payload], { type: "application/json" }),
+      );
     } else {
-      fetch("/api/track", { method: "POST", body: payload, keepalive: true, headers: { "Content-Type": "application/json" } });
+      fetch("/api/track", {
+        method: "POST",
+        body: payload,
+        keepalive: true,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   } catch {
     /* ölçüm asla akışı bozmaz */

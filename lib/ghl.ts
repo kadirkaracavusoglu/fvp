@@ -9,7 +9,8 @@ function inferredSource(attr: Attr): string {
   if (source) return source;
   if (str(attr?.fbclid)) return "meta";
   if (str(attr?.ttclid)) return "tiktok";
-  if (str(attr?.gclid) || str(attr?.gbraid) || str(attr?.wbraid)) return "google";
+  if (str(attr?.gclid) || str(attr?.gbraid) || str(attr?.wbraid))
+    return "google";
   if (str(attr?.msclkid)) return "bing";
   return "direct";
 }
