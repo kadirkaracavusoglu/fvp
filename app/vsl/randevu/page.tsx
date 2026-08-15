@@ -63,11 +63,10 @@ export default function VslRandevuPage() {
             id="SSw6HZHR3j9veTWH8xTp_1786750718220"
             src={calendarUrl}
             allow="payment"
-            scrolling="no"
+            scrolling="yes"
             title="Online Koçluk Strateji Görüşmesi takvimi"
-            className="min-h-[760px] w-full"
-            loading="lazy"
-            style={{ border: "none", overflow: "hidden" }}
+            className="h-[calc(100vh-96px)] min-h-[1040px] w-full"
+            style={{ border: "none", overflow: "auto" }}
             onLoad={() => {
               track("vsl_calendar_loaded", { location: "vsl" });
               trackServer("vsl_calendar_loaded");

@@ -57,6 +57,16 @@ assertIncludes(
   'href="/vsl/tesekkurler"',
   "Randevu sonrası teşekkür sayfasına geçiş olmalı",
 );
+assertIncludes(
+  "app/vsl/randevu/page.tsx",
+  'scrolling="yes"',
+  "Randevu iframe'i saat seçimi sonrası scroll kilitlememeli",
+);
+assertIncludes(
+  "app/vsl/randevu/page.tsx",
+  'overflow: "auto"',
+  "Randevu iframe'i iç form taşınca scroll edilebilir olmalı",
+);
 
 assertIncludes(
   "app/vsl/tesekkurler/page.tsx",
