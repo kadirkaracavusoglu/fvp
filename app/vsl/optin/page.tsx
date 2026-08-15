@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SITE } from "@/lib/site";
-import { VSL_VIDEO, VSL_UNLOCK_KEY, VSL_OPTIN_CONTACT_KEY } from "@/lib/funnel";
+import { VSL_VIDEO, VSL_UNLOCK_KEY, VSL_CTA_KEY, VSL_OPTIN_CONTACT_KEY } from "@/lib/funnel";
 import {
   captureAttribution,
   track,
@@ -28,9 +28,14 @@ export default function VslOptinPage() {
 
   useEffect(() => {
     captureAttribution();
-    // Zaten opt-in vermişse doğrudan videoya al (formu tekrar gösterme).
     try {
-      if (localStorage.getItem(VSL_UNLOCK_KEY)) {
+      // Test kaçış kapısı: /vsl/optin?reset=1 → kilidi sıfırla, formu göster.
+      const reset = new URLSearchParams(window.location.search).get("reset");
+      if (reset === "1") {
+        localStorage.removeItem(VSL_UNLOCK_KEY);
+        localStorage.removeItem(VSL_CTA_KEY);
+      } else if (localStorage.getItem(VSL_UNLOCK_KEY)) {
+        // Zaten opt-in vermiş → tekrar doldurtma, doğrudan videoya al.
         router.replace("/vsl");
         return;
       }
