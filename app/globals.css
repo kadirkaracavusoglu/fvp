@@ -1,23 +1,27 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
+@source "../lib";
 
 /* ===== FvP — Açık Tema (beyaz zemin + lacivert ana renk) =====
    Renklerin TEK KAYNAĞI burasıdır. Marka değiştirirken yalnız bu bloğu değiştir.
    ⚠️ lib/theme.ts ile elle eşit tutulmalı — themeColor / manifest / global-error
    CSS değişkeni okuyamıyor, statik değer istiyor. */
 :root {
-  --navy: #0d204d;        /* ANA RENK — başlık, buton, accent */
-  --navy-rgb: 13, 32, 77; /* şeffaflıklı kullanımlar için: rgba(var(--navy-rgb), .3) */
+  --navy: #0d204d; /* ANA RENK — başlık, buton, accent */
+  --navy-rgb:
+    13, 32, 77; /* şeffaflıklı kullanımlar için: rgba(var(--navy-rgb), .3) */
   --navy-hover: #14295c;
-  --navy-soft: #1d3670;   /* dekoratif ikinci ton */
-  --accent: #22d3ee;      /* dekoratif vurgu */
+  --navy-soft: #1d3670; /* dekoratif ikinci ton */
+  --accent: #22d3ee; /* dekoratif vurgu */
   --white: #ffffff;
 
-  --bg: #ffffff;          /* zemin */
-  --strip: #f4f6f9;       /* alternatif bölüm zemini */
-  --surface: #ffffff;     /* kart yüzeyi */
-  --line: #e6e8ea;        /* kenarlık */
-  --text: var(--navy);    /* ana metin */
-  --muted: #5b6472;       /* ikincil metin */
+  --bg: #ffffff; /* zemin */
+  --strip: #f4f6f9; /* alternatif bölüm zemini */
+  --surface: #ffffff; /* kart yüzeyi */
+  --line: #e6e8ea; /* kenarlık */
+  --text: var(--navy); /* ana metin */
+  --muted: #5b6472; /* ikincil metin */
 
   --background: var(--bg);
   --foreground: var(--text);
@@ -31,17 +35,17 @@
   --color-navy: var(--navy);
   --color-navy-soft: var(--navy-soft);
   --color-accent: var(--accent);
-  --color-line: var(--line);         /* border-line */
-  --color-strip: var(--strip);       /* bg-strip */
-  --color-muted: var(--muted);       /* text-muted */
-  --color-navy-900: var(--bg);       /* header/footer/hero zemini → beyaz */
-  --color-navy-800: var(--strip);    /* şerit zemin → açık gri */
-  --color-navy-700: var(--strip);    /* kart/gradient → açık gri */
-  --color-navy-600: var(--line);     /* kenarlık → açık gri */
-  --color-cyan: var(--navy);         /* accent → lacivert */
+  --color-line: var(--line); /* border-line */
+  --color-strip: var(--strip); /* bg-strip */
+  --color-muted: var(--muted); /* text-muted */
+  --color-navy-900: var(--bg); /* header/footer/hero zemini → beyaz */
+  --color-navy-800: var(--strip); /* şerit zemin → açık gri */
+  --color-navy-700: var(--strip); /* kart/gradient → açık gri */
+  --color-navy-600: var(--line); /* kenarlık → açık gri */
+  --color-cyan: var(--navy); /* accent → lacivert */
   --color-cyan-600: var(--navy-hover);
-  --color-gray-100: var(--text);     /* koyu metin */
-  --color-gray-400: var(--muted);    /* ikincil metin */
+  --color-gray-100: var(--text); /* koyu metin */
+  --color-gray-400: var(--muted); /* ikincil metin */
   --font-sans: var(--font-sans);
 }
 
@@ -59,8 +63,16 @@ body {
 /* yumuşak arka plan ışıması (açık) */
 .glow-bg {
   background:
-    radial-gradient(60% 50% at 50% 0%, rgba(var(--navy-rgb), 0.07), transparent 70%),
-    radial-gradient(45% 45% at 100% 10%, rgba(var(--navy-rgb), 0.05), transparent 70%),
+    radial-gradient(
+      60% 50% at 50% 0%,
+      rgba(var(--navy-rgb), 0.07),
+      transparent 70%
+    ),
+    radial-gradient(
+      45% 45% at 100% 10%,
+      rgba(var(--navy-rgb), 0.05),
+      transparent 70%
+    ),
     var(--bg);
 }
 
@@ -68,7 +80,10 @@ body {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 1rem;
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 .card:hover {
   transform: translateY(-4px);
@@ -81,25 +96,36 @@ body {
   color: var(--white);
   font-weight: 600;
   border-radius: 9999px;
-  transition: transform .2s ease, background .2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
-.btn-primary:hover { background: var(--navy-hover); transform: translateY(-2px); }
+.btn-primary:hover {
+  background: var(--navy-hover);
+  transform: translateY(-2px);
+}
 
 .btn-ghost {
   border: 1px solid var(--navy);
   color: var(--navy);
   border-radius: 9999px;
-  transition: background .2s ease, color .2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
-.btn-ghost:hover { background: var(--navy); color: var(--white); }
+.btn-ghost:hover {
+  background: var(--navy);
+  color: var(--white);
+}
 
 .chip {
   border: 1px solid var(--line);
   border-radius: 9999px;
   color: var(--muted);
-  transition: all .2s ease;
+  transition: all 0.2s ease;
 }
-.chip:hover, .chip[data-active="true"] {
+.chip:hover,
+.chip[data-active="true"] {
   color: var(--white);
   background: var(--navy);
   border-color: var(--navy);
@@ -113,7 +139,9 @@ body {
   border-radius: 4px;
 }
 /* Fare tıklamasında outline gösterme (sadece klavye) */
-:focus:not(:focus-visible) { outline: none; }
+:focus:not(:focus-visible) {
+  outline: none;
+}
 
 /* İçeriğe geç bağlantısı — sadece Tab'a basınca görünür */
 .skip-link {
@@ -127,6 +155,8 @@ body {
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
-  transition: top .15s ease;
+  transition: top 0.15s ease;
 }
-.skip-link:focus { top: 12px; }
+.skip-link:focus {
+  top: 12px;
+}

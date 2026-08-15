@@ -8,11 +8,22 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { VslPlayer } from "@/components/lp/VslPlayer";
 import { VSL_OPTIN_CONTACT_KEY } from "@/lib/funnel";
-import { track, trackServer, getAttribution } from "@/lib/tracking";
+import {
+  captureAttribution,
+  track,
+  trackServer,
+  getAttribution,
+} from "@/lib/tracking";
 
 const UNLOCK_KEY = "fvp_vsl_unlocked";
 
-export function VslFunnel({ videoId, poster }: { videoId: string; poster?: string }) {
+export function VslFunnel({
+  videoId,
+  poster,
+}: {
+  videoId: string;
+  poster?: string;
+}) {
   const [unlocked, setUnlocked] = useState(false);
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
   const [firstName, setFirstName] = useState("");
@@ -23,9 +34,11 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState("");
 
-  const posterUrl = poster || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+  const posterUrl =
+    poster || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 
   useEffect(() => {
+    captureAttribution();
     try {
       if (localStorage.getItem(UNLOCK_KEY)) setUnlocked(true);
     } catch {}
@@ -34,17 +47,36 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
     track("vsl_optin_view", { location: "vsl" });
   }, []);
 
+  useEffect(() => {
+    if (!modalOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setModalOpen(false);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [modalOpen]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    if (!firstName.trim() || !lastName.trim()) return setErr("Ad ve soyadınızı girin.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErr("Geçerli bir e-posta girin.");
+    if (!firstName.trim() || !lastName.trim())
+      return setErr("Ad ve soyadınızı girin.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return setErr("Geçerli bir e-posta girin.");
     setSending(true);
     try {
+      captureAttribution();
+      const attribution = getAttribution();
       const res = await fetch("/api/optin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, website, attribution: getAttribution() }),
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          website,
+          attribution,
+        }),
       });
       const data = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !data.ok) {
@@ -60,7 +92,7 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
             firstName: firstName.trim(),
             lastName: lastName.trim(),
             email: email.toLowerCase().trim(),
-          })
+          }),
         );
       } catch {}
       track("vsl_optin_submit", { location: "vsl" });
@@ -102,7 +134,9 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
           >
             Yol haritanı birlikte konuşalım →
           </Link>
-          <p className="mt-3 text-sm text-gray-400">Kısa bir başvuru + ücretsiz strateji görüşmesi.</p>
+          <p className="mt-3 text-sm text-gray-400">
+            Kısa bir başvuru + ücretsiz strateji görüşmesi.
+          </p>
         </div>
       </div>
     );
@@ -113,7 +147,11 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
     <>
       <div className="relative overflow-hidden rounded-2xl bg-black shadow-2xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={posterUrl} alt="Video kapağı" className="aspect-video w-full object-cover" />
+        <img
+          src={posterUrl}
+          alt="Video kapağı"
+          className="aspect-video w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#071331]/45 via-[#071331]/10 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center px-5 text-white">
           <button
@@ -122,15 +160,26 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
             className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/30 to-white/10 shadow-2xl shadow-black/25 backdrop-blur-sm transition hover:scale-105 hover:from-white/35 hover:to-white/15"
             aria-label="Videoyu aç"
           >
-            <span className="absolute inset-2 rounded-full border border-white/20" aria-hidden="true" />
-            <svg viewBox="0 0 24 24" className="ml-1 h-10 w-10 fill-white drop-shadow" aria-hidden="true">
+            <span
+              className="absolute inset-2 rounded-full border border-white/20"
+              aria-hidden="true"
+            />
+            <svg
+              viewBox="0 0 24 24"
+              className="ml-1 h-10 w-10 fill-white drop-shadow"
+              aria-hidden="true"
+            >
               <path d="M8.5 5.75v12.5c0 .62.68 1 1.2.67l9.7-6.25a.8.8 0 0 0 0-1.34l-9.7-6.25a.8.8 0 0 0-1.2.67Z" />
             </svg>
           </button>
         </div>
       </div>
       <div className="mt-5 text-center">
-        <button type="button" onClick={openModal} className="btn-primary w-full px-8 py-4 text-base sm:w-auto">
+        <button
+          type="button"
+          onClick={openModal}
+          className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
+        >
           Videoyu aç
         </button>
         <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
@@ -155,11 +204,18 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
               ×
             </button>
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#0d204d]">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-6 w-6 fill-white"
+                aria-hidden="true"
+              >
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
-            <h2 id="vsl-optin-title" className="text-xl font-bold text-[#0d204d] sm:text-2xl">
+            <h2
+              id="vsl-optin-title"
+              className="text-xl font-bold text-[#0d204d] sm:text-2xl"
+            >
               Videoyu hemen açalım
             </h2>
             <p className="mt-2 text-sm text-gray-400">
@@ -168,34 +224,67 @@ export function VslFunnel({ videoId, poster }: { videoId: string; poster?: strin
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
               <input
-                type="text" tabIndex={-1} autoComplete="off" value={website}
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                name="website"
                 onChange={(e) => setWebsite(e.target.value)}
-                style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }}
+                style={{
+                  position: "absolute",
+                  left: "-9999px",
+                  width: 1,
+                  height: 1,
+                }}
                 aria-hidden="true"
               />
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
-                  type="text" placeholder="Adınız" value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                  type="text"
+                  name="firstName"
+                  aria-label="Adınız"
+                  placeholder="Adınız"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  autoComplete="given-name"
+                  required
                   className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm text-[#0d204d] outline-none focus:border-[#0d204d]"
                 />
                 <input
-                  type="text" placeholder="Soyadınız" value={lastName} onChange={(e) => setLastName(e.target.value)}
+                  type="text"
+                  name="lastName"
+                  aria-label="Soyadınız"
+                  placeholder="Soyadınız"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  autoComplete="family-name"
+                  required
                   className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm text-[#0d204d] outline-none focus:border-[#0d204d]"
                 />
               </div>
               <input
-                type="email" placeholder="E-posta adresiniz" value={email} onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                name="email"
+                aria-label="E-posta adresiniz"
+                placeholder="E-posta adresiniz"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
                 className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm text-[#0d204d] outline-none focus:border-[#0d204d]"
               />
               {err && <p className="text-sm text-red-600">{err}</p>}
               <button
-                type="submit" disabled={sending}
+                type="submit"
+                disabled={sending}
                 className="btn-primary w-full px-6 py-3 text-sm disabled:opacity-60"
               >
                 {sending ? "Açılıyor..." : "Videoyu aç"}
               </button>
             </form>
-            <p className="mt-3 text-xs text-gray-400">Bilgileriniz güvende, istediğiniz an çıkabilirsiniz.</p>
+            <p className="mt-3 text-xs text-gray-400">
+              Bilgileriniz güvende, istediğiniz an çıkabilirsiniz.
+            </p>
           </div>
         </div>
       )}

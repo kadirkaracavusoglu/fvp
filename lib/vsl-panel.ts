@@ -79,30 +79,30 @@ export type VslPanelData = {
     optins: number;
     plays: number;
     watch5m: number;
-	    applications: number;
-	    qualifiedApplications: number;
-	    hotApplications: number;
-	    calendarViews: number;
-	    calendarLoaded: number;
-	    calendarExternalClicks: number;
-	    thankyouViews: number;
-	    thankyouVideoClicks: number;
-	    booked: number;
-	    utmCaptured: number;
-	    optinRate: number | null;
-	    playRate: number | null;
-	    watch5Rate: number | null;
-	    applicationRate: number | null;
-	    calendarLoadRate: number | null;
-	    bookedRate: number | null;
-	    utmRate: number | null;
-	  };
+    applications: number;
+    qualifiedApplications: number;
+    hotApplications: number;
+    calendarViews: number;
+    calendarLoaded: number;
+    calendarExternalClicks: number;
+    thankyouViews: number;
+    thankyouVideoClicks: number;
+    booked: number;
+    utmCaptured: number;
+    optinRate: number | null;
+    playRate: number | null;
+    watch5Rate: number | null;
+    applicationRate: number | null;
+    calendarLoadRate: number | null;
+    bookedRate: number | null;
+    utmRate: number | null;
+  };
   funnel: FunnelStep[];
   form: FunnelStep[];
   video: FunnelStep[];
-	  channels: ChannelRow[];
-	  questionBreakdown: AnswerBreakdown[];
-	  recentLeads: RecentLead[];
+  channels: ChannelRow[];
+  questionBreakdown: AnswerBreakdown[];
+  recentLeads: RecentLead[];
   trackingHealth: { label: string; value: string; state: "ok" | "warn" }[];
 };
 
@@ -131,28 +131,53 @@ function startIso(date: string): string {
 function resolveRange(range: PanelRange) {
   const today = trToday();
   if (range === "today") {
-    return { startDate: today, endDate: today, since: startIso(today), until: startIso(addDays(today, 1)) };
+    return {
+      startDate: today,
+      endDate: today,
+      since: startIso(today),
+      until: startIso(addDays(today, 1)),
+    };
   }
   if (range === "yesterday") {
     const y = addDays(today, -1);
-    return { startDate: y, endDate: y, since: startIso(y), until: startIso(today) };
+    return {
+      startDate: y,
+      endDate: y,
+      since: startIso(y),
+      until: startIso(today),
+    };
   }
   if (range === "month") {
     const s = addDays(today, -29);
-    return { startDate: s, endDate: today, since: startIso(s), until: startIso(addDays(today, 1)) };
+    return {
+      startDate: s,
+      endDate: today,
+      since: startIso(s),
+      until: startIso(addDays(today, 1)),
+    };
   }
   if (range === "launch") {
-    return { startDate: LAUNCH_DATE, endDate: today, since: startIso(LAUNCH_DATE), until: startIso(addDays(today, 1)) };
+    return {
+      startDate: LAUNCH_DATE,
+      endDate: today,
+      since: startIso(LAUNCH_DATE),
+      until: startIso(addDays(today, 1)),
+    };
   }
   const s = addDays(today, -6);
-  return { startDate: s, endDate: today, since: startIso(s), until: startIso(addDays(today, 1)) };
+  return {
+    startDate: s,
+    endDate: today,
+    since: startIso(s),
+    until: startIso(addDays(today, 1)),
+  };
 }
 
 async function fetchAll<T extends object>(
   table: "events" | "leads",
   select: string,
   since: string,
-  until: string
+  until: string,
 ): Promise<T[]> {
   if (!supabaseAdmin) return [];
   const all: T[] = [];
@@ -215,17 +240,25 @@ function pct(part: number, whole: number): number | null {
 function channelKey(attr?: Record<string, string> | null): string {
   const source = (attr?.utm_source || "").toLowerCase();
   const medium = (attr?.utm_medium || "").toLowerCase();
-  if (attr?.fbclid || /meta|facebook|fb|instagram|ig/.test(source)) return "meta";
+  if (attr?.fbclid || /meta|facebook|fb|instagram|ig/.test(source))
+    return "meta";
   if (attr?.gclid || /google|youtube|yt/.test(source)) return "google";
   if (/tiktok|tt/.test(source)) return "tiktok";
-  if (/email|beehiiv|bulten|newsletter/.test(source) || /email/.test(medium)) return "email";
+  if (/email|beehiiv|bulten|newsletter/.test(source) || /email/.test(medium))
+    return "email";
   if (/instagram|ig/.test(source)) return "instagram";
   return "organik";
 }
 
 function hasCampaign(attr?: Record<string, string> | null): boolean {
   if (!attr) return false;
-  return Boolean(attr.utm_source || attr.utm_campaign || attr.utm_content || attr.fbclid || attr.gclid);
+  return Boolean(
+    attr.utm_source ||
+    attr.utm_campaign ||
+    attr.utm_content ||
+    attr.fbclid ||
+    attr.gclid,
+  );
 }
 
 const CHANNEL_LABELS: Record<string, string> = {
@@ -237,7 +270,14 @@ const CHANNEL_LABELS: Record<string, string> = {
   organik: "Organik / direkt",
 };
 
-function bump(map: Map<string, ChannelRow>, key: string, field: keyof Pick<ChannelRow, "visits" | "optins" | "applications" | "calendarViews" | "booked">) {
+function bump(
+  map: Map<string, ChannelRow>,
+  key: string,
+  field: keyof Pick<
+    ChannelRow,
+    "visits" | "optins" | "applications" | "calendarViews" | "booked"
+  >,
+) {
   const row = map.get(key) || {
     key,
     label: CHANNEL_LABELS[key] || key,
@@ -263,7 +303,8 @@ function instagram(row: LeadRow): string {
 function textAnswer(row: LeadRow, key: string): string {
   const val = row.cevaplar?.[key];
   if (typeof val === "string") return val;
-  if (Array.isArray(val)) return val.filter((v) => typeof v === "string").join(", ");
+  if (Array.isArray(val))
+    return val.filter((v) => typeof v === "string").join(", ");
   return "";
 }
 
@@ -293,27 +334,33 @@ function uniqueLeadRows(rows: LeadRow[], formType: string): LeadRow[] {
 
 function answerBreakdown(rows: LeadRow[]): AnswerBreakdown[] {
   const keys = ["asama", "gelir", "darbogazlar", "yatirim", "karar_hizi"];
-  return keys.map((key) => {
-    const question = BASVURU_SORULARI.find((s) => s.key === key);
-    const counts = new Map<string, number>();
-    for (const row of rows) {
-      const value = row.cevaplar?.[key];
-      const values = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
-      for (const item of values) {
-        if (typeof item !== "string" || !item.trim()) continue;
-        counts.set(item, (counts.get(item) || 0) + 1);
+  return keys
+    .map((key) => {
+      const question = BASVURU_SORULARI.find((s) => s.key === key);
+      const counts = new Map<string, number>();
+      for (const row of rows) {
+        const value = row.cevaplar?.[key];
+        const values = Array.isArray(value)
+          ? value
+          : typeof value === "string"
+            ? [value]
+            : [];
+        for (const item of values) {
+          if (typeof item !== "string" || !item.trim()) continue;
+          counts.set(item, (counts.get(item) || 0) + 1);
+        }
       }
-    }
-    return {
-      key,
-      label: question?.soru || key,
-      total: [...counts.values()].reduce((a, b) => a + b, 0),
-      answers: [...counts.entries()]
-        .map(([label, count]) => ({ label, count }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 5),
-    };
-  }).filter((row) => row.total > 0);
+      return {
+        key,
+        label: question?.soru || key,
+        total: [...counts.values()].reduce((a, b) => a + b, 0),
+        answers: [...counts.entries()]
+          .map(([label, count]) => ({ label, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 5),
+      };
+    })
+    .filter((row) => row.total > 0);
 }
 
 function formLabel(type?: string | null): string {
@@ -322,7 +369,9 @@ function formLabel(type?: string | null): string {
   return "Opt-in";
 }
 
-export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> {
+export async function getVslPanelData(
+  range: PanelRange,
+): Promise<VslPanelData> {
   const r = resolveRange(range);
   const base: VslPanelData = {
     ok: false,
@@ -334,32 +383,32 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       visits: 0,
       popupOpens: 0,
       optins: 0,
-	      plays: 0,
-	      watch5m: 0,
-	      applications: 0,
-	      qualifiedApplications: 0,
-	      hotApplications: 0,
-	      calendarViews: 0,
-	      calendarLoaded: 0,
-	      calendarExternalClicks: 0,
-	      thankyouViews: 0,
-	      thankyouVideoClicks: 0,
-	      booked: 0,
-	      utmCaptured: 0,
-	      optinRate: null,
-	      playRate: null,
-	      watch5Rate: null,
-	      applicationRate: null,
-	      calendarLoadRate: null,
-	      bookedRate: null,
-	      utmRate: null,
-	    },
+      plays: 0,
+      watch5m: 0,
+      applications: 0,
+      qualifiedApplications: 0,
+      hotApplications: 0,
+      calendarViews: 0,
+      calendarLoaded: 0,
+      calendarExternalClicks: 0,
+      thankyouViews: 0,
+      thankyouVideoClicks: 0,
+      booked: 0,
+      utmCaptured: 0,
+      optinRate: null,
+      playRate: null,
+      watch5Rate: null,
+      applicationRate: null,
+      calendarLoadRate: null,
+      bookedRate: null,
+      utmRate: null,
+    },
     funnel: [],
     form: [],
-	    video: [],
-	    channels: [],
-	    questionBreakdown: [],
-	    recentLeads: [],
+    video: [],
+    channels: [],
+    questionBreakdown: [],
+    recentLeads: [],
     trackingHealth: [],
   };
 
@@ -367,8 +416,18 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
 
   try {
     const [events, leads] = await Promise.all([
-      fetchAll<EventRow>("events", "name,path,session_id,attribution,meta,created_at", r.since, r.until),
-      fetchAll<LeadRow>("leads", "first_name,last_name,email,phone,form_type,cevaplar,attribution,created_at", r.since, r.until),
+      fetchAll<EventRow>(
+        "events",
+        "name,path,session_id,attribution,meta,created_at",
+        r.since,
+        r.until,
+      ),
+      fetchAll<LeadRow>(
+        "leads",
+        "first_name,last_name,email,phone,form_type,cevaplar,attribution,created_at",
+        r.since,
+        r.until,
+      ),
     ]);
 
     const visits = uniqueBy(events, "vsl_optin_view");
@@ -380,95 +439,245 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
     const watch5m = uniqueAny(events, ["vsl_min5", "vsl_sn300"]);
     const watch10m = uniqueAny(events, ["vsl_min10", "vsl_sn600"]);
     const watch15m = uniqueAny(events, ["vsl_min15", "vsl_sn900"]);
-	    const watch50 = uniqueBy(events, "vsl_50");
-	    const cta = uniqueBy(events, "cta_click");
-	    const formStart = uniqueBy(events, "vsl_basvuru_start");
-	    const formS1 = uniqueBy(events, "vsl_basvuru_s1");
-	    const formBottleneckStep = BASVURU_SORULARI.findIndex((s) => s.key === "darbogazlar") + 1;
-	    const formInvestmentStep = BASVURU_SORULARI.findIndex((s) => s.key === "yatirim") + 1;
-	    const contactStep = BASVURU_SORULARI.length + 1;
-	    const formBottleneck = formBottleneckStep > 0 ? uniqueBy(events, `vsl_basvuru_s${formBottleneckStep}`) : 0;
-	    const formInvestment = formInvestmentStep > 0 ? uniqueBy(events, `vsl_basvuru_s${formInvestmentStep}`) : 0;
-	    const formContact = uniqueAny(events, ["vsl_basvuru_contact_view", `vsl_basvuru_s${contactStep}`]);
-	    const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
-	    const calendarViews = uniqueBy(events, "vsl_calendar_view");
-	    const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
-	    const calendarExternalClicks = uniqueBy(events, "vsl_calendar_external_click");
-	    const thankyouViews = uniqueBy(events, "vsl_thankyou_view");
-	    const thankyouVideoClicks = uniqueBy(events, "vsl_thankyou_video_click");
-	    const bookedEvent = uniqueBy(events, "vsl_calendar_booked");
+    const watch50 = uniqueBy(events, "vsl_50");
+    const cta = uniqueBy(events, "cta_click");
+    const formStart = uniqueBy(events, "vsl_basvuru_start");
+    const formS1 = uniqueBy(events, "vsl_basvuru_s1");
+    const formBottleneckStep =
+      BASVURU_SORULARI.findIndex((s) => s.key === "darbogazlar") + 1;
+    const formInvestmentStep =
+      BASVURU_SORULARI.findIndex((s) => s.key === "yatirim") + 1;
+    const contactStep = BASVURU_SORULARI.length + 1;
+    const formBottleneck =
+      formBottleneckStep > 0
+        ? uniqueBy(events, `vsl_basvuru_s${formBottleneckStep}`)
+        : 0;
+    const formInvestment =
+      formInvestmentStep > 0
+        ? uniqueBy(events, `vsl_basvuru_s${formInvestmentStep}`)
+        : 0;
+    const formContact = uniqueAny(events, [
+      "vsl_basvuru_contact_view",
+      `vsl_basvuru_s${contactStep}`,
+    ]);
+    const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
+    const calendarViews = uniqueBy(events, "vsl_calendar_view");
+    const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
+    const calendarExternalClicks = uniqueBy(
+      events,
+      "vsl_calendar_external_click",
+    );
+    const thankyouViews = uniqueBy(events, "vsl_thankyou_view");
+    const thankyouVideoClicks = uniqueBy(events, "vsl_thankyou_video_click");
+    const bookedEvent = uniqueBy(events, "vsl_calendar_booked");
 
-	    const optins = uniqueLeadCount(leads, "vsl_optin");
-	    const applicationRows = uniqueLeadRows(leads, "vsl_basvuru");
-	    const applications = applicationRows.length;
-	    const booked = uniqueLeadCount(leads, "vsl_randevu") || bookedEvent;
-	    const qualifiedApplications = applicationRows.filter((row) => {
-	      const score = leadScore(row) || 0;
-	      return score >= 5 || /Yüksek|Orta/.test(leadSegment(row));
-	    }).length;
-	    const hotApplications = applicationRows.filter((row) => {
-	      const score = leadScore(row) || 0;
-	      return score >= 8 || /Yüksek/.test(leadSegment(row));
-	    }).length;
-	    const utmCaptured = uniqueLeadRows(leads, "vsl_optin")
-	      .concat(applicationRows)
-	      .filter((row, index, arr) => {
-	        const email = (row.email || "").toLowerCase().trim();
-	        return hasCampaign(row.attribution) && arr.findIndex((r) => (r.email || "").toLowerCase().trim() === email) === index;
-	      }).length;
+    const optins = uniqueLeadCount(leads, "vsl_optin");
+    const applicationRows = uniqueLeadRows(leads, "vsl_basvuru");
+    const applications = applicationRows.length;
+    const booked = uniqueLeadCount(leads, "vsl_randevu") || bookedEvent;
+    const qualifiedApplications = applicationRows.filter((row) => {
+      const score = leadScore(row) || 0;
+      return score >= 5 || /Yüksek|Orta/.test(leadSegment(row));
+    }).length;
+    const hotApplications = applicationRows.filter((row) => {
+      const score = leadScore(row) || 0;
+      return score >= 8 || /Yüksek/.test(leadSegment(row));
+    }).length;
+    const utmCaptured = uniqueLeadRows(leads, "vsl_optin")
+      .concat(applicationRows)
+      .filter((row, index, arr) => {
+        const email = (row.email || "").toLowerCase().trim();
+        return (
+          hasCampaign(row.attribution) &&
+          arr.findIndex(
+            (r) => (r.email || "").toLowerCase().trim() === email,
+          ) === index
+        );
+      }).length;
 
     const funnel: FunnelStep[] = [
       { key: "visit", label: "VSL sayfasını gördü", count: visits, pct: 100 },
-      { key: "popup", label: "Video kilidini açmak istedi", count: popupOpens, pct: pct(popupOpens, visits), pctPrev: pct(popupOpens, visits) },
-      { key: "optin", label: "Opt-in bıraktı", count: optins, pct: pct(optins, visits), pctPrev: pct(optins, popupOpens) },
-      { key: "play", label: "Videoyu oynattı", count: plays, pct: pct(plays, visits), pctPrev: pct(plays, optins) },
-      { key: "watch5", label: "5 dakika izledi", count: watch5m, pct: pct(watch5m, visits), pctPrev: pct(watch5m, plays) },
-      { key: "cta", label: "Başvuru CTA tıkladı", count: cta, pct: pct(cta, visits), pctPrev: pct(cta, watch5m) },
-      { key: "apply", label: "Başvuruyu tamamladı", count: applications, pct: pct(applications, visits), pctPrev: pct(applications, cta || formStart) },
-      { key: "calendar", label: "Takvimi gördü", count: calendarViews, pct: pct(calendarViews, visits), pctPrev: pct(calendarViews, applications) },
-      { key: "thankyou", label: "Teşekkür sayfasını gördü", count: thankyouViews, pct: pct(thankyouViews, visits), pctPrev: pct(thankyouViews, calendarViews) },
-      { key: "booked", label: "Randevu aldı", count: booked, pct: pct(booked, visits), pctPrev: pct(booked, calendarViews) },
+      {
+        key: "popup",
+        label: "Video kilidini açmak istedi",
+        count: popupOpens,
+        pct: pct(popupOpens, visits),
+        pctPrev: pct(popupOpens, visits),
+      },
+      {
+        key: "optin",
+        label: "Opt-in bıraktı",
+        count: optins,
+        pct: pct(optins, visits),
+        pctPrev: pct(optins, popupOpens),
+      },
+      {
+        key: "play",
+        label: "Videoyu oynattı",
+        count: plays,
+        pct: pct(plays, visits),
+        pctPrev: pct(plays, optins),
+      },
+      {
+        key: "watch5",
+        label: "5 dakika izledi",
+        count: watch5m,
+        pct: pct(watch5m, visits),
+        pctPrev: pct(watch5m, plays),
+      },
+      {
+        key: "cta",
+        label: "Başvuru CTA tıkladı",
+        count: cta,
+        pct: pct(cta, visits),
+        pctPrev: pct(cta, watch5m),
+      },
+      {
+        key: "apply",
+        label: "Başvuruyu tamamladı",
+        count: applications,
+        pct: pct(applications, visits),
+        pctPrev: pct(applications, cta || formStart),
+      },
+      {
+        key: "calendar",
+        label: "Takvimi gördü",
+        count: calendarViews,
+        pct: pct(calendarViews, visits),
+        pctPrev: pct(calendarViews, applications),
+      },
+      {
+        key: "thankyou",
+        label: "Teşekkür sayfasını gördü",
+        count: thankyouViews,
+        pct: pct(thankyouViews, visits),
+        pctPrev: pct(thankyouViews, calendarViews),
+      },
+      {
+        key: "booked",
+        label: "Randevu aldı",
+        count: booked,
+        pct: pct(booked, visits),
+        pctPrev: pct(booked, calendarViews),
+      },
     ];
 
-	    const form: FunnelStep[] = [
-	      { key: "start", label: "Forma girdi", count: formStart, pct: 100 },
-	      { key: "s1", label: "İlk soruyu gördü", count: formS1, pct: pct(formS1, formStart), pctPrev: pct(formS1, formStart) },
-	      { key: "bottleneck", label: "Darboğaz sorusuna geldi", count: formBottleneck, pct: pct(formBottleneck, formStart), pctPrev: pct(formBottleneck, formS1) },
-	      { key: "investment", label: "Yatırım sorusuna geldi", count: formInvestment, pct: pct(formInvestment, formStart), pctPrev: pct(formInvestment, formBottleneck) },
-	      { key: "contact", label: "İletişim ekranına geldi", count: formContact, pct: pct(formContact, formStart), pctPrev: pct(formContact, formInvestment) },
-	      { key: "submit", label: "Başvuruyu gönderdi", count: applications || formSubmitEvent, pct: pct(applications || formSubmitEvent, formStart), pctPrev: pct(applications || formSubmitEvent, formContact) },
-	    ];
+    const form: FunnelStep[] = [
+      { key: "start", label: "Forma girdi", count: formStart, pct: 100 },
+      {
+        key: "s1",
+        label: "İlk soruyu gördü",
+        count: formS1,
+        pct: pct(formS1, formStart),
+        pctPrev: pct(formS1, formStart),
+      },
+      {
+        key: "bottleneck",
+        label: "Darboğaz sorusuna geldi",
+        count: formBottleneck,
+        pct: pct(formBottleneck, formStart),
+        pctPrev: pct(formBottleneck, formS1),
+      },
+      {
+        key: "investment",
+        label: "Yatırım sorusuna geldi",
+        count: formInvestment,
+        pct: pct(formInvestment, formStart),
+        pctPrev: pct(formInvestment, formBottleneck),
+      },
+      {
+        key: "contact",
+        label: "İletişim ekranına geldi",
+        count: formContact,
+        pct: pct(formContact, formStart),
+        pctPrev: pct(formContact, formInvestment),
+      },
+      {
+        key: "submit",
+        label: "Başvuruyu gönderdi",
+        count: applications || formSubmitEvent,
+        pct: pct(applications || formSubmitEvent, formStart),
+        pctPrev: pct(applications || formSubmitEvent, formContact),
+      },
+    ];
 
     const video: FunnelStep[] = [
-      { key: "play", label: "Oynattı", count: plays, pct: pct(plays, optins || visits) },
-      { key: "unmute", label: "Sesi açtı", count: unmute, pct: pct(unmute, plays), pctPrev: pct(unmute, plays) },
-      { key: "min1", label: "1 dakika", count: watch1m, pct: pct(watch1m, plays), pctPrev: pct(watch1m, unmute || plays) },
-      { key: "min3", label: "3 dakika", count: watch3m, pct: pct(watch3m, plays), pctPrev: pct(watch3m, watch1m) },
-      { key: "min5", label: "5 dakika", count: watch5m, pct: pct(watch5m, plays), pctPrev: pct(watch5m, watch3m) },
-      { key: "min10", label: "10 dakika", count: watch10m, pct: pct(watch10m, plays), pctPrev: pct(watch10m, watch5m) },
-      { key: "min15", label: "15 dakika", count: watch15m, pct: pct(watch15m, plays), pctPrev: pct(watch15m, watch10m) },
-      { key: "half", label: "%50", count: watch50, pct: pct(watch50, plays), pctPrev: pct(watch50, watch5m) },
+      {
+        key: "play",
+        label: "Oynattı",
+        count: plays,
+        pct: pct(plays, optins || visits),
+      },
+      {
+        key: "unmute",
+        label: "Sesi açtı",
+        count: unmute,
+        pct: pct(unmute, plays),
+        pctPrev: pct(unmute, plays),
+      },
+      {
+        key: "min1",
+        label: "1 dakika",
+        count: watch1m,
+        pct: pct(watch1m, plays),
+        pctPrev: pct(watch1m, unmute || plays),
+      },
+      {
+        key: "min3",
+        label: "3 dakika",
+        count: watch3m,
+        pct: pct(watch3m, plays),
+        pctPrev: pct(watch3m, watch1m),
+      },
+      {
+        key: "min5",
+        label: "5 dakika",
+        count: watch5m,
+        pct: pct(watch5m, plays),
+        pctPrev: pct(watch5m, watch3m),
+      },
+      {
+        key: "min10",
+        label: "10 dakika",
+        count: watch10m,
+        pct: pct(watch10m, plays),
+        pctPrev: pct(watch10m, watch5m),
+      },
+      {
+        key: "min15",
+        label: "15 dakika",
+        count: watch15m,
+        pct: pct(watch15m, plays),
+        pctPrev: pct(watch15m, watch10m),
+      },
+      {
+        key: "half",
+        label: "%50",
+        count: watch50,
+        pct: pct(watch50, plays),
+        pctPrev: pct(watch50, watch5m),
+      },
     ];
 
     const channelMap = new Map<string, ChannelRow>();
     const seenVisits = new Set<string>();
-	    for (const event of events) {
-	      if (event.name !== "vsl_optin_view") continue;
-	      const id = event.session_id || `${event.created_at}-${event.path}`;
-	      if (seenVisits.has(id)) continue;
-	      seenVisits.add(id);
-	      bump(channelMap, channelKey(event.attribution), "visits");
-	    }
-	    const seenCalendar = new Set<string>();
-	    for (const event of events) {
-	      if (event.name !== "vsl_calendar_view") continue;
-	      const id = event.session_id || `${event.created_at}-${event.path}`;
-	      if (seenCalendar.has(id)) continue;
-	      seenCalendar.add(id);
-	      bump(channelMap, channelKey(event.attribution), "calendarViews");
-	    }
-	    const seenLead = new Set<string>();
-	    for (const lead of leads) {
+    for (const event of events) {
+      if (event.name !== "vsl_optin_view") continue;
+      const id = event.session_id || `${event.created_at}-${event.path}`;
+      if (seenVisits.has(id)) continue;
+      seenVisits.add(id);
+      bump(channelMap, channelKey(event.attribution), "visits");
+    }
+    const seenCalendar = new Set<string>();
+    for (const event of events) {
+      if (event.name !== "vsl_calendar_view") continue;
+      const id = event.session_id || `${event.created_at}-${event.path}`;
+      if (seenCalendar.has(id)) continue;
+      seenCalendar.add(id);
+      bump(channelMap, channelKey(event.attribution), "calendarViews");
+    }
+    const seenLead = new Set<string>();
+    for (const lead of leads) {
       const type = lead.form_type || "";
       if (!["vsl_optin", "vsl_basvuru", "vsl_randevu"].includes(type)) continue;
       const email = (lead.email || "").toLowerCase().trim();
@@ -481,38 +690,78 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
       if (type === "vsl_randevu") bump(channelMap, key, "booked");
     }
 
-	    const recentLeads = leads
-	      .filter((l) => l.form_type === "vsl_basvuru" || l.form_type === "vsl_randevu")
-	      .sort((a, b) => b.created_at.localeCompare(a.created_at))
-	      .slice(0, 20)
-	      .map((l) => ({
-	        name: leadName(l),
-	        email: l.email || "",
-	        phone: l.phone || "",
-	        instagram: instagram(l),
-	        businessName: textAnswer(l, "businessName"),
-	        formType: formLabel(l.form_type),
-	        channel: CHANNEL_LABELS[channelKey(l.attribution)] || channelKey(l.attribution),
-	        score: leadScore(l),
-	        segment: leadSegment(l),
-	        goal: textAnswer(l, "hedef_12_ay"),
-	        bottlenecks: textAnswer(l, "darbogazlar"),
-	        utmSource: l.attribution?.utm_source || "",
-	        utmCampaign: l.attribution?.utm_campaign || "",
-	        utmContent: l.attribution?.utm_content || "",
-	        createdAt: l.created_at,
-	      }));
+    const recentLeads = leads
+      .filter(
+        (l) => l.form_type === "vsl_basvuru" || l.form_type === "vsl_randevu",
+      )
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .slice(0, 20)
+      .map((l) => ({
+        name: leadName(l),
+        email: l.email || "",
+        phone: l.phone || "",
+        instagram: instagram(l),
+        businessName: textAnswer(l, "businessName"),
+        formType: formLabel(l.form_type),
+        channel:
+          CHANNEL_LABELS[channelKey(l.attribution)] ||
+          channelKey(l.attribution),
+        score: leadScore(l),
+        segment: leadSegment(l),
+        goal: textAnswer(l, "hedef_12_ay"),
+        bottlenecks: textAnswer(l, "darbogazlar"),
+        utmSource: l.attribution?.utm_source || "",
+        utmCampaign: l.attribution?.utm_campaign || "",
+        utmContent: l.attribution?.utm_content || "",
+        createdAt: l.created_at,
+      }));
 
-	    const trackingHealth = [
-	      { label: "Event akışı", value: `${events.length} olay`, state: events.length ? "ok" : "warn" },
-	      { label: "Lead akışı", value: `${leads.length} kayıt`, state: leads.length ? "ok" : "warn" },
-	      { label: "Opt-in → Supabase", value: `${optins} kişi`, state: optins ? "ok" : "warn" },
-	      { label: "Başvuru → Supabase", value: `${applications} kişi`, state: applications ? "ok" : "warn" },
-	      { label: "UTM yakalama", value: `${utmCaptured} kayıt`, state: utmCaptured ? "ok" : "warn" },
-	      { label: "Form iletişim adımı", value: `${formContact} kişi`, state: formContact ? "ok" : "warn" },
-	      { label: "Takvim embed", value: `${calendarLoaded} yükleme`, state: calendarLoaded ? "ok" : "warn" },
-	      { label: "Teşekkür sayfası", value: `${thankyouViews} görüntüleme`, state: thankyouViews ? "ok" : "warn" },
-	      { label: "GHL randevu webhook", value: booked ? `${booked} randevu` : "henüz sinyal yok", state: booked ? "ok" : "warn" },
+    const trackingHealth = [
+      {
+        label: "Event akışı",
+        value: `${events.length} olay`,
+        state: events.length ? "ok" : "warn",
+      },
+      {
+        label: "Lead akışı",
+        value: `${leads.length} kayıt`,
+        state: leads.length ? "ok" : "warn",
+      },
+      {
+        label: "Opt-in → Supabase",
+        value: `${optins} kişi`,
+        state: optins ? "ok" : "warn",
+      },
+      {
+        label: "Başvuru → Supabase",
+        value: `${applications} kişi`,
+        state: applications ? "ok" : "warn",
+      },
+      {
+        label: "UTM yakalama",
+        value: `${utmCaptured} kayıt`,
+        state: utmCaptured ? "ok" : "warn",
+      },
+      {
+        label: "Form iletişim adımı",
+        value: `${formContact} kişi`,
+        state: formContact ? "ok" : "warn",
+      },
+      {
+        label: "Takvim embed",
+        value: `${calendarLoaded} yükleme`,
+        state: calendarLoaded ? "ok" : "warn",
+      },
+      {
+        label: "Teşekkür sayfası",
+        value: `${thankyouViews} görüntüleme`,
+        state: thankyouViews ? "ok" : "warn",
+      },
+      {
+        label: "GHL randevu webhook",
+        value: booked ? `${booked} randevu` : "henüz sinyal yok",
+        state: booked ? "ok" : "warn",
+      },
     ] satisfies VslPanelData["trackingHealth"];
 
     return {
@@ -522,36 +771,44 @@ export async function getVslPanelData(range: PanelRange): Promise<VslPanelData> 
         visits,
         popupOpens,
         optins,
-	        plays,
-	        watch5m,
-	        applications,
-	        qualifiedApplications,
-	        hotApplications,
-	        calendarViews,
-	        calendarLoaded,
-	        calendarExternalClicks,
-	        thankyouViews,
-	        thankyouVideoClicks,
-	        booked,
-	        utmCaptured,
-	        optinRate: pct(optins, visits),
-	        playRate: pct(plays, optins || visits),
-	        watch5Rate: pct(watch5m, plays),
-	        applicationRate: pct(applications, optins),
-	        calendarLoadRate: pct(calendarLoaded, calendarViews),
-	        bookedRate: pct(booked, applications),
-	        utmRate: pct(utmCaptured, optins + applications),
-	      },
-	      funnel,
-	      form,
-	      video,
-	      channels: [...channelMap.values()].sort((a, b) => b.applications - a.applications || b.optins - a.optins || b.visits - a.visits),
-	      questionBreakdown: answerBreakdown(applicationRows),
-	      recentLeads,
-	      trackingHealth,
-	    };
+        plays,
+        watch5m,
+        applications,
+        qualifiedApplications,
+        hotApplications,
+        calendarViews,
+        calendarLoaded,
+        calendarExternalClicks,
+        thankyouViews,
+        thankyouVideoClicks,
+        booked,
+        utmCaptured,
+        optinRate: pct(optins, visits),
+        playRate: pct(plays, optins || visits),
+        watch5Rate: pct(watch5m, plays),
+        applicationRate: pct(applications, optins),
+        calendarLoadRate: pct(calendarLoaded, calendarViews),
+        bookedRate: pct(booked, applications),
+        utmRate: pct(utmCaptured, optins + applications),
+      },
+      funnel,
+      form,
+      video,
+      channels: [...channelMap.values()].sort(
+        (a, b) =>
+          b.applications - a.applications ||
+          b.optins - a.optins ||
+          b.visits - a.visits,
+      ),
+      questionBreakdown: answerBreakdown(applicationRows),
+      recentLeads,
+      trackingHealth,
+    };
   } catch (e) {
-    return { ...base, error: e instanceof Error ? e.message : "Panel verisi okunamadı." };
+    return {
+      ...base,
+      error: e instanceof Error ? e.message : "Panel verisi okunamadı.",
+    };
   }
 }
 
