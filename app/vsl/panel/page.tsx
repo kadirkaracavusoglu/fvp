@@ -15,13 +15,14 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-function panelKey() {
-  return process.env.FVP_PANEL_KEY || process.env.PANEL_KEY || "";
+function panelKeys() {
+  return [process.env.FVP_PANEL_KEY, process.env.PANEL_KEY]
+    .map((key) => key?.trim())
+    .filter((key): key is string => Boolean(key));
 }
 
 function authed(cookieVal?: string): boolean {
-  const expected = panelKey();
-  return Boolean(expected) && cookieVal === expected;
+  return Boolean(cookieVal) && panelKeys().includes(cookieVal);
 }
 
 function isRange(value?: string): value is PanelRange {
@@ -38,7 +39,7 @@ export default async function VslPanelPage({
   const isAuthed = authed(jar.get("fvp_panel_auth")?.value);
 
   if (!isAuthed) {
-    const keyMissing = !panelKey();
+    const keyMissing = !panelKeys().length;
     return (
       <div className="glow-bg flex min-h-screen items-center justify-center px-5">
         <div className="w-full max-w-sm rounded-2xl border border-[#e6e8ea] bg-white p-6 shadow-xl">

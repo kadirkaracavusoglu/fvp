@@ -193,6 +193,19 @@ for (const field of [
   );
 }
 
+for (const file of ["app/vsl/panel/page.tsx", "app/vsl/panel/actions.ts"]) {
+  assertIncludes(
+    file,
+    "process.env.FVP_PANEL_KEY, process.env.PANEL_KEY",
+    `${file} FVP_PANEL_KEY ve PANEL_KEY anahtarlarını beraber kabul etmeli`,
+  );
+  assertIncludes(
+    file,
+    ".trim()",
+    `${file} panel anahtarını boşluklara karşı normalize etmeli`,
+  );
+}
+
 assertIncludes(
   "lib/tracking.ts",
   "captureAttribution();",

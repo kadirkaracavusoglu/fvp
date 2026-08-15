@@ -3,17 +3,19 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-function panelKey() {
-  return process.env.FVP_PANEL_KEY || process.env.PANEL_KEY || "";
+function panelKeys() {
+  return [process.env.FVP_PANEL_KEY, process.env.PANEL_KEY]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value));
 }
 
 export async function login(formData: FormData) {
-  const key = String(formData.get("key") || "");
-  const expected = panelKey();
-  if (!expected || key !== expected) redirect("/vsl/panel?e=1");
+  const key = String(formData.get("key") || "").trim();
+  const keys = panelKeys();
+  if (!keys.length || !keys.includes(key)) redirect("/vsl/panel?e=1");
 
   const jar = await cookies();
-  jar.set("fvp_panel_auth", expected, {
+  jar.set("fvp_panel_auth", key, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
