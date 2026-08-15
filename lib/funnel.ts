@@ -4,10 +4,12 @@
 export const FUNNEL = {
   // GHL "Online Koçluk Strateji Görüşmesi" — hazır, quiz funnel'ında da bu kullanılıyor
   calendarUrl: "https://link.fitsistem.co/widget/booking/SSw6HZHR3j9veTWH8xTp",
-  // VSL lead'leri GHL'e ARTIK doğrudan API ile yazılır (lib/ghl-contact.ts, custom
-  // field id'leriyle). Quiz webhook'u KULLANILMAZ (yanlış workflow/e-posta tetikler).
-  // İstenirse ek bir VSL webhook'u env ile açılabilir; default kapalı.
-  ghlWebhook: process.env.GHL_VSL_WEBHOOK || "",
+  // VSL'ye ÖZEL GHL webhook'u (Kadir, 15 Ağu) — kendi VSL workflow'unu tetikler
+  // (contact + otomasyon/e-posta/pipeline). Custom field'lar ayrıca doğrudan upsert
+  // ile de doldurulur (lib/ghl-contact.ts). URL gizli değil; env ile override edilebilir.
+  ghlWebhook:
+    process.env.GHL_VSL_WEBHOOK ||
+    "https://services.leadconnectorhq.com/hooks/ui4C7FNVHfgWeZk9DQpB/webhook-trigger/8d9d82de-d562-4c8c-ba39-49e224b4ebcd",
 } as const;
 
 export const VSL_OPTIN_CONTACT_KEY = "fvp_vsl_contact";
