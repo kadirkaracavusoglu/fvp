@@ -59,6 +59,11 @@ assertIncludes(
 );
 assertIncludes(
   "app/vsl/randevu/page.tsx",
+  "Takvimi yeni sekmede aç",
+  "Randevu sayfasında GHL domain fallback CTA'sı görünmeli",
+);
+assertIncludes(
+  "app/vsl/randevu/page.tsx",
   'scrolling="yes"',
   "Randevu iframe'i saat seçimi sonrası scroll kilitlememeli",
 );

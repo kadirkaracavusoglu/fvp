@@ -25,6 +25,11 @@ const CALENDAR_UTM_FIELDS = [
 export default function VslRandevuPage() {
   const [calendarUrl, setCalendarUrl] = useState<string>(FUNNEL.calendarUrl);
 
+  const handleCalendarExternalClick = () => {
+    track("vsl_calendar_external_click", { location: "vsl" });
+    trackServer("vsl_calendar_external_click");
+  };
+
   useEffect(() => {
     captureAttribution();
     const attr = getAttribution();
@@ -56,6 +61,15 @@ export default function VslRandevuPage() {
             Başvurunu aldık. Uygun zamanı seç, görüşme detayları e-posta ile
             gelsin.
           </p>
+          <a
+            href={calendarUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-primary mt-5 inline-block px-8 py-4 text-base"
+            onClick={handleCalendarExternalClick}
+          >
+            Takvimi yeni sekmede aç
+          </a>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-[#e6e8ea] bg-white shadow-xl">
@@ -85,10 +99,7 @@ export default function VslRandevuPage() {
             target="_blank"
             rel="noreferrer"
             className="font-semibold text-[#0d204d] underline underline-offset-4"
-            onClick={() => {
-              track("vsl_calendar_external_click", { location: "vsl" });
-              trackServer("vsl_calendar_external_click");
-            }}
+            onClick={handleCalendarExternalClick}
           >
             buradan yeni sekmede aç
           </a>
