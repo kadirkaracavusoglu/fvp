@@ -1,14 +1,11 @@
 import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
-import { VslFunnel } from "@/components/lp/VslFunnel";
+import { VslWatch } from "@/components/lp/VslWatch";
+import { VSL_VIDEO } from "@/lib/funnel";
 
-// ⚙️ Konumlandırma/CTA Kadir tarafından yönlendirilecek. Video, başlık ve
-// alttaki çağrı tek yerden değiştirilir. Görünüm: sitenin açık teması (native).
-const VSL = {
-  videoId: "DwMVqyS20Bo", // taslak: "10 ayda 9M TL" vaka videosu (26:57)
-  headline: "Bir fitness koçunun online koçluk işini 10 ayda nasıl 9.000.000 TL'ye büyüttük?",
-  sub: "Şansla değil, sistemle. Adım adım, gerçek rakamlarla anlatıyorum.",
-};
+// VSL İZLEME sayfası — opt-in SONRASI. Kilitli değil; guard opt-in'siz gireni
+// /vsl/optin'e yollar. Reklam /vsl/optin'e gelir, form dolunca buraya yönlenir.
+// Görünüm: sitenin açık teması (native, chrome yok).
 
 export default function VslPage() {
   return (
@@ -23,19 +20,19 @@ export default function VslPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-              {VSL.headline}
+              {VSL_VIDEO.headline}
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">{VSL.sub}</p>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">{VSL_VIDEO.sub}</p>
           </Reveal>
         </div>
       </section>
 
-      {/* Opt-in kapısı → video → CTA */}
+      {/* Video + 5 dk sonra CTA (guard içeride) */}
       <section className="mx-auto max-w-4xl px-5 pb-16">
         <Reveal delay={0.1}>
-          <VslFunnel videoId={VSL.videoId} />
+          <VslWatch videoId={VSL_VIDEO.videoId} />
         </Reveal>
       </section>
     </>

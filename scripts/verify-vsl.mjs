@@ -52,16 +52,7 @@ for (const field of [
   );
 }
 
-assertIncludes(
-  "app/vsl/randevu/page.tsx",
-  'href="/vsl/tesekkurler"',
-  "Randevu sonrası teşekkür sayfasına geçiş olmalı",
-);
-assertIncludes(
-  "app/vsl/randevu/page.tsx",
-  "Takvimi yeni sekmede aç",
-  "Randevu sayfasında GHL domain fallback CTA'sı görünmeli",
-);
+// Randevu → teşekkür geçişi artık GHL otomatik yönlendirmesiyle (manuel link yok).
 assertIncludes(
   "app/vsl/randevu/page.tsx",
   'scrolling="yes"',
@@ -127,37 +118,23 @@ for (const field of [
   );
 }
 
+// Opt-in AYRI sayfa (/vsl/optin) → form + /vsl'e yönlendirme.
 for (const field of ['name="firstName"', 'name="lastName"', 'name="email"']) {
   assertIncludes(
-    "components/lp/VslFunnel.tsx",
+    "app/vsl/optin/page.tsx",
     field,
     `Opt-in formu ${field} alanını taşımalı`,
   );
 }
 assertIncludes(
-  "components/lp/VslFunnel.tsx",
-  "h-12 w-12",
-  "Opt-in video play butonu yüzü kapatmayacak kadar küçük olmalı",
+  "app/vsl/optin/page.tsx",
+  'router.push("/vsl")',
+  "Opt-in dolunca /vsl izleme sayfasına yönlendirmeli",
 );
 assertIncludes(
-  "components/lp/VslFunnel.tsx",
-  "translate-y-7",
-  "Opt-in video play butonu çene hizasının hafif altında durmalı",
-);
-assertIncludes(
-  "components/lp/VslFunnel.tsx",
-  "items-center justify-center",
-  "Opt-in video play butonu kompozisyonda ortalı olmalı",
-);
-assertNotIncludes(
-  "components/lp/VslFunnel.tsx",
-  "inset-1.5 rounded-full border",
-  "Opt-in video play butonunda ikinci iç halka olmamalı",
-);
-assertNotIncludes(
-  "components/lp/VslFunnel.tsx",
-  "h-24 w-24",
-  "Opt-in video play butonu eski büyük boyuta dönmemeli",
+  "components/lp/VslWatch.tsx",
+  '/vsl/optin',
+  "İzleme sayfası opt-in yoksa /vsl/optin'e geri yollamalı",
 );
 
 for (const event of [

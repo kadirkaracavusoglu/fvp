@@ -13,6 +13,15 @@ export const FUNNEL = {
 } as const;
 
 export const VSL_OPTIN_CONTACT_KEY = "fvp_vsl_contact";
+export const VSL_UNLOCK_KEY = "fvp_vsl_unlocked"; // opt-in verildi → /vsl video sayfası açılır
+export const VSL_CTA_KEY = "fvp_vsl_cta"; // 5 dk izlendi → başvuru CTA açık kalır
+
+// VSL video — /vsl/optin (kilitli poster) ve /vsl (izleme) ortak kullanır.
+export const VSL_VIDEO = {
+  videoId: "DwMVqyS20Bo", // taslak: "10 ayda 9M TL" vaka (26:57) — gerçekle değişecek
+  headline: "Bir fitness koçunun online koçluk işini 10 ayda nasıl 9.000.000 TL'ye büyüttük?",
+  sub: "Şansla değil, sistemle. Adım adım, gerçek rakamlarla anlatıyorum.",
+} as const;
 
 // Başvuru formu — yüksek niyetli application akışı.
 // Typeform tarzı: her ekran tek karar; seçmeli, çoklu seçim ve kısa metin destekler.

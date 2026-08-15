@@ -22,7 +22,11 @@ type YTPlayer = {
   getCurrentTime: () => number;
   getDuration: () => number;
   getPlayerState: () => number;
+  setPlaybackRate: (rate: number) => void;
 };
+
+// Oynatma hızı seçenekleri — kullanıcı isteği (1x / 1.5x / 2x).
+const SPEEDS = [1, 1.5, 2] as const;
 
 declare global {
   interface Window {
@@ -87,6 +91,7 @@ export function VslPlayer({
   const [muted, setMuted] = useState(true);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
+  const [rate, setRate] = useState(1); // oynatma hızı
 
   const posterUrl = poster || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 
@@ -220,6 +225,15 @@ export function VslPlayer({
     }
   }
 
+  function cycleSpeed() {
+    const p = playerRef.current;
+    if (!p) return;
+    const i = SPEEDS.indexOf(rate as (typeof SPEEDS)[number]);
+    const next = SPEEDS[(i + 1) % SPEEDS.length];
+    p.setPlaybackRate(next);
+    setRate(next);
+  }
+
   function seek(e: React.MouseEvent<HTMLDivElement>) {
     const p = playerRef.current;
     if (!p || !dur) return;
@@ -236,25 +250,38 @@ export function VslPlayer({
       {/* Oynatıcı iframe buraya girer */}
       <div ref={holderRef} className="absolute inset-0 h-full w-full [&>iframe]:h-full [&>iframe]:w-full" />
 
-      {/* Poster — video gerçekten oynayana kadar görünür (yükleme boşluğunu + duraklamayı örter) */}
-      {!playing && (
+      {/* Başlamadan önce: poster kapağı + büyük oynat düğmesi */}
+      {!started && (
         <button
           type="button"
-          onClick={() => (started ? togglePlay() : boot())}
+          onClick={boot}
           className="group absolute inset-0 z-20 flex items-center justify-center"
           aria-label="Videoyu oynat"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={posterUrl} alt="Video kapağı" className="absolute inset-0 h-full w-full object-cover" />
           <span className="absolute inset-0 bg-black/25 transition group-hover:bg-black/35" />
-          {/* Büyük oynat düğmesi yalnızca manuel girişte (autoplay booted değilken) */}
-          {!started && (
-            <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-xl transition group-hover:scale-105">
-              <svg viewBox="0 0 24 24" className="ml-1 h-9 w-9 fill-[#0d204d]">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
-          )}
+          <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-xl transition group-hover:scale-105">
+            <svg viewBox="0 0 24 24" className="ml-1 h-9 w-9 fill-[#0d204d]">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </button>
+      )}
+
+      {/* Duraklatılınca: POSTER YOK — o anki kare görünür, üstünde oynat düğmesi */}
+      {started && !playing && (
+        <button
+          type="button"
+          onClick={togglePlay}
+          className="group absolute inset-0 z-20 flex items-center justify-center bg-black/10 transition hover:bg-black/20"
+          aria-label="Videoyu oynat"
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-xl transition group-hover:scale-105">
+            <svg viewBox="0 0 24 24" className="ml-1 h-8 w-8 fill-[#0d204d]">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
         </button>
       )}
 
@@ -300,6 +327,13 @@ export function VslPlayer({
           <span className="shrink-0 text-xs font-medium tabular-nums text-white/90">
             {fmt(cur)} / {fmt(dur)}
           </span>
+          <button
+            onClick={cycleSpeed}
+            aria-label="Oynatma hızı"
+            className="shrink-0 rounded-md bg-white/15 px-2 py-1 text-xs font-semibold tabular-nums text-white hover:bg-white/25"
+          >
+            {rate}x
+          </button>
         </div>
       )}
     </div>
