@@ -141,13 +141,18 @@ assertIncludes(
 );
 assertIncludes(
   "components/lp/VslFunnel.tsx",
-  "pb-4",
-  "Opt-in video play butonu kapağın alt tarafına yakın durmalı",
+  "translate-y-12",
+  "Opt-in video play butonu merkezin hafif altında durmalı",
 );
 assertIncludes(
   "components/lp/VslFunnel.tsx",
-  "items-end justify-center",
-  "Opt-in video play butonu yüz hizasında merkezde durmamalı",
+  "items-center justify-center",
+  "Opt-in video play butonu kompozisyonda ortalı olmalı",
+);
+assertNotIncludes(
+  "components/lp/VslFunnel.tsx",
+  "inset-1.5 rounded-full border",
+  "Opt-in video play butonunda ikinci iç halka olmamalı",
 );
 assertNotIncludes(
   "components/lp/VslFunnel.tsx",
