@@ -134,6 +134,16 @@ for (const field of ['name="firstName"', 'name="lastName"', 'name="email"']) {
     `Opt-in formu ${field} alanını taşımalı`,
   );
 }
+assertIncludes(
+  "components/lp/VslFunnel.tsx",
+  "h-16 w-16",
+  "Opt-in video play butonu yüzü kapatmayacak kadar küçük olmalı",
+);
+assertNotIncludes(
+  "components/lp/VslFunnel.tsx",
+  "h-24 w-24",
+  "Opt-in video play butonu eski büyük boyuta dönmemeli",
+);
 
 for (const event of [
   "vsl_min1",

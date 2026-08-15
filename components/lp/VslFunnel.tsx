@@ -157,16 +157,16 @@ export function VslFunnel({
           <button
             type="button"
             onClick={openModal}
-            className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/30 to-white/10 shadow-2xl shadow-black/25 backdrop-blur-sm transition hover:scale-105 hover:from-white/35 hover:to-white/15"
+            className="relative flex h-16 w-16 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/25 to-white/10 shadow-xl shadow-black/20 backdrop-blur-sm transition hover:scale-105 hover:from-white/30 hover:to-white/15 sm:h-18 sm:w-18"
             aria-label="Videoyu aç"
           >
             <span
-              className="absolute inset-2 rounded-full border border-white/20"
+              className="absolute inset-1.5 rounded-full border border-white/20"
               aria-hidden="true"
             />
             <svg
               viewBox="0 0 24 24"
-              className="ml-1 h-10 w-10 fill-white drop-shadow"
+              className="ml-0.5 h-7 w-7 fill-white drop-shadow sm:h-8 sm:w-8"
               aria-hidden="true"
             >
               <path d="M8.5 5.75v12.5c0 .62.68 1 1.2.67l9.7-6.25a.8.8 0 0 0 0-1.34l-9.7-6.25a.8.8 0 0 0-1.2.67Z" />
