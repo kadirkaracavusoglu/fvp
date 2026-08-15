@@ -175,6 +175,7 @@ for (const event of [
   );
 }
 
+// Veri sözleşmesi — panel hesabında korunmalı (UI'de gösterilmese de)
 for (const field of [
   "qualifiedApplications",
   "hotApplications",
@@ -199,6 +200,25 @@ for (const field of [
     field,
     `Panel ${field} sözleşmesini korumalı`,
   );
+}
+
+// Panel UI'de gösterilmesi gereken KPI alanları
+for (const field of [
+  "visitToApplicationRate",
+  "leadCost",
+  "appointmentCost",
+  "salesConversionRate",
+  "cpa",
+  "roas",
+  "reachRate",
+  "closeRate",
+  "leadToAppointmentMinutes",
+  "leadToAppointmentAvgMinutes",
+  "leadToAppointmentMeasured",
+  "leadToSaleMinutes",
+  "leadToSaleAvgMinutes",
+  "leadToSaleMeasured",
+]) {
   assertIncludes(
     "app/vsl/panel/PanelView.tsx",
     field,
@@ -208,7 +228,6 @@ for (const field of [
 
 for (const text of [
   "Komuta Merkezi",
-  "Ana KPI",
   "Ana Huni",
   "Kanal Kırılımı",
   "Conv. page %",
