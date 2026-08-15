@@ -38,19 +38,19 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2) GHL'e doğrudan upsert (early lead + vsl-optin tag) — env key varsa
-    upsertGhlContact({
+    // 2) GHL'e doğrudan upsert — AWAIT (serverless yanıt dönünce isteği kesmesin)
+    const ghlRes = await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail,
       tags: ["vsl-optin"],
       source: "VSL opt-in (/vsl)",
       funnelStage: "video_unlocked",
       attribution: attr,
-    }).catch(() => {});
+    });
 
-    // 3) Ek VSL webhook (yalnız env ile açıksa) — fire-and-forget
+    // 3) Ek VSL webhook — AWAIT (fire-and-forget serverless'ta düşüyordu)
     if (FUNNEL.ghlWebhook) {
       const ghlAttr = ghlAttributionPayload(attr);
-      fetch(FUNNEL.ghlWebhook, {
+      await fetch(FUNNEL.ghlWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       }).catch(() => {});
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, _ghl: ghlRes });
   } catch {
     return NextResponse.json({ ok: false, error: "Beklenmeyen bir hata oluştu." }, { status: 500 });
   }
