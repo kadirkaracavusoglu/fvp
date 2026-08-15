@@ -153,11 +153,11 @@ export function VslFunnel({
           className="aspect-video w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#071331]/45 via-[#071331]/10 to-transparent" />
-        <div className="absolute inset-0 flex items-end justify-center px-5 pb-7 text-white sm:pb-8">
+        <div className="absolute inset-0 flex items-end justify-center px-5 pb-4 text-white sm:pb-5">
           <button
             type="button"
             onClick={openModal}
-            className="relative flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/25 to-white/10 shadow-xl shadow-black/20 backdrop-blur-sm transition hover:scale-105 hover:from-white/30 hover:to-white/15 sm:h-16 sm:w-16"
+            className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-gradient-to-br from-white/25 to-white/10 shadow-xl shadow-black/20 backdrop-blur-sm transition hover:scale-105 hover:from-white/30 hover:to-white/15 sm:h-14 sm:w-14"
             aria-label="Videoyu aç"
           >
             <span
@@ -166,7 +166,7 @@ export function VslFunnel({
             />
             <svg
               viewBox="0 0 24 24"
-              className="ml-0.5 h-6 w-6 fill-white drop-shadow sm:h-7 sm:w-7"
+              className="ml-0.5 h-5 w-5 fill-white drop-shadow sm:h-6 sm:w-6"
               aria-hidden="true"
             >
               <path d="M8.5 5.75v12.5c0 .62.68 1 1.2.67l9.7-6.25a.8.8 0 0 0 0-1.34l-9.7-6.25a.8.8 0 0 0-1.2.67Z" />
