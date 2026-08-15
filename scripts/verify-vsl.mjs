@@ -52,6 +52,28 @@ for (const field of [
   );
 }
 
+assertIncludes(
+  "app/vsl/randevu/page.tsx",
+  'href="/vsl/tesekkurler"',
+  "Randevu sonrası teşekkür sayfasına geçiş olmalı",
+);
+
+assertIncludes(
+  "app/vsl/tesekkurler/page.tsx",
+  "https://www.youtube.com/watch?v=L_2y4a_k5hY&t=24s",
+  "Teşekkür sayfası görüşme öncesi YouTube videosunu taşımalı",
+);
+assertIncludes(
+  "app/vsl/tesekkurler/page.tsx",
+  "vsl_thankyou_view",
+  "Teşekkür sayfası görüntülenme event'i göndermeli",
+);
+assertIncludes(
+  "app/vsl/tesekkurler/page.tsx",
+  "vsl_thankyou_video_click",
+  "Teşekkür sayfası video tıklama event'i göndermeli",
+);
+
 for (const field of [
   "attributionSource",
   "utmSource",
