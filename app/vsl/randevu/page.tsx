@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Script from "next/script";
 import { FUNNEL } from "@/lib/funnel";
 import {
@@ -106,22 +105,6 @@ export default function VslRandevuPage() {
           .
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-400">
-            Randevunu seçtiysen görüşmeye kadar izlemen gereken kısa videoya
-            geçebilirsin.
-          </p>
-          <Link
-            href="/vsl/tesekkurler"
-            className="btn-primary mt-4 inline-block px-8 py-4 text-base"
-            onClick={() => {
-              track("vsl_calendar_done_click", { location: "vsl" });
-              trackServer("vsl_calendar_done_click");
-            }}
-          >
-            Randevumu aldım
-          </Link>
-        </div>
       </div>
     </div>
   );
