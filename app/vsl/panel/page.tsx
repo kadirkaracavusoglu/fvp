@@ -22,7 +22,7 @@ function panelKeys() {
 }
 
 function authed(cookieVal?: string): boolean {
-  return Boolean(cookieVal) && panelKeys().includes(cookieVal);
+  return cookieVal ? panelKeys().includes(cookieVal) : false;
 }
 
 function isRange(value?: string): value is PanelRange {
