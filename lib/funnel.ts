@@ -19,7 +19,7 @@ export const VSL_CTA_KEY = "fvp_vsl_cta"; // 5 dk izlendi → başvuru CTA açı
 // VSL video — /vsl/optin (kilitli poster) ve /vsl (izleme) ortak videoId kullanır.
 // Başlık/alt metin sayfaya özel (optin ile izleme sayfası farklı konuşur).
 export const VSL_VIDEO = {
-  videoId: "DwMVqyS20Bo", // taslak: "10 ayda 9M TL" vaka (26:57) — gerçekle değişecek
+  videoId: "DwMVqyS20Bo", // FINAL: "10 ayda 9M TL" vaka videosu (26:57) — Kadir onayladı
 } as const;
 
 // Başvuru formu — yüksek niyetli application akışı.
