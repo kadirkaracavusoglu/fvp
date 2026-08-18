@@ -42,8 +42,8 @@ export function VslWatch({ videoId }: { videoId: string }) {
         videoId={videoId}
         autoplay
         onMilestone={(name) => {
-          // CTA yalnız 5 dakika izlendikten sonra açılır (time-on-brand).
-          if (name === "vsl_min5") {
+          // CTA yalnız 10 dakika izlendikten sonra açılır (time-on-brand + niyet).
+          if (name === "vsl_min10") {
             setCtaReady(true);
             try {
               localStorage.setItem(VSL_CTA_KEY, "1");
@@ -51,12 +51,9 @@ export function VslWatch({ videoId }: { videoId: string }) {
           }
         }}
       />
-      {/* CTA — yalnız 5 dk izlendikten sonra görünür (adım 2: detaylı başvuru) */}
+      {/* CTA — yalnız 10 dk izlendikten sonra görünür. Sonraki adım: başvuru. */}
       {ctaReady && (
         <div className="mt-8 text-center">
-          <p className="mb-4 text-sm text-gray-400">
-            Videoyu izlediniz. Sıradaki adım: kısa bir form.
-          </p>
           <Link
             href="/vsl/basvuru"
             className="btn-primary inline-block px-8 py-4 text-base"
@@ -65,8 +62,13 @@ export function VslWatch({ videoId }: { videoId: string }) {
               trackServer("cta_click", { video: videoId });
             }}
           >
-            Devam et — formu doldur →
+            FitSistem&apos;i Kendi İşime Uygulamak İstiyorum →
           </Link>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
+            İşinin bugün nerede olduğunu ve neyi değiştirmek istediğini
+            anlatacağın kısa başvuruyu tamamla. Ardından sana uygun görüşme
+            saatini seçebilirsin.
+          </p>
         </div>
       )}
     </div>

@@ -16,7 +16,6 @@ import {
 export default function VslOptinPage() {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
   const [modalOpen, setModalOpen] = useState(false);
@@ -62,10 +61,9 @@ export default function VslOptinPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    if (!firstName.trim() || !lastName.trim())
-      return setErr("Ad ve soyadınızı girin.");
+    if (!firstName.trim()) return setErr("Adını gir.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return setErr("Geçerli bir e-posta girin.");
+      return setErr("Geçerli bir e-posta gir.");
     setSending(true);
     try {
       captureAttribution();
@@ -73,11 +71,11 @@ export default function VslOptinPage() {
       const res = await fetch("/api/optin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, website, attribution }),
+        body: JSON.stringify({ firstName, lastName: "", email, website, attribution }),
       });
       const data = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !data.ok) {
-        setErr(data.error || "Bir sorun oluştu, tekrar deneyin.");
+        setErr(data.error || "Bir sorun oluştu, tekrar dene.");
         setSending(false);
         return;
       }
@@ -87,7 +85,7 @@ export default function VslOptinPage() {
           VSL_OPTIN_CONTACT_KEY,
           JSON.stringify({
             firstName: firstName.trim(),
-            lastName: lastName.trim(),
+            lastName: "",
             email: email.toLowerCase().trim(),
           }),
         );
@@ -97,7 +95,7 @@ export default function VslOptinPage() {
       // Videoyu izleyeceği sayfaya gönder.
       router.push("/vsl");
     } catch {
-      setErr("Bağlantı sorunu, tekrar deneyin.");
+      setErr("Bağlantı sorunu, tekrar dene.");
       setSending(false);
     }
   }
@@ -108,15 +106,18 @@ export default function VslOptinPage() {
       <section className="glow-bg">
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            1. Adım — Videoyu açın
+            ONLINE KOÇLUK İŞİNİ KURMAK VEYA BÜYÜTMEK İSTEYEN FITNESS KOÇLARI İÇİN
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Bir fitness koçunun işini 10 ayda 9 milyon TL yaptık. Nasıl
-            yaptığımızı size göstereceğim.
+            Bir fitness koçuyla 10 ayda 9 milyon TL ciro üretmemizi sağlayan
+            FitSistem&apos;i ve bunu kendi online koçluk işinde nasıl
+            uygulayabileceğini gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            İşi şansa bırakmadık; bir düzene, bir sisteme oturttuk. Buna
-            FitSistem diyorum. Videoda tek tek anlatıyorum.
+            Bu 27 dakikalık videoda daha fazla kişiye ulaşmak, daha fazla danışan
+            kazanmak ve online koçluk işini kendi şartlarınla büyütmek için
+            FitSistem&apos;i nasıl kullandığımızı gerçek rakamlar ve yaptığımız
+            çalışmalar üzerinden anlatıyorum.
           </p>
         </div>
       </section>
@@ -150,16 +151,10 @@ export default function VslOptinPage() {
             onClick={openModal}
             className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
           >
-            Videoyu aç
+            FitSistem&apos;i Nasıl Uyguladığımızı İzle →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Videoyu açmak için adınızı ve e-postanızı yazın. Hemen açılır.
-          </p>
-          <p className="mx-auto mt-6 max-w-xl text-sm text-gray-400">
-            Sırayla şunları yapacaksınız: <b className="text-[#0d204d]">1)</b>{" "}
-            Videoyu açın · <b className="text-[#0d204d]">2)</b> İzleyin ·{" "}
-            <b className="text-[#0d204d]">3)</b> Kısa bir form doldurun ·{" "}
-            <b className="text-[#0d204d]">4)</b> Size uygun görüşme saatini seçin.
+            Adını ve e-posta adresini bırak, video hemen açılsın.
           </p>
         </div>
       </section>
@@ -186,10 +181,10 @@ export default function VslOptinPage() {
               </svg>
             </div>
             <h2 id="vsl-optin-title" className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-              Videoyu hemen açalım
+              Videoyu hemen izlemeye başla
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Bilgilerinizi bırakın, video açılsın.
+              Adını ve e-posta adresini bırak, video hemen açılsın.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
@@ -203,35 +198,22 @@ export default function VslOptinPage() {
                 style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }}
                 aria-hidden="true"
               />
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <input
-                  type="text"
-                  name="firstName"
-                  aria-label="Adınız"
-                  placeholder="Adınız"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  autoComplete="given-name"
-                  required
-                  className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm text-[#0d204d] outline-none focus:border-[#0d204d]"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  aria-label="Soyadınız"
-                  placeholder="Soyadınız"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  autoComplete="family-name"
-                  required
-                  className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm text-[#0d204d] outline-none focus:border-[#0d204d]"
-                />
-              </div>
+              <input
+                type="text"
+                name="firstName"
+                aria-label="Adın"
+                placeholder="Adın"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                autoComplete="given-name"
+                required
+                className="w-full rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm text-[#0d204d] outline-none focus:border-[#0d204d]"
+              />
               <input
                 type="email"
                 name="email"
-                aria-label="E-posta adresiniz"
-                placeholder="E-posta adresiniz"
+                aria-label="E-posta adresin"
+                placeholder="E-posta adresin"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -244,11 +226,11 @@ export default function VslOptinPage() {
                 disabled={sending}
                 className="btn-primary w-full px-6 py-3 text-sm disabled:opacity-60"
               >
-                {sending ? "Açılıyor..." : "Videoyu aç"}
+                {sending ? "Açılıyor..." : "Videoyu Aç ve FitSistem'i Gör →"}
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
-              Bilgileriniz güvende, istediğiniz an çıkabilirsiniz.
+              Bilgilerin güvende, istediğin an çıkabilirsin.
             </p>
           </div>
         </div>

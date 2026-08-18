@@ -24,55 +24,60 @@ export default function VslTesekkurlerPage() {
         {/* 1. ONAY */}
         <div className="text-center">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            Hazırsınız
+            Randevun tamamlandı
           </span>
           <h1 className="mx-auto mt-5 max-w-2xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Her şey tamam. Görüşmede görüşürüz.
+            Görüşmeden önce iki şeye hazırlan.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Seçtiğiniz saat takvime eklendi. Aşağıda, görüşmeye kadar ne
-            yapmanız gerektiğini basitçe bıraktık.
+            Görüşmede zamanı genel şeyler konuşarak geçirmek yerine doğrudan
+            senin işine odaklanmak istiyorum. Bu yüzden görüşmeden önce iki şeyi
+            düşünmen yeterli.
           </p>
         </div>
 
-        {/* 2. ŞİMDİ NE OLACAK */}
+        {/* 2. İKİ HAZIRLIK */}
         <div className="mt-10 rounded-2xl border border-[#e6e8ea] bg-white p-6 shadow-sm sm:p-8">
-          <h2 className="text-xl font-bold text-[#0d204d]">Şimdi ne olacak?</h2>
-          <ul className="mt-4 space-y-4 text-sm text-gray-500">
-            <li className="flex gap-3">
-              <span className="font-bold text-[#0d204d]">1.</span>
+          <ul className="space-y-6 text-sm text-gray-500">
+            <li className="flex gap-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
+                1
+              </span>
               <span>
-                Takvim daveti ve görüşme linki{" "}
-                <strong className="text-[#0d204d]">e-postanıza gitti</strong>.
-                Göremezseniz spam/tanıtım klasörüne bakın.
+                <strong className="text-[#0d204d]">
+                  Önümüzdeki 90 günde neyi değiştirmek istediğini düşün.
+                </strong>{" "}
+                Daha fazla danışan almak, daha fazla kişiye ulaşmak, gelirini
+                artırmak veya işini daha düzenli hale getirmek olabilir. Senin
+                için en önemli olan şeyi netleştir.
               </span>
             </li>
-            <li className="flex gap-3">
-              <span className="font-bold text-[#0d204d]">2.</span>
-              <span>
-                Görüşme günü, e-postadaki linke tıklayın —{" "}
-                <strong className="text-[#0d204d]">Google Meet</strong>, kurulum
-                yok.
+            <li className="flex gap-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
+                2
               </span>
-            </li>
-            <li className="flex gap-3">
-              <span className="font-bold text-[#0d204d]">3.</span>
               <span>
-                Sakin bir yerden bağlanın; işinizi ve hedefinizi{" "}
-                <strong className="text-[#0d204d]">düşünmüş olun</strong>.
+                <strong className="text-[#0d204d]">
+                  Bildiğin rakamları yanında bulundur.
+                </strong>{" "}
+                Son birkaç ayda yaklaşık ne kadar ciro yaptığını, kaç kişinin
+                sana ulaştığını, kaç görüşme yaptığını ve kaç satış yaptığını
+                biliyorsan not al. Hepsini bilmek zorunda değilsin.
               </span>
             </li>
           </ul>
         </div>
 
-        {/* 3. GÖRÜŞMEYE KADAR İZLE */}
+        {/* 3. VAKA */}
         <div className="mt-10 text-center">
           <h2 className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-            Görüşmeye kadar bu videoyu izleyin
+            Görüşmeden önce gerçek bir sürecin nasıl ilerlediğini görmek
+            istersen...
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm text-gray-400">
-            Görüşmeye daha hazırlıklı gelmeniz için önce bu videoyu izlemenizi
-            öneririm.
+            Hande ile yaptığımız çalışmada nereden başladığımızı, süreçte neleri
+            değiştirdiğimizi ve işin nasıl geliştiğini bu kısa vaka analizinde
+            anlattım.
           </p>
           <div className="mt-6 overflow-hidden rounded-2xl border border-[#e6e8ea] bg-black shadow-2xl">
             <iframe
@@ -93,7 +98,7 @@ export default function VslTesekkurlerPage() {
               trackServer("vsl_thankyou_video_click");
             }}
           >
-            YouTube&apos;da aç
+            Hande&apos;nin Sürecini İzle →
           </a>
         </div>
 

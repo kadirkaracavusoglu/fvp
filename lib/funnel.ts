@@ -37,34 +37,32 @@ export type BasvuruSoru = {
 export const BASVURU_SORULARI: BasvuruSoru[] = [
   {
     key: "asama",
-    soru: "Online koçluk işinde şu an hangi seviyedesin?",
-    aciklama: "Görüşmede sana nereden başlamamız gerektiğini bilmek için.",
+    soru: "Online koçluk işinde şu an neredesin?",
     tip: "secim",
     secenekler: [
-      { deger: "Henüz başlamadım", alt: "Fikrim var ama daha danışanım yok" },
-      { deger: "İlk danışanlarım var", alt: "Satış geliyor ama düzenli değil" },
-      { deger: "Düzenli danışan alıyorum", alt: "Büyütmek istiyorum ama sistem eksik" },
-      { deger: "Oturmuş işi ölçeklemek istiyorum", alt: "Daha fazla kâr, ekip veya sistem hedefliyorum" },
+      { deger: "Henüz başlamadım" },
+      { deger: "İlk danışanlarımı almaya başladım" },
+      { deger: "Düzenli danışan alıyorum" },
+      { deger: "İşim oturdu, şimdi daha fazla büyütmek istiyorum" },
     ],
   },
   {
     key: "is_modeli",
-    soru: "İşi şu an nasıl yürütüyorsun?",
+    soru: "Şu an ağırlıklı olarak nasıl çalışıyorsun?",
     tip: "secim",
     secenekler: [
-      { deger: "Tek başıma online koçluk yapıyorum" },
-      { deger: "Online + yüz yüze/hibrid çalışıyorum" },
-      { deger: "Ekibim veya operasyon desteğim var" },
-      { deger: "Salon/klinik/stüdyo üzerinden büyütüyorum" },
+      { deger: "Tamamen online çalışıyorum" },
+      { deger: "Hem online hem yüz yüze çalışıyorum" },
+      { deger: "Ağırlıklı olarak salon / stüdyo üzerinden çalışıyorum" },
+      { deger: "Henüz düzenli danışanım yok" },
     ],
   },
   {
     key: "gelir",
-    soru: "Son 3 ay ortalama aylık ciron hangi bantta?",
-    aciklama: "Net rakam değil, doğru ölçek seviyesini anlamak için bant yeterli.",
+    soru: "Son 3 ayda aylık ortalama ciron hangi aralıkta?",
     tip: "secim",
     secenekler: [
-      { deger: "Henüz düzenli gelir yok" },
+      { deger: "Henüz düzenli gelirim yok" },
       { deger: "0 - 25.000 TL" },
       { deger: "25.000 - 75.000 TL" },
       { deger: "75.000 - 150.000 TL" },
@@ -73,72 +71,72 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "hedef_12_ay",
-    soru: "Önümüzdeki 12 ayda işinin nerede olmasını istiyorsun?",
-    aciklama: "Tek cümle yeter. Görüşmedeki stratejiyi bu hedefe göre kuracağız.",
+    soru: "Önümüzdeki 90 günde işinde neyin değişmesini istiyorsun?",
+    aciklama: "Mümkün olduğunca net yaz. Görüşmede bu hedef üzerinden ilerleyeceğiz.",
     tip: "metin",
-    placeholder: "Örn: Ayda 20 nitelikli görüşme, 10 yeni danışan ve daha sistemli satış akışı...",
-    minLength: 10,
+    placeholder: "Örn: Daha düzenli danışan almak, aylık gelirimi artırmak, daha fazla kişinin bana ulaşmasını sağlamak...",
+    minLength: 8,
   },
   {
     key: "darbogazlar",
-    soru: "Şu an büyümeyi en çok nerede kaybediyorsun?",
-    aciklama: "Birden fazla seçebilirsin.",
-    tip: "coklu",
+    soru: "Şu an işinde seni en çok zorlayan şey hangisi?",
+    tip: "secim",
     secenekler: [
-      { deger: "Kime hitap ettiğim net değil", alt: "Konumlandırma" },
-      { deger: "Düzenli lead akışı kuramıyorum", alt: "Trafik" },
-      { deger: "İçerik/otorite beni taşımıyor", alt: "Güven" },
-      { deger: "Görüşmeler satışa dönmüyor", alt: "Dönüşüm" },
-      { deger: "Sistem yok, her şey bana bağlı", alt: "Operasyon" },
-      { deger: "Kâr ve zaman dengesi bozuluyor", alt: "Ekonomi" },
+      { deger: "Kime hitap edeceğim ve kendimi nasıl farklı göstereceğim net değil" },
+      { deger: "Yeterince kişi bana ulaşmıyor" },
+      { deger: "İçerik üretiyorum ama danışana dönüşmüyor" },
+      { deger: "İnsanlarla görüşüyorum ama yeterince satış yapamıyorum" },
+      { deger: "İş büyüdükçe her şeye yetişmekte zorlanıyorum" },
+      { deger: "Para kazanıyorum ama iş istediğim kadar düzenli ilerlemiyor" },
+      { deger: "Nerede yanlış yaptığımı tam olarak bilmiyorum" },
     ],
   },
   {
     key: "engel_detay",
-    soru: "Bu hedefe ulaşmanı şu an en çok ne engelliyor?",
-    aciklama: "Kısa ve net yaz. Görüşmede buradan açacağız.",
+    soru: "Sence bugün istediğin noktaya gelmeni en çok ne engelliyor?",
+    aciklama: "Kendi cümlelerinle kısa ve net anlatabilirsin.",
     tip: "metin",
     placeholder: "Örn: Nişim net değil, reklam denedim ama görüşmeler satışa dönmedi...",
-    minLength: 10,
+    minLength: 8,
   },
   {
     key: "degismezse",
-    soru: "6 ay hiçbir şey değişmezse seni en çok ne zorlar?",
-    aciklama: "Bu soru aceleyi değil, gerçek önceliği anlamak için.",
+    soru: "6 ay boyunca hiçbir şey değişmezse seni en çok ne zorlar?",
+    aciklama: "Seni acele ettirmek için değil, bunu çözmenin senin için ne kadar önemli olduğunu anlamak için soruyoruz.",
     tip: "metin",
     placeholder: "Örn: Aynı yerde kalmak, referansa bağımlı olmak, zamanıma rağmen büyüyememek...",
-    minLength: 10,
+    minLength: 8,
   },
   {
     key: "yatirim",
-    soru: "Doğru plan çıkarsa büyüme için aylık yatırım hazırlığın nedir?",
-    aciklama: "Reklam, sistem ve danışmanlık kapasitesini doğru önermek için.",
+    soru: "Doğru çözümü bulduğuna karar verirsen, işini büyütmek için yatırım yapmaya hazır mısın?",
     tip: "secim",
     secenekler: [
-      { deger: "Şu an yatırım ayıramam" },
-      { deger: "20.000 TL altı" },
-      { deger: "20.000 - 50.000 TL" },
-      { deger: "50.000 - 100.000 TL" },
-      { deger: "100.000 TL ve üzeri" },
+      { deger: "Evet, doğru çözümse yatırım yapmaya hazırım" },
+      { deger: "Önce nasıl çalıştığınızı görüp karar vermek istiyorum" },
+      { deger: "Başlamak için bütçemi ayarlamam gerekir" },
+      { deger: "Şu anda yatırım yapabilecek durumda değilim" },
     ],
   },
   {
     key: "karar_hizi",
-    soru: "Fit çıkarsa ne kadar hızlı başlamak istersin?",
+    soru: "Birlikte çalışmanın senin için doğru olduğuna karar verirsek ne zaman başlamak istersin?",
     tip: "secim",
     secenekler: [
-      { deger: "Bu ay başlamak isterim" },
-      { deger: "1-2 ay içinde netleştirmek isterim" },
-      { deger: "Önce seçenekleri anlamak istiyorum" },
-      { deger: "Sadece araştırıyorum" },
+      { deger: "Mümkünse hemen başlamak istiyorum" },
+      { deger: "Bu ay içinde başlamak istiyorum" },
+      { deger: "Önümüzdeki 1-2 ay içinde başlayabilirim" },
+      { deger: "Önce nasıl çalıştığınızı anlamak istiyorum" },
+      { deger: "Şimdilik sadece araştırıyorum" },
     ],
   },
   {
     key: "basari_kriteri",
-    soru: "Bu görüşmenin senin için değerli olması için neyi netleştirmeliyiz?",
+    soru: "Görüşmeden çıktığında en çok hangi konuyu netleştirmiş olmak istersin?",
+    aciklama: "Aklındaki en önemli soruyu veya çözmek istediğin konuyu yazabilirsin.",
     tip: "metin",
     placeholder: "Örn: Bana uygun büyüme yolu, reklam bütçesi, satış sistemi veya niş netliği...",
-    minLength: 8,
+    minLength: 6,
   },
 ];
 
@@ -156,12 +154,11 @@ export function scoreApplication(answers: BasvuruCevaplar) {
   const gelir = String(answers.gelir || "");
   const yatirim = String(answers.yatirim || "");
   const karar = String(answers.karar_hizi || "");
-  const darbogazlar = Array.isArray(answers.darbogazlar) ? answers.darbogazlar : [];
 
-  if (/Oturmuş|Düzenli/.test(asama)) {
+  if (/oturdu|Düzenli/.test(asama)) {
     score += 2;
     reasons.push("iş seviyesi uygun");
-  } else if (/İlk/.test(asama)) {
+  } else if (/İlk danışan/.test(asama)) {
     score += 1;
   }
 
@@ -174,27 +171,27 @@ export function scoreApplication(answers: BasvuruCevaplar) {
     score += 1;
   }
 
-  if (/100\.000/.test(yatirim)) {
+  // Yatırım niyeti (yeni seçenekler)
+  if (/hazırım/.test(yatirim)) {
     score += 4;
-    reasons.push("yüksek yatırım hazırlığı");
-  } else if (/50\.000 - 100\.000/.test(yatirim)) {
-    score += 3;
-  } else if (/20\.000 - 50\.000/.test(yatirim)) {
-    score += 2;
-  } else if (/20\.000 TL altı/.test(yatirim)) {
+    reasons.push("yatırıma hazır");
+  } else if (/görüp karar|bütçemi ayarlamam/.test(yatirim)) {
     score += 1;
-  } else if (/ayıramam/.test(yatirim)) {
+  } else if (/durumda değilim/.test(yatirim)) {
     score -= 2;
   }
 
-  if (/Bu ay/.test(karar)) {
+  // Başlama niyeti (yeni seçenekler)
+  if (/hemen başlamak/.test(karar)) {
     score += 2;
     reasons.push("hızlı karar niyeti");
+  } else if (/Bu ay içinde/.test(karar)) {
+    score += 2;
   } else if (/1-2 ay/.test(karar)) {
     score += 1;
+  } else if (/sadece araştırıyorum/.test(karar)) {
+    score -= 1;
   }
-
-  if (darbogazlar.length >= 2) score += 1;
 
   const segment =
     score >= 8 ? "Yüksek öncelik" :

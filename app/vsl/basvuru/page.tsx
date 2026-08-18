@@ -31,8 +31,6 @@ export default function BasvuruPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [instagram, setInstagram] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [websiteUrl, setWebsiteUrl] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState("");
@@ -132,12 +130,13 @@ export default function BasvuruPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    if (!firstName.trim() || !lastName.trim())
-      return setErr("Ad ve soyadınızı girin.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return setErr("Geçerli bir e-posta girin.");
-    if (phone.trim().length < 7) return setErr("Telefon numaranızı girin.");
-    if (!instagram.trim()) return setErr("Instagram adresinizi girin.");
+    // Ad + e-posta opt-in'den prefill gelir. Yoksa (opt-in atlanmış) başa al.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      router.push("/vsl/optin");
+      return;
+    }
+    if (phone.trim().length < 7) return setErr("Telefon numaranı gir.");
+    if (!instagram.trim()) return setErr("Instagram kullanıcı adını gir.");
     setSending(true);
     try {
       captureAttribution();
@@ -151,8 +150,6 @@ export default function BasvuruPage() {
           email,
           phone,
           instagram,
-          businessName,
-          websiteUrl,
           cevaplar: answers,
           website,
           attribution,
@@ -188,9 +185,18 @@ export default function BasvuruPage() {
       </div>
 
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-5 py-16">
-        <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-400">
-          3. Adım — Formu doldurun
-        </p>
+        {step === 0 && (
+          <div className="mb-5 text-center">
+            <h2 className="text-lg font-bold text-[#0d204d]">
+              Şimdi biraz senin işine bakalım.
+            </h2>
+            <p className="mx-auto mt-1 max-w-xl text-sm text-gray-400">
+              Aşağıdaki sorular işinin bugün nerede olduğunu, nereye ulaşmak
+              istediğini ve sana gerçekten yardımcı olup olamayacağımızı
+              anlamamız için. Yaklaşık birkaç dakikanı alacak.
+            </p>
+          </div>
+        )}
         <div className="mb-4 flex items-center justify-between gap-3 text-xs font-medium text-gray-400">
           <div className="flex items-center gap-3">
             {step > 0 && (
@@ -295,11 +301,11 @@ export default function BasvuruPage() {
         ) : (
           <form onSubmit={submit}>
             <h1 className="text-2xl font-bold leading-tight text-[#0d204d] sm:text-3xl">
-              Son bir şey — size nasıl ulaşalım?
+              İletişim bilgileri
             </h1>
             <p className="mt-2 text-sm text-gray-400">
-              Görüşme bağlantısını buraya göndereceğiz. Bittiğinde görüşme
-              saatinizi seçeceksiniz. Marka/site alanları opsiyonel.
+              Görüşme bağlantısını buraya göndereceğiz. Ardından sana uygun
+              görüşme saatini seçeceksin.
             </p>
             <input
               type="text"
@@ -318,43 +324,10 @@ export default function BasvuruPage() {
             />
             <div className="mt-6 space-y-3">
               <input
-                type="text"
-                name="firstName"
-                aria-label="Adınız"
-                placeholder="Adınız"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className={fieldClass}
-                autoComplete="given-name"
-                required
-              />
-              <input
-                type="text"
-                name="lastName"
-                aria-label="Soyadınız"
-                placeholder="Soyadınız"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className={fieldClass}
-                autoComplete="family-name"
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                aria-label="E-posta"
-                placeholder="E-posta"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={fieldClass}
-                autoComplete="email"
-                required
-              />
-              <input
                 type="tel"
                 name="phone"
-                aria-label="Telefon"
-                placeholder="Telefon"
+                aria-label="Telefon numaran"
+                placeholder="Telefon numaran"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className={fieldClass}
@@ -364,33 +337,13 @@ export default function BasvuruPage() {
               <input
                 type="text"
                 name="instagram"
-                aria-label="Instagram adresiniz"
-                placeholder="Instagram adresiniz"
+                aria-label="Instagram kullanıcı adın"
+                placeholder="Instagram kullanıcı adın"
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
                 className={fieldClass}
                 autoComplete="url"
                 required
-              />
-              <input
-                type="text"
-                name="businessName"
-                aria-label="Marka veya işletme adı"
-                placeholder="Marka / işletme adı (opsiyonel)"
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                className={fieldClass}
-                autoComplete="organization"
-              />
-              <input
-                type="url"
-                name="websiteUrl"
-                aria-label="Web site veya profil linki"
-                placeholder="Web site veya profil linki (opsiyonel)"
-                value={websiteUrl}
-                onChange={(e) => setWebsiteUrl(e.target.value)}
-                className={fieldClass}
-                autoComplete="url"
               />
               {err && <p className="text-sm text-red-600">{err}</p>}
               <button
@@ -398,7 +351,9 @@ export default function BasvuruPage() {
                 disabled={sending}
                 className="btn-primary w-full px-6 py-4 text-base disabled:opacity-60"
               >
-                {sending ? "Gönderiliyor…" : "Formu bitir, saat seçmeye geç →"}
+                {sending
+                  ? "Gönderiliyor…"
+                  : "Başvurumu Tamamla ve Görüşme Saatimi Seç →"}
               </button>
             </div>
           </form>

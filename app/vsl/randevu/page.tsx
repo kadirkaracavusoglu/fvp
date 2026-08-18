@@ -24,11 +24,6 @@ const CALENDAR_UTM_FIELDS = [
 export default function VslRandevuPage() {
   const [calendarUrl, setCalendarUrl] = useState<string>(FUNNEL.calendarUrl);
 
-  const handleCalendarExternalClick = () => {
-    track("vsl_calendar_external_click", { location: "vsl" });
-    trackServer("vsl_calendar_external_click");
-  };
-
   useEffect(() => {
     captureAttribution();
     const attr = getAttribution();
@@ -47,29 +42,22 @@ export default function VslRandevuPage() {
     <div className="glow-bg min-h-screen px-5 py-10 sm:py-14">
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 text-center">
-          <span
-            className="chip inline-block px-4 py-1 text-xs"
-            data-active="true"
-          >
-            4. Adım — Görüşme saatinizi seçin
-          </span>
-          <h1 className="mx-auto mt-5 max-w-3xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Son adım: size uygun saati seçin.
+          <h1 className="mx-auto mt-2 max-w-3xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
+            Başvurun tamamlandı. Şimdi sana uygun görüşme saatini seç.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Formunuzu aldık. Aşağıdan boş bir gün ve saat seçin. Görüşme
-            internetten (Google Meet), yaklaşık 30 dakika. Seçtiğiniz anda
-            bağlantı e-postanıza gelir.
+            Bu 30 dakikalık görüşmede işinin bugün nerede olduğunu, nereye
+            ulaşmak istediğini ve bunun önündeki en önemli problemi birlikte
+            değerlendireceğiz.
           </p>
-          <a
-            href={calendarUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-primary mt-5 inline-block px-8 py-4 text-base"
-            onClick={handleCalendarExternalClick}
-          >
-            Takvimi yeni sekmede aç
-          </a>
+          <p className="mx-auto mt-3 max-w-2xl text-base text-gray-400 sm:text-lg">
+            Sana gerçekten yardımcı olabileceğimizi düşünürsek,
+            FitSistem&apos;i kendi işinde nasıl uygulayabileceğimizi ve birlikte
+            nasıl ilerleyebileceğimizi de konuşacağız.
+          </p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400">
+            Aşağıdaki takvimden gerçekten katılabileceğin bir gün ve saat seç.
+          </p>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-[#e6e8ea] bg-white shadow-xl">
@@ -91,21 +79,6 @@ export default function VslRandevuPage() {
             strategy="afterInteractive"
           />
         </div>
-
-        <div className="mt-5 text-center text-sm text-gray-400">
-          Takvim açılmazsa{" "}
-          <a
-            href={calendarUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="font-semibold text-[#0d204d] underline underline-offset-4"
-            onClick={handleCalendarExternalClick}
-          >
-            buradan yeni sekmede aç
-          </a>
-          .
-        </div>
-
       </div>
     </div>
   );

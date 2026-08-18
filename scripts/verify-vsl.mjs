@@ -102,15 +102,8 @@ for (const field of [
   assertIncludes("lib/ghl.ts", field, `GHL payload ${field} alanını taşımalı`);
 }
 
-for (const field of [
-  'name="firstName"',
-  'name="lastName"',
-  'name="email"',
-  'name="phone"',
-  'name="instagram"',
-  'name="businessName"',
-  'name="websiteUrl"',
-]) {
+// Başvuru iletişim ekranı sadeleşti: yalnız telefon + Instagram (ad/e-posta opt-in'den prefill).
+for (const field of ['name="phone"', 'name="instagram"']) {
   assertIncludes(
     "app/vsl/basvuru/page.tsx",
     field,
@@ -118,8 +111,8 @@ for (const field of [
   );
 }
 
-// Opt-in AYRI sayfa (/vsl/optin) → form + /vsl'e yönlendirme.
-for (const field of ['name="firstName"', 'name="lastName"', 'name="email"']) {
+// Opt-in AYRI sayfa (/vsl/optin) → yalnız ad + e-posta, /vsl'e yönlendirme.
+for (const field of ['name="firstName"', 'name="email"']) {
   assertIncludes(
     "app/vsl/optin/page.tsx",
     field,
