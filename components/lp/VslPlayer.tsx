@@ -82,6 +82,7 @@ export function VslPlayer({
   onMilestone?: (name: string) => void;
 }) {
   const holderRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
   const firedRef = useRef<Set<string>>(new Set());
   const pollRef = useRef<number | null>(null);
@@ -234,6 +235,23 @@ export function VslPlayer({
     setRate(next);
   }
 
+  function toggleFullscreen() {
+    const el = containerRef.current as
+      | (HTMLDivElement & { webkitRequestFullscreen?: () => void })
+      | null;
+    if (!el) return;
+    const doc = document as Document & {
+      webkitFullscreenElement?: Element;
+      webkitExitFullscreen?: () => void;
+    };
+    const active = document.fullscreenElement || doc.webkitFullscreenElement;
+    if (active) {
+      (document.exitFullscreen || doc.webkitExitFullscreen)?.call(document);
+    } else {
+      (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
+    }
+  }
+
   function seek(e: React.MouseEvent<HTMLDivElement>) {
     const p = playerRef.current;
     if (!p || !dur) return;
@@ -246,7 +264,10 @@ export function VslPlayer({
   const pct = dur > 0 ? (cur / dur) * 100 : 0;
 
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl">
+    <div
+      ref={containerRef}
+      className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl [&:fullscreen]:aspect-auto [&:fullscreen]:h-full [&:fullscreen]:w-full [&:fullscreen]:rounded-none"
+    >
       {/* Oynatıcı iframe buraya girer */}
       <div ref={holderRef} className="absolute inset-0 h-full w-full [&>iframe]:h-full [&>iframe]:w-full" />
 
@@ -333,6 +354,15 @@ export function VslPlayer({
             className="shrink-0 rounded-md bg-white/15 px-2 py-1 text-xs font-semibold tabular-nums text-white hover:bg-white/25"
           >
             {rate}x
+          </button>
+          <button
+            onClick={toggleFullscreen}
+            aria-label="Tam ekran"
+            className="shrink-0 text-white"
+          >
+            <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white">
+              <path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4z" />
+            </svg>
           </button>
         </div>
       )}
