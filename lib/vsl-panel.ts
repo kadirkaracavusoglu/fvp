@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { BASVURU_SORULARI } from "@/lib/funnel";
 import { getMetaSpend } from "@/lib/meta-insights";
+import { getGhlBookedCount } from "@/lib/ghl-appointments";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch";
 
@@ -743,7 +744,14 @@ export async function getVslPanelData(
     );
     const leadToSale = conversionTiming(timingLeadRows, saleSignals);
     const applications = applicationRows.length;
-    const booked = Math.max(uniqueLeadCount(leads, "vsl_randevu"), bookedEvent);
+    // Randevu sayısı: önce GHL takvimi (webhook'a bağımsız, gerçek kaynak),
+    // yoksa eldeki tracking sinyalleri (vsl_randevu lead / vsl_calendar_booked).
+    const ghlBooked = await getGhlBookedCount(r.since, r.until);
+    const booked = Math.max(
+      uniqueLeadCount(leads, "vsl_randevu"),
+      bookedEvent,
+      ghlBooked ?? 0,
+    );
     const qualifiedApplications = applicationRows.filter((row) => {
       const score = leadScore(row) || 0;
       return score >= 5 || /Yüksek|Orta/.test(leadSegment(row));
@@ -1027,8 +1035,8 @@ export async function getVslPanelData(
         state: thankyouViews ? "ok" : "warn",
       },
       {
-        label: "GHL randevu webhook",
-        value: booked ? `${booked} randevu` : "henüz sinyal yok",
+        label: "GHL randevu (takvimden)",
+        value: booked ? `${booked} randevu` : "henüz randevu yok",
         state: booked ? "ok" : "warn",
       },
     ] satisfies VslPanelData["trackingHealth"];
