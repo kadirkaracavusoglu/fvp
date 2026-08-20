@@ -84,6 +84,7 @@ export function VslPlayer({
   const holderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
+  const maxRef = useRef(0); // izlenen en ileri konum — ileri sarma buraya kadar
   const firedRef = useRef<Set<string>>(new Set());
   const pollRef = useRef<number | null>(null);
 
@@ -113,6 +114,7 @@ export function VslPlayer({
       if (!p) return;
       const t = p.getCurrentTime?.() || 0;
       const d = p.getDuration?.() || 0;
+      if (t > maxRef.current) maxRef.current = t; // izlenen en ileri nokta
       setCur(t);
       if (d && d !== dur) setDur(d);
       MINUTE_MARKS.forEach((m) => {
@@ -257,8 +259,10 @@ export function VslPlayer({
     if (!p || !dur) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
-    p.seekTo(ratio * dur, true);
-    setCur(ratio * dur);
+    // İleri sarma yok: yalnız izlenen en ileri noktaya kadar (geri sarma serbest).
+    const target = Math.min(ratio * dur, maxRef.current);
+    p.seekTo(target, true);
+    setCur(target);
   }
 
   const pct = dur > 0 ? (cur / dur) * 100 : 0;
