@@ -14,18 +14,23 @@ const CALENDAR_ID = "SSw6HZHR3j9veTWH8xTp";
 type ApptRaw = {
   contactId?: string;
   dateAdded?: string; // randevunun oluşturulduğu (booked) an
+  title?: string; // kişi adı (ör. "Hüseyin Bediz")
   appointmentStatus?: string;
 };
 
+export type GhlBooking = { contactId: string; bookedMs: number; name: string };
+export type GhlBookings = { count: number; appts: GhlBooking[] };
+
 /**
- * [sinceISO, untilISO] aralığında BOOKED olan (dateAdded'e göre) randevuları,
- * kişi başına tekilleştirerek say. GHL erişimi yoksa/patlarsa null döner
- * (panel eldeki tracking'e düşer).
+ * [sinceISO, untilISO] aralığında BOOKED olan randevular (dateAdded'e göre).
+ * TEK GHL çağrısı: hem tekil-kişi SAYISINI hem de her randevunun {kişi, booked anı,
+ * ad} bilgisini döndürür (ad, panelde lead'e isimden eşlenip süre hesabı için —
+ * ekstra çağrı YOK). GHL erişimi yoksa/patlarsa null (panel eldeki tracking'e düşer).
  */
-export async function getGhlBookedCount(
+export async function getGhlBookings(
   sinceISO: string,
   untilISO?: string,
-): Promise<number | null> {
+): Promise<GhlBookings | null> {
   if (!LOCATION_KEY) return null;
   try {
     const sinceMs = new Date(sinceISO).getTime();
@@ -43,14 +48,20 @@ export async function getGhlBookedCount(
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { events?: ApptRaw[] };
-    const contacts = new Set<string>();
+    // Kişi başına EN ERKEN booked randevu (ilk randevu).
+    const first = new Map<string, GhlBooking>();
     for (const e of data.events || []) {
       const booked = e.dateAdded ? new Date(e.dateAdded).getTime() : NaN;
       if (!Number.isFinite(booked)) continue;
       if (booked < sinceMs || booked >= untilMs) continue; // BOOKED aralıkta mı
-      if (e.contactId) contacts.add(e.contactId);
+      const cid = e.contactId;
+      if (!cid) continue;
+      const prev = first.get(cid);
+      if (!prev || booked < prev.bookedMs) {
+        first.set(cid, { contactId: cid, bookedMs: booked, name: e.title || "" });
+      }
     }
-    return contacts.size;
+    return { count: first.size, appts: [...first.values()] };
   } catch {
     return null;
   }

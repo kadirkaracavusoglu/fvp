@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { BASVURU_SORULARI } from "@/lib/funnel";
 import { getMetaSpend } from "@/lib/meta-insights";
-import { getGhlBookedCount } from "@/lib/ghl-appointments";
+import { getGhlBookings, type GhlBooking } from "@/lib/ghl-appointments";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch";
 
@@ -460,6 +460,42 @@ function conversionTiming(leads: LeadRow[], signals: TimedSignal[]) {
   };
 }
 
+/** GHL randevusunu (isim) Supabase lead'ine isimden eşleyerek lead→randevu süresi.
+ *  EK API ÇAĞRISI YOK — appts zaten booked sayımı için çekildi, leads zaten yüklü.
+ *  Eşleme: randevu adının İLK kelimesi = lead ad'ı (opt-in yalnız ad topluyor);
+ *  randevudan önceki EN ERKEN lead alınır. Aynı ad çakışırsa yaklaşık olur. */
+function ghlNameTiming(appts: GhlBooking[] | undefined, leads: LeadRow[]) {
+  const empty = {
+    measured: 0,
+    medianMinutes: null as number | null,
+    avgMinutes: null as number | null,
+  };
+  if (!appts?.length) return empty;
+  const norm = (s: string) =>
+    (s || "").toLocaleLowerCase("tr").trim().replace(/\s+/g, " ");
+  const minutes: number[] = [];
+  for (const a of appts) {
+    const apptFirst = norm(a.name).split(" ")[0];
+    if (!apptFirst) continue;
+    let leadMs: number | null = null;
+    for (const l of leads) {
+      const leadFirst = norm(l.first_name || "").split(" ")[0];
+      if (!leadFirst || leadFirst !== apptFirst) continue;
+      const t = new Date(l.created_at).getTime();
+      if (!Number.isFinite(t) || t > a.bookedMs) continue;
+      if (leadMs == null || t < leadMs) leadMs = t;
+    }
+    if (leadMs == null) continue;
+    const m = Math.round((a.bookedMs - leadMs) / 60000);
+    if (m >= 0 && m < 365 * 1440) minutes.push(m);
+  }
+  return {
+    measured: minutes.length,
+    medianMinutes: median(minutes),
+    avgMinutes: average(minutes),
+  };
+}
+
 function channelKey(attr?: Record<string, string> | null): string {
   const source = (attr?.utm_source || "").toLowerCase();
   const medium = (attr?.utm_medium || "").toLowerCase();
@@ -738,20 +774,24 @@ export async function getVslPanelData(
     const saleSignals = saleRows
       .map(eventSignal)
       .filter((signal): signal is TimedSignal => Boolean(signal));
-    const leadToAppointment = conversionTiming(
+    const leadToAppointmentSignal = conversionTiming(
       timingLeadRows,
       appointmentSignals,
     );
     const leadToSale = conversionTiming(timingLeadRows, saleSignals);
     const applications = applicationRows.length;
-    // Randevu sayısı: önce GHL takvimi (webhook'a bağımsız, gerçek kaynak),
-    // yoksa eldeki tracking sinyalleri (vsl_randevu lead / vsl_calendar_booked).
-    const ghlBooked = await getGhlBookedCount(r.since, r.until);
+    // Randevu: GHL takviminden (webhook'a bağımsız). TEK çağrı hem sayı hem süre için.
+    const ghl = await getGhlBookings(r.since, r.until);
     const booked = Math.max(
       uniqueLeadCount(leads, "vsl_randevu"),
       bookedEvent,
-      ghlBooked ?? 0,
+      ghl?.count ?? 0,
     );
+    // Lead→randevu süresi: GHL randevusunu (aynı çağrı) isimden lead'e eşle (ek çağrı YOK).
+    // Eşleşme yoksa eldeki webhook sinyaline düş.
+    const ghlTiming = ghlNameTiming(ghl?.appts, leads);
+    const leadToAppointment =
+      ghlTiming.measured > 0 ? ghlTiming : leadToAppointmentSignal;
     const qualifiedApplications = applicationRows.filter((row) => {
       const score = leadScore(row) || 0;
       return score >= 5 || /Yüksek|Orta/.test(leadSegment(row));
