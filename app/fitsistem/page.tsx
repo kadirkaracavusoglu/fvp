@@ -1,7 +1,7 @@
 "use client";
 
 // VSL OPT-IN SAYFASI — funnel'ın İLK sayfası. Video kilitli; açmak için form.
-// Form dolunca /vsl (izleme sayfası) açılır. Reklam trafiği buraya gelir.
+// Form dolunca /fitsistem/izle (izleme sayfası) açılır. Reklam trafiği buraya gelir.
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -27,14 +27,14 @@ export default function VslOptinPage() {
   useEffect(() => {
     captureAttribution();
     try {
-      // Test kaçış kapısı: /vsl/optin?reset=1 → kilidi sıfırla, formu göster.
+      // Test kaçış kapısı: /fitsistem?reset=1 → kilidi sıfırla, formu göster.
       const reset = new URLSearchParams(window.location.search).get("reset");
       if (reset === "1") {
         localStorage.removeItem(VSL_UNLOCK_KEY);
         localStorage.removeItem(VSL_CTA_KEY);
       } else if (localStorage.getItem(VSL_UNLOCK_KEY)) {
         // Zaten opt-in vermiş → tekrar doldurtma, doğrudan videoya al.
-        router.replace("/vsl");
+        router.replace("/fitsistem/izle");
         return;
       }
     } catch {}
@@ -93,7 +93,7 @@ export default function VslOptinPage() {
       track("vsl_optin_submit", { location: "optin" });
       trackServer("vsl_optin_submit", { video: VSL_VIDEO.videoId });
       // Videoyu izleyeceği sayfaya gönder.
-      router.push("/vsl");
+      router.push("/fitsistem/izle");
     } catch {
       setErr("Bağlantı sorunu, tekrar dene.");
       setSending(false);

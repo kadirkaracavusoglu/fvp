@@ -3,7 +3,7 @@ import { VslWatch } from "@/components/lp/VslWatch";
 import { VSL_VIDEO } from "@/lib/funnel";
 
 // VSL İZLEME sayfası — opt-in SONRASI. Kilitli değil; guard opt-in'siz gireni
-// /vsl/optin'e yollar. Reklam /vsl/optin'e gelir, form dolunca buraya yönlenir.
+// /fitsistem'e yollar. Reklam /fitsistem'e gelir, form dolunca buraya yönlenir.
 // Görünüm: sitenin açık teması (native, chrome yok).
 
 export default function VslPage() {

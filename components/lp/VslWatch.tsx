@@ -1,7 +1,7 @@
 "use client";
 
-// VSL İZLEME görünümü — /vsl. Opt-in SONRASI uzun video sayfası.
-// Guard: opt-in vermemişse /vsl/optin'e geri yollar. CTA yalnız 5 dk izlenince açılır.
+// VSL İZLEME görünümü — /fitsistem/izle. Opt-in SONRASI uzun video sayfası.
+// Guard: opt-in vermemişse /fitsistem'e geri yollar. CTA yalnız 5 dk izlenince açılır.
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -20,13 +20,13 @@ export function VslWatch({ videoId }: { videoId: string }) {
     captureAttribution();
     try {
       if (!localStorage.getItem(VSL_UNLOCK_KEY)) {
-        router.replace("/vsl/optin"); // opt-in yoksa kapıya geri
+        router.replace("/fitsistem"); // opt-in yoksa kapıya geri
         return;
       }
       setAllowed(true);
       if (localStorage.getItem(VSL_CTA_KEY)) setCtaReady(true); // daha önce 5 dk izlemiş
     } catch {
-      router.replace("/vsl/optin");
+      router.replace("/fitsistem");
       return;
     }
     setReady(true);
@@ -55,7 +55,7 @@ export function VslWatch({ videoId }: { videoId: string }) {
       {ctaReady && (
         <div className="mt-8 text-center">
           <Link
-            href="/vsl/basvuru"
+            href="/fitsistem/basvuru"
             className="btn-primary inline-block px-8 py-4 text-base"
             onClick={() => {
               track("cta_click", { location: "vsl" });

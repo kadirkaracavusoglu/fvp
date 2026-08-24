@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail,
       tags: ["vsl-optin"],
-      source: "VSL opt-in (/vsl)",
+      source: "VSL opt-in (/fitsistem)",
       funnelStage: "video_unlocked",
       attribution: attr,
     });
@@ -56,11 +56,11 @@ export async function POST(req: Request) {
         body: JSON.stringify({
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
           email: mail,
-          source: "VSL opt-in (/vsl)",
+          source: "VSL opt-in (/fitsistem)",
           formType: "vsl_optin",
           leadStage: "video_unlocked",
           funnel: "fvp_vsl",
-          pageUrl: `${SITE.url}/vsl`,
+          pageUrl: `${SITE.url}/fitsistem`,
           ...ghlAttr,
           ...(attr || {}),
         }),

@@ -136,7 +136,7 @@ export function PanelView({
             {PANEL_RANGES.map((r) => (
               <a
                 key={r.key}
-                href={`/vsl/panel?range=${r.key}`}
+                href={`/fitsistem/panel?range=${r.key}`}
                 className={`rounded-full border px-3 py-2 text-xs font-semibold ${
                   active === r.key
                     ? "border-[#0d204d] bg-[#0d204d] text-white"

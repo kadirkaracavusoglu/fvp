@@ -35,6 +35,17 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // VSL funnel /vsl → /fitsistem'e taşındı; eski linkler (reklam/paylaşım) kırılmasın.
+  async redirects() {
+    return [
+      { source: "/vsl/optin", destination: "/fitsistem", permanent: false },
+      { source: "/vsl/basvuru", destination: "/fitsistem/basvuru", permanent: false },
+      { source: "/vsl/randevu", destination: "/fitsistem/randevu", permanent: false },
+      { source: "/vsl/tesekkurler", destination: "/fitsistem/tesekkurler", permanent: false },
+      { source: "/vsl/panel", destination: "/fitsistem/panel", permanent: false },
+      { source: "/vsl", destination: "/fitsistem/izle", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;

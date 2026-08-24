@@ -12,7 +12,7 @@ function panelKeys() {
 export async function login(formData: FormData) {
   const key = String(formData.get("key") || "").trim();
   const keys = panelKeys();
-  if (!keys.length || !keys.includes(key)) redirect("/vsl/panel?e=1");
+  if (!keys.length || !keys.includes(key)) redirect("/fitsistem/panel?e=1");
 
   const jar = await cookies();
   jar.set("fvp_panel_auth", key, {
@@ -22,11 +22,11 @@ export async function login(formData: FormData) {
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
-  redirect("/vsl/panel");
+  redirect("/fitsistem/panel");
 }
 
 export async function logout() {
   const jar = await cookies();
   jar.delete("fvp_panel_auth");
-  redirect("/vsl/panel");
+  redirect("/fitsistem/panel");
 }

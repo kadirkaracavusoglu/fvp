@@ -132,7 +132,7 @@ export default function BasvuruPage() {
     setErr("");
     // Ad + e-posta opt-in'den prefill gelir. Yoksa (opt-in atlanmış) başa al.
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      router.push("/vsl/optin");
+      router.push("/fitsistem");
       return;
     }
     if (phone.trim().length < 7) return setErr("Telefon numaranı gir.");
@@ -163,7 +163,7 @@ export default function BasvuruPage() {
       }
       track("vsl_basvuru_submit", { location: "vsl" });
       trackServer("vsl_basvuru_submit");
-      router.push("/vsl/randevu");
+      router.push("/fitsistem/randevu");
     } catch {
       setErr("Bağlantı sorunu, tekrar deneyin.");
       setSending(false);

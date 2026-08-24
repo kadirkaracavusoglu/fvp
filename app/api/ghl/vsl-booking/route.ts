@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
       await supabaseAdmin.from("events").insert({
         name: "vsl_calendar_booked",
-        path: "/vsl/randevu",
+        path: "/fitsistem/randevu",
         session_id: null,
         video: null,
         attribution: null,

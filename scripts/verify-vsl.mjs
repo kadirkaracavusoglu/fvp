@@ -46,7 +46,7 @@ for (const field of [
   "fbclid",
 ]) {
   assertIncludes(
-    "app/vsl/randevu/page.tsx",
+    "app/fitsistem/randevu/page.tsx",
     field,
     `Randevu iframe'i ${field} taşımalı`,
   );
@@ -54,12 +54,12 @@ for (const field of [
 
 // Randevu → teşekkür geçişi artık GHL otomatik yönlendirmesiyle (manuel link yok).
 assertIncludes(
-  "app/vsl/randevu/page.tsx",
+  "app/fitsistem/randevu/page.tsx",
   'scrolling="yes"',
   "Randevu iframe'i saat seçimi sonrası scroll kilitlememeli",
 );
 assertIncludes(
-  "app/vsl/randevu/page.tsx",
+  "app/fitsistem/randevu/page.tsx",
   'overflow: "auto"',
   "Randevu iframe'i iç form taşınca scroll edilebilir olmalı",
 );
@@ -68,24 +68,24 @@ for (const permission of [
   "private-state-token-redemption",
 ]) {
   assertIncludes(
-    "app/vsl/randevu/page.tsx",
+    "app/fitsistem/randevu/page.tsx",
     permission,
     `Randevu iframe'i Turnstile ${permission} iznini taşımalı`,
   );
 }
 
 assertIncludes(
-  "app/vsl/tesekkurler/page.tsx",
+  "app/fitsistem/tesekkurler/page.tsx",
   "https://www.youtube.com/watch?v=L_2y4a_k5hY&t=24s",
   "Teşekkür sayfası görüşme öncesi YouTube videosunu taşımalı",
 );
 assertIncludes(
-  "app/vsl/tesekkurler/page.tsx",
+  "app/fitsistem/tesekkurler/page.tsx",
   "vsl_thankyou_view",
   "Teşekkür sayfası görüntülenme event'i göndermeli",
 );
 assertIncludes(
-  "app/vsl/tesekkurler/page.tsx",
+  "app/fitsistem/tesekkurler/page.tsx",
   "vsl_thankyou_video_click",
   "Teşekkür sayfası video tıklama event'i göndermeli",
 );
@@ -105,29 +105,29 @@ for (const field of [
 // Başvuru iletişim ekranı sadeleşti: yalnız telefon + Instagram (ad/e-posta opt-in'den prefill).
 for (const field of ['name="phone"', 'name="instagram"']) {
   assertIncludes(
-    "app/vsl/basvuru/page.tsx",
+    "app/fitsistem/basvuru/page.tsx",
     field,
     `Başvuru formu ${field} alanını taşımalı`,
   );
 }
 
-// Opt-in AYRI sayfa (/vsl/optin) → yalnız ad + e-posta, /vsl'e yönlendirme.
+// Opt-in AYRI sayfa (/fitsistem) → yalnız ad + e-posta, /vsl'e yönlendirme.
 for (const field of ['name="firstName"', 'name="email"']) {
   assertIncludes(
-    "app/vsl/optin/page.tsx",
+    "app/fitsistem/page.tsx",
     field,
     `Opt-in formu ${field} alanını taşımalı`,
   );
 }
 assertIncludes(
-  "app/vsl/optin/page.tsx",
-  'router.push("/vsl")',
-  "Opt-in dolunca /vsl izleme sayfasına yönlendirmeli",
+  "app/fitsistem/page.tsx",
+  'router.push("/fitsistem/izle")',
+  "Opt-in dolunca /fitsistem/izle izleme sayfasına yönlendirmeli",
 );
 assertIncludes(
   "components/lp/VslWatch.tsx",
-  '/vsl/optin',
-  "İzleme sayfası opt-in yoksa /vsl/optin'e geri yollamalı",
+  '/fitsistem',
+  "İzleme sayfası opt-in yoksa /fitsistem'e geri yollamalı",
 );
 
 for (const event of [
@@ -190,7 +190,7 @@ for (const field of [
   "leadToSaleMeasured",
 ]) {
   assertIncludes(
-    "app/vsl/panel/PanelView.tsx",
+    "app/fitsistem/panel/PanelView.tsx",
     field,
     `Panel UI ${field} alanını göstermeli`,
   );
@@ -212,7 +212,7 @@ for (const text of [
   "Lead → satış süresi",
 ]) {
   assertIncludes(
-    "app/vsl/panel/PanelView.tsx",
+    "app/fitsistem/panel/PanelView.tsx",
     text,
     `Panel UI ${text} alanını göstermeli`,
   );
@@ -225,14 +225,14 @@ for (const text of [
   "Takip Sağlığı",
 ]) {
   assertNotIncludes(
-    "app/vsl/panel/PanelView.tsx",
+    "app/fitsistem/panel/PanelView.tsx",
     text,
     `Panel UI ${text} bölümünü göstermemeli`,
   );
 }
 
 assertNotIncludes(
-  "app/vsl/panel/page.tsx",
+  "app/fitsistem/panel/page.tsx",
   "VSL Panel",
   "Panel giriş ekranı genel panel adı kullanmalı",
 );
@@ -265,7 +265,7 @@ assertIncludes(
   "Meta harcama okuyucu güncel Graph API versiyonunu kullanmalı",
 );
 
-for (const file of ["app/vsl/panel/page.tsx", "app/vsl/panel/actions.ts"]) {
+for (const file of ["app/fitsistem/panel/page.tsx", "app/fitsistem/panel/actions.ts"]) {
   assertIncludes(
     file,
     "process.env.FVP_PANEL_KEY, process.env.PANEL_KEY",

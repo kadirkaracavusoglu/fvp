@@ -13,10 +13,10 @@ export const FUNNEL = {
 } as const;
 
 export const VSL_OPTIN_CONTACT_KEY = "fvp_vsl_contact";
-export const VSL_UNLOCK_KEY = "fvp_vsl_unlocked"; // opt-in verildi → /vsl video sayfası açılır
+export const VSL_UNLOCK_KEY = "fvp_vsl_unlocked"; // opt-in verildi → /fitsistem/izle video sayfası açılır
 export const VSL_CTA_KEY = "fvp_vsl_cta"; // 5 dk izlendi → başvuru CTA açık kalır
 
-// VSL video — /vsl/optin (kilitli poster) ve /vsl (izleme) ortak videoId kullanır.
+// VSL video — /fitsistem (kilitli poster) ve /fitsistem/izle (izleme) ortak videoId kullanır.
 // Başlık/alt metin sayfaya özel (optin ile izleme sayfası farklı konuşur).
 export const VSL_VIDEO = {
   videoId: "DwMVqyS20Bo", // FINAL: "10 ayda 9M TL" vaka videosu (26:57) — Kadir onayladı

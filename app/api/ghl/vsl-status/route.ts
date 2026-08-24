@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     if (supabaseAdmin) {
       const { error } = await supabaseAdmin.from("events").insert({
         name,
-        path: "/vsl",
+        path: "/fitsistem/izle",
         session_id: null,
         video: null,
         attribution: null,
