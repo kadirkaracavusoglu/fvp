@@ -94,6 +94,7 @@ export function VslPlayer({
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
   const [rate, setRate] = useState(1); // oynatma hızı
+  const [pseudoFs, setPseudoFs] = useState(false); // iPhone: native fullscreen yok → CSS tam ekran
 
   const posterUrl = poster || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 
@@ -239,7 +240,7 @@ export function VslPlayer({
 
   function toggleFullscreen() {
     const el = containerRef.current as
-      | (HTMLDivElement & { webkitRequestFullscreen?: () => void })
+      | (HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> | void })
       | null;
     if (!el) return;
     const doc = document as Document & {
@@ -247,12 +248,40 @@ export function VslPlayer({
       webkitExitFullscreen?: () => void;
     };
     const active = document.fullscreenElement || doc.webkitFullscreenElement;
+    // Zaten tam ekran (native ya da CSS) → çık
     if (active) {
       (document.exitFullscreen || doc.webkitExitFullscreen)?.call(document);
+      return;
+    }
+    if (pseudoFs) {
+      setPseudoFs(false);
+      return;
+    }
+    // Native fullscreen'i dene; iPhone'da (div'de) fonksiyon yok/başarısız → CSS tam ekran
+    const req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) {
+      try {
+        const r = req.call(el) as Promise<void> | void;
+        if (r && typeof (r as Promise<void>).then === "function") {
+          (r as Promise<void>).catch(() => setPseudoFs(true));
+        }
+      } catch {
+        setPseudoFs(true);
+      }
     } else {
-      (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
+      setPseudoFs(true);
     }
   }
+
+  // CSS tam ekran açıkken sayfa arkada kaymasın
+  useEffect(() => {
+    if (!pseudoFs) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [pseudoFs]);
 
   function seek(e: React.MouseEvent<HTMLDivElement>) {
     const p = playerRef.current;
@@ -270,7 +299,11 @@ export function VslPlayer({
   return (
     <div
       ref={containerRef}
-      className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl [&:fullscreen]:aspect-auto [&:fullscreen]:h-full [&:fullscreen]:w-full [&:fullscreen]:rounded-none"
+      className={
+        pseudoFs
+          ? "fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-black"
+          : "relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl [&:fullscreen]:aspect-auto [&:fullscreen]:h-full [&:fullscreen]:w-full [&:fullscreen]:rounded-none"
+      }
     >
       {/* Oynatıcı iframe buraya girer */}
       <div ref={holderRef} className="absolute inset-0 h-full w-full [&>iframe]:h-full [&>iframe]:w-full" />
