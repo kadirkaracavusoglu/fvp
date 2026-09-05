@@ -62,7 +62,7 @@ export function VslWatch({ videoId }: { videoId: string }) {
               trackServer("cta_click", { video: videoId });
             }}
           >
-            FitSistem&apos;i Kendi İşime Uygulamak İstiyorum →
+            Fitsistem&apos;i Kendi İşime Uygulamak İstiyorum →
           </Link>
           <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
             İşinin bugün nerede olduğunu ve neyi değiştirmek istediğini

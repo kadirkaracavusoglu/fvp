@@ -52,7 +52,7 @@ export default function VslRandevuPage() {
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-base text-gray-400 sm:text-lg">
             Sana gerçekten yardımcı olabileceğimizi düşünürsek,
-            FitSistem&apos;i kendi işinde nasıl uygulayabileceğimizi ve birlikte
+            Fitsistem&apos;i kendi işinde nasıl uygulayabileceğimizi ve birlikte
             nasıl ilerleyebileceğimizi de konuşacağız.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400">

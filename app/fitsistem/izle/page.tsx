@@ -14,14 +14,14 @@ export default function VslPage() {
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <Reveal delay={0.08}>
             <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-              10 ayda 9 milyon TL&apos;ye ulaşmamızı sağlayan FitSistem&apos;i
+              10 ayda 9 milyon TL&apos;ye ulaşmamızı sağlayan Fitsistem&apos;i
               şimdi adım adım göreceksin.
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
               Önce gerçek rakamları ve süreç boyunca neleri değiştirdiğimizi
-              göstereceğim. Sonra FitSistem&apos;i nasıl kurduğumuzu ve aynı
+              göstereceğim. Sonra Fitsistem&apos;i nasıl kurduğumuzu ve aynı
               yaklaşımı kendi online koçluk işinde nasıl kullanabileceğini
               anlatacağım.
             </p>

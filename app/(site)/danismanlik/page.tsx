@@ -25,7 +25,7 @@ const surec = [
 export const metadata = {
   title: "Danışmanlık",
   description:
-    "FitSistem Birebir Danışmanlık — konumlanmadan funnel'a, içerikten CRM'e fitness işini sisteme oturt. Her ay sıfırdan başlamayı bitir.",
+    "Fitsistem Birebir Danışmanlık — konumlanmadan funnel'a, içerikten CRM'e fitness işini sisteme oturt. Her ay sıfırdan başlamayı bitir.",
   alternates: { canonical: "/danismanlik" },
 };
 
@@ -36,7 +36,7 @@ export default function DanismanlikPage() {
       <section className="glow-bg">
         <div className="mx-auto max-w-4xl px-5 py-20 text-center">
           <Reveal>
-            <div className="text-xs font-medium text-cyan">FitSistem Birebir Danışmanlık</div>
+            <div className="text-xs font-medium text-cyan">Fitsistem Birebir Danışmanlık</div>
             <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
               İşini şansa değil, sisteme oturt.
             </h1>

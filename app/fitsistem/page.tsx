@@ -110,13 +110,13 @@ export default function VslOptinPage() {
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
             Bir fitness koçuyla 10 ayda 9 milyon TL ciro üretmemizi sağlayan
-            FitSistem&apos;i ve bunu kendi online koçluk işinde nasıl
+            Fitsistem&apos;i ve bunu kendi online koçluk işinde nasıl
             uygulayabileceğini gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
             Bu 27 dakikalık videoda daha fazla kişiye ulaşmak, daha fazla danışan
             kazanmak ve online koçluk işini kendi şartlarınla büyütmek için
-            FitSistem&apos;i nasıl kullandığımızı gerçek rakamlar ve yaptığımız
+            Fitsistem&apos;i nasıl kullandığımızı gerçek rakamlar ve yaptığımız
             çalışmalar üzerinden anlatıyorum.
           </p>
         </div>
@@ -151,7 +151,7 @@ export default function VslOptinPage() {
             onClick={openModal}
             className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
           >
-            FitSistem&apos;i Nasıl Uyguladığımızı İzle →
+            Fitsistem&apos;i Nasıl Uyguladığımızı İzle →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
             Adını ve e-posta adresini bırak, video hemen açılsın.
@@ -226,7 +226,7 @@ export default function VslOptinPage() {
                 disabled={sending}
                 className="btn-primary w-full px-6 py-3 text-sm disabled:opacity-60"
               >
-                {sending ? "Açılıyor..." : "Videoyu Aç ve FitSistem'i Gör →"}
+                {sending ? "Açılıyor..." : "Videoyu Aç ve Fitsistem'i Gör →"}
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
