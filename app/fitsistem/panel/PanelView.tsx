@@ -1,6 +1,8 @@
 import {
   PANEL_RANGES,
+  PANEL_FUNNELS,
   type FunnelStep,
+  type FunnelKey,
   type VslPanelData,
 } from "@/lib/vsl-panel";
 
@@ -114,11 +116,14 @@ function FunnelCard({ title, steps }: { title: string; steps: FunnelStep[] }) {
 export function PanelView({
   data,
   logout,
+  funnel,
 }: {
   data: VslPanelData;
   logout: () => void;
+  funnel: FunnelKey;
 }) {
   const active = data.range;
+  const funnelLabel = PANEL_FUNNELS.find((f) => f.key === funnel)?.label ?? "Fitsistem";
   return (
     <div className="min-h-screen bg-[#f4f6f9] px-5 py-8 text-[#0d204d]">
       <div className="mx-auto max-w-6xl">
@@ -128,15 +133,31 @@ export function PanelView({
               Komuta Merkezi
             </h1>
             <p className="mt-1 text-sm text-gray-400">
-              Fitness ve Pazarlama · {data.startDate} → {data.endDate} · son
+              {funnelLabel} · {data.startDate} → {data.endDate} · son
               güncelleme {fmtDate(data.generatedAt)}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            {/* Funnel seçici — iki VSL funnel'ı ayrı ayrı */}
+            <div className="mr-1 flex items-center gap-1 rounded-full border border-[#e6e8ea] bg-white p-1">
+              {PANEL_FUNNELS.map((f) => (
+                <a
+                  key={f.key}
+                  href={`/fitsistem/panel?range=${active}&funnel=${f.key}`}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
+                    funnel === f.key
+                      ? "bg-[#0d204d] text-white"
+                      : "text-gray-400 hover:text-[#0d204d]"
+                  }`}
+                >
+                  {f.label}
+                </a>
+              ))}
+            </div>
             {PANEL_RANGES.map((r) => (
               <a
                 key={r.key}
-                href={`/fitsistem/panel?range=${r.key}`}
+                href={`/fitsistem/panel?range=${r.key}&funnel=${funnel}`}
                 className={`rounded-full border px-3 py-2 text-xs font-semibold ${
                   active === r.key
                     ? "border-[#0d204d] bg-[#0d204d] text-white"

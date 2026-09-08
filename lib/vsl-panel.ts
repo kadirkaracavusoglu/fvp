@@ -5,6 +5,13 @@ import { getGhlBookings, type GhlBooking } from "@/lib/ghl-appointments";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch";
 
+// İki VSL funnel'ı — panelde ayrı ayrı görüntülenir (event path / lead landing path ile filtre).
+export type FunnelKey = "fitsistem" | "vaka-hande";
+export const PANEL_FUNNELS: { key: FunnelKey; label: string; prefixes: string[] }[] = [
+  { key: "fitsistem", label: "Fitsistem", prefixes: ["/fitsistem", "/vsl"] },
+  { key: "vaka-hande", label: "Vaka-Hande", prefixes: ["/vaka-hande"] },
+];
+
 type EventRow = {
   name: string;
   path: string | null;
@@ -630,6 +637,7 @@ function formLabel(type?: string | null): string {
 
 export async function getVslPanelData(
   range: PanelRange,
+  funnel: FunnelKey = "fitsistem",
 ): Promise<VslPanelData> {
   const r = resolveRange(range);
   const base: VslPanelData = {
@@ -692,7 +700,7 @@ export async function getVslPanelData(
   if (!supabaseAdmin) return { ...base, error: "Supabase env tanımlı değil." };
 
   try {
-    const [events, leads] = await Promise.all([
+    const [eventsRaw, leadsRaw] = await Promise.all([
       fetchAll<EventRow>(
         "events",
         "name,path,session_id,attribution,meta,created_at",
@@ -706,6 +714,25 @@ export async function getVslPanelData(
         r.until,
       ),
     ]);
+
+    // Funnel filtresi — iki funnel aynı event isimlerini paylaştığı için path ile ayır.
+    // Event: fired-path (/fitsistem* vs /vaka-hande*). Lead: attribution landing_path.
+    // vaka-hande AÇIK path ister; fitsistem legacy/null'ı da kapsar (geçmiş veri korunur).
+    const prefixes = PANEL_FUNNELS.find((f) => f.key === funnel)?.prefixes ?? ["/fitsistem", "/vsl"];
+    const isVaka = funnel === "vaka-hande";
+    const inFunnel = (p?: string | null): boolean => {
+      if (p && prefixes.some((pre) => p.startsWith(pre))) return true;
+      return !isVaka && !p; // yol yoksa/eski → fitsistem'e say
+    };
+    const events = eventsRaw.filter((e) => inFunnel(e.path));
+    const leads = leadsRaw.filter((l) => {
+      const a = (l.attribution || {}) as Record<string, unknown>;
+      const lp =
+        (typeof a.first_landing_path === "string" && a.first_landing_path) ||
+        (typeof a.landing_path === "string" && a.landing_path) ||
+        null;
+      return inFunnel(lp);
+    });
 
     const visits = uniqueBy(events, "vsl_optin_view");
     const popupOpens = uniqueBy(events, "vsl_optin_cta_click");

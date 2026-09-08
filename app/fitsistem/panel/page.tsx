@@ -2,7 +2,9 @@ import { cookies } from "next/headers";
 import {
   getVslPanelData,
   PANEL_RANGES,
+  PANEL_FUNNELS,
   type PanelRange,
+  type FunnelKey,
 } from "@/lib/vsl-panel";
 import { login, logout } from "./actions";
 import { PanelView } from "./PanelView";
@@ -29,10 +31,14 @@ function isRange(value?: string): value is PanelRange {
   return PANEL_RANGES.some((r) => r.key === value);
 }
 
+function isFunnel(value?: string): value is FunnelKey {
+  return PANEL_FUNNELS.some((f) => f.key === value);
+}
+
 export default async function VslPanelPage({
   searchParams,
 }: {
-  searchParams: Promise<{ range?: string; e?: string }>;
+  searchParams: Promise<{ range?: string; funnel?: string; e?: string }>;
 }) {
   const sp = await searchParams;
   const jar = await cookies();
@@ -75,7 +81,8 @@ export default async function VslPanelPage({
   }
 
   const range = isRange(sp.range) ? sp.range : "week";
-  const data = await getVslPanelData(range);
+  const funnel = isFunnel(sp.funnel) ? sp.funnel : "fitsistem";
+  const data = await getVslPanelData(range, funnel);
 
-  return <PanelView data={data} logout={logout} />;
+  return <PanelView data={data} logout={logout} funnel={funnel} />;
 }
