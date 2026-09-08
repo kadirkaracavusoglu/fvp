@@ -9,12 +9,24 @@ export const FUNNEL = {
   // ile de doldurulur (lib/ghl-contact.ts). URL gizli değil; env ile override edilebilir.
   ghlWebhook:
     process.env.GHL_VSL_WEBHOOK ||
+    process.env.GHL_WEBHOOK_URL ||
     "https://services.leadconnectorhq.com/hooks/ui4C7FNVHfgWeZk9DQpB/webhook-trigger/8d9d82de-d562-4c8c-ba39-49e224b4ebcd",
 } as const;
 
 export const VSL_OPTIN_CONTACT_KEY = "fvp_vsl_contact";
 export const VSL_UNLOCK_KEY = "fvp_vsl_unlocked"; // opt-in verildi → /fitsistem/izle video sayfası açılır
 export const VSL_CTA_KEY = "fvp_vsl_cta"; // 5 dk izlendi → başvuru CTA açık kalır
+
+// İKİNCİ FUNNEL — Hande vakası (/vaka-hande). Kendi videosu + kendi localStorage
+// anahtarları (fitsistem funnel'ıyla kilit/CTA durumu KARIŞMASIN). Takvim + başvuru
+// API'si + tracking altyapısı ortaktır; lead'ler attribution.landingUrl (/vaka-hande)
+// ile ayrışır. Event'ler location:"vaka-hande" ile etiketlenir.
+export const VAKA_HANDE = {
+  videoId: "L_2y4a_k5hY", // Hande Zeynep Koç dönüşüm vakası (~27 dk)
+  unlockKey: "fvp_vh_unlocked",
+  ctaKey: "fvp_vh_cta",
+  contactKey: "fvp_vh_contact",
+} as const;
 
 // VSL video — /fitsistem (kilitli poster) ve /fitsistem/izle (izleme) ortak videoId kullanır.
 // Başlık/alt metin sayfaya özel (optin ile izleme sayfası farklı konuşur).

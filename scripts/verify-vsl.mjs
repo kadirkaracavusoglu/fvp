@@ -26,6 +26,11 @@ const calendarId = "SSw6HZHR3j9veTWH8xTp";
 
 assertIncludes(
   "lib/funnel.ts",
+  "process.env.GHL_WEBHOOK_URL",
+  "Funnel GHL webhook eski env adıyla da çalışmalı",
+);
+assertIncludes(
+  "lib/funnel.ts",
   `https://link.fitsistem.co/widget/booking/${calendarId}`,
   "GHL takvim URL'i singular widget/booking olmalı",
 );
@@ -101,6 +106,22 @@ for (const field of [
 ]) {
   assertIncludes("lib/ghl.ts", field, `GHL payload ${field} alanını taşımalı`);
 }
+
+for (const field of [
+  "ghl_ok",
+  "ghl_last_status",
+  "ghl_error",
+  "ghl_attempted_at",
+  "ghl_attempt_count",
+]) {
+  assertIncludes("supabase/schema.sql", field, `Leads tablosu ${field} GHL durum alanını taşımalı`);
+}
+for (const file of ["app/api/optin/route.ts", "app/api/basvuru/route.ts"]) {
+  assertIncludes(file, "markLeadGhlDelivery", `${file} GHL durumunu Supabase'e yazmalı`);
+  assertIncludes(file, "summarizeGhlDelivery", `${file} GHL adımlarını tek başarı durumuna çevirmeli`);
+}
+assertIncludes("scripts/replay-ghl.mjs", 'listUrl.searchParams.set("ghl_ok", "eq.false")', "Replay script yalnız başarısız GHL kayıtlarını seçmeli");
+assertIncludes("scripts/replay-ghl.mjs", "process.env.GHL_WEBHOOK_URL", "Replay script eski GHL webhook env adını da kullanmalı");
 
 // Başvuru iletişim ekranı sadeleşti: yalnız telefon + Instagram (ad/e-posta opt-in'den prefill).
 for (const field of ['name="phone"', 'name="instagram"']) {

@@ -74,12 +74,15 @@ export function VslPlayer({
   poster,
   autoplay = true,
   onMilestone,
+  location = "vsl",
 }: {
   videoId: string;
   poster?: string;
   autoplay?: boolean;
   /** Her milestone tetiklendiğinde çağrılır (ör. "vsl_min5" → CTA aç). Bir kez/olay. */
   onMilestone?: (name: string) => void;
+  /** Event etiketi — farklı funnel'larda veriyi ayırmak için (varsayılan "vsl"). */
+  location?: string;
 }) {
   const holderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,10 +105,10 @@ export function VslPlayer({
   const fire = useCallback((name: string, extra?: Record<string, unknown>) => {
     if (firedRef.current.has(name)) return;
     firedRef.current.add(name);
-    track(name, { location: "vsl", video: videoId, ...extra });
+    track(name, { location, video: videoId, ...extra });
     trackServer(name, { video: videoId, meta: extra });
     onMilestone?.(name);
-  }, [videoId, onMilestone]);
+  }, [videoId, onMilestone, location]);
 
   // İzleme ilerlemesini yokla → progress bar + milestone
   const startPolling = useCallback(() => {

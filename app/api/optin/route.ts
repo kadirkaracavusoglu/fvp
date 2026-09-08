@@ -3,7 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { FUNNEL } from "@/lib/funnel";
 import { ghlAttributionPayload } from "@/lib/ghl";
-import { upsertGhlContact } from "@/lib/ghl-contact";
+import { postGhlWebhook, summarizeGhlDelivery, upsertGhlContact, type GhlStepResult } from "@/lib/ghl-contact";
+import { markLeadGhlDelivery } from "@/lib/lead-ghl-status";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
@@ -30,16 +31,18 @@ export async function POST(req: Request) {
     const attr = attribution && Object.keys(attribution).length ? attribution : null;
 
     // 1) Kendi DB'mize (leads) — GHL'den bağımsız, her zaman
+    let leadId: string | null = null;
     if (supabaseAdmin) {
-      const row = { first_name: fn, last_name: ln, email: mail, form_type: "vsl_optin", attribution: attr, source: SITE.domain };
-      const { error } = await supabaseAdmin.from("leads").insert(row);
+      const row = { first_name: fn, last_name: ln, email: mail, form_type: "vsl_optin", attribution: attr, source: SITE.domain, ghl_ok: false };
+      const { data, error } = await supabaseAdmin.from("leads").insert(row).select("id").single();
       if (error && !/relation .*leads.* does not exist|schema cache/i.test(error.message)) {
         console.error("optin leads insert:", error.message);
       }
+      leadId = data?.id || null;
     }
 
     // 2) GHL'e doğrudan upsert — AWAIT (serverless yanıt dönünce isteği kesmesin)
-    await upsertGhlContact({
+    const contact = await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail,
       tags: ["vsl-optin"],
       source: "VSL opt-in (/fitsistem)",
@@ -48,12 +51,12 @@ export async function POST(req: Request) {
     });
 
     // 3) Ek VSL webhook — AWAIT (fire-and-forget serverless'ta düşüyordu)
+    let webhook: GhlStepResult = { ok: false, skipped: true };
     if (FUNNEL.ghlWebhook) {
       const ghlAttr = ghlAttributionPayload(attr);
-      await fetch(FUNNEL.ghlWebhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      webhook = await postGhlWebhook(
+        FUNNEL.ghlWebhook,
+        {
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
           email: mail,
           source: "VSL opt-in (/fitsistem)",
@@ -63,9 +66,14 @@ export async function POST(req: Request) {
           pageUrl: `${SITE.url}/fitsistem`,
           ...ghlAttr,
           ...(attr || {}),
-        }),
-      }).catch(() => {});
+        },
+      );
     }
+    const delivery = summarizeGhlDelivery([
+      { label: "contact_upsert", result: contact },
+      { label: "vsl_webhook", result: webhook },
+    ]);
+    await markLeadGhlDelivery(supabaseAdmin, leadId, delivery);
 
     return NextResponse.json({ ok: true });
   } catch {

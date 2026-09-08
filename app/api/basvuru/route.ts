@@ -3,7 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { BASVURU_LABELS, FUNNEL, scoreApplication, type BasvuruCevaplar } from "@/lib/funnel";
 import { ghlAttributionPayload } from "@/lib/ghl";
-import { upsertGhlContact, ensureOpportunity } from "@/lib/ghl-contact";
+import { ensureOpportunity, postGhlWebhook, summarizeGhlDelivery, upsertGhlContact, type GhlStepResult } from "@/lib/ghl-contact";
+import { markLeadGhlDelivery } from "@/lib/lead-ghl-status";
 import { SITE } from "@/lib/site";
 
 function isValidEmail(email: string) {
@@ -72,15 +73,17 @@ export async function POST(req: Request) {
     };
     const attr = attribution && Object.keys(attribution).length ? attribution : null;
 
+    let leadId: string | null = null;
     if (supabaseAdmin) {
       const row = {
         first_name: fn, last_name: ln, email: mail, phone: tel,
-        form_type: "vsl_basvuru", cevaplar: enrichedAnswers, attribution: attr, source: SITE.domain,
+        form_type: "vsl_basvuru", cevaplar: enrichedAnswers, attribution: attr, source: SITE.domain, ghl_ok: false,
       };
-      const { error } = await supabaseAdmin.from("leads").insert(row);
+      const { data, error } = await supabaseAdmin.from("leads").insert(row).select("id").single();
       if (error && !/relation .*leads.* does not exist|schema cache/i.test(error.message)) {
         console.error("basvuru leads insert:", error.message);
       }
+      leadId = data?.id || null;
     }
 
     // GHL'e doğrudan upsert — tüm custom field'lar id ile dolar (workflow gerekmez).
@@ -102,17 +105,18 @@ export async function POST(req: Request) {
 
     // Sales Pipeline'da opportunity aç (Yeni Başvuru). WF-01 buradan tetiklenir.
     // Mükerrer açmaz; contactId yoksa (upsert no-op/hatası) atlar.
+    let opportunity: GhlStepResult = { ok: false, skipped: true };
     if (ghlRes.ok && ghlRes.id) {
-      await ensureOpportunity({ contactId: ghlRes.id, name: `${fn} ${ln}`.trim() || mail });
+      opportunity = await ensureOpportunity({ contactId: ghlRes.id, name: `${fn} ${ln}`.trim() || mail });
     }
 
     // Ek VSL webhook — AWAIT. Cevaplar tek metinde de gider.
+    let webhook: GhlStepResult = { ok: false, skipped: true };
     if (FUNNEL.ghlWebhook) {
       const ghlAttr = ghlAttributionPayload(attr);
-      await fetch(FUNNEL.ghlWebhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      webhook = await postGhlWebhook(
+        FUNNEL.ghlWebhook,
+        {
           ...enrichedAnswers,
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
           email: mail,
@@ -132,9 +136,15 @@ export async function POST(req: Request) {
           leadReasons: score.reasons.join(", "),
           ...ghlAttr,
           ...(attr || {}),
-        }),
-      }).catch(() => {});
+        },
+      );
     }
+    const delivery = summarizeGhlDelivery([
+      { label: "contact_upsert", result: ghlRes },
+      { label: "opportunity", result: opportunity },
+      { label: "vsl_webhook", result: webhook },
+    ]);
+    await markLeadGhlDelivery(supabaseAdmin, leadId, delivery);
 
     return NextResponse.json({ ok: true });
   } catch {

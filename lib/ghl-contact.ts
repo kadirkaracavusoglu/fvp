@@ -68,7 +68,61 @@ export type GhlUpsertInput = {
 };
 
 /** Contact'ı GHL'e upsert et (email/phone ile dedup). Field'ları id ile doldurur. */
-export async function upsertGhlContact(input: GhlUpsertInput): Promise<{ ok: boolean; id?: string; skipped?: boolean }> {
+export type GhlStepResult = {
+  ok: boolean;
+  id?: string;
+  skipped?: boolean;
+  status?: number;
+  error?: string;
+};
+
+function errorText(value: unknown) {
+  return value instanceof Error ? value.message : String(value || "unknown error");
+}
+
+async function readShortResponse(res: Response) {
+  try {
+    return (await res.text()).slice(0, 200);
+  } catch {
+    return "";
+  }
+}
+
+export async function postGhlWebhook(url: string, body: unknown): Promise<GhlStepResult> {
+  if (!url) return { ok: false, skipped: true, error: "webhook url empty" };
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      return { ok: false, status: res.status, error: await readShortResponse(res) };
+    }
+    return { ok: true, status: res.status };
+  } catch (e) {
+    return { ok: false, error: errorText(e) };
+  }
+}
+
+export function summarizeGhlDelivery(
+  steps: Array<{ label: string; result: GhlStepResult }>,
+): { ok: boolean; status: number | null; error: string | null } {
+  const failures = steps
+    .filter((step) => !step.result.ok && !step.result.skipped)
+    .map((step) => `${step.label}: ${step.result.status || "error"} ${step.result.error || ""}`.trim());
+  const status =
+    steps.find((step) => !step.result.ok && !step.result.skipped && step.result.status)?.result.status ||
+    [...steps].reverse().find((step) => step.result.status)?.result.status ||
+    null;
+  return {
+    ok: failures.length === 0,
+    status,
+    error: failures.length ? failures.join(" | ").slice(0, 1000) : null,
+  };
+}
+
+export async function upsertGhlContact(input: GhlUpsertInput): Promise<GhlStepResult> {
   if (!LOCATION_KEY) return { ok: false, skipped: true };
 
   const cf: CustomField[] = [];
@@ -124,14 +178,16 @@ export async function upsertGhlContact(input: GhlUpsertInput): Promise<{ ok: boo
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      console.error("ghl upsert failed:", res.status, (await res.text()).slice(0, 200));
-      return { ok: false };
+      const err = await readShortResponse(res);
+      console.error("ghl upsert failed:", res.status, err);
+      return { ok: false, status: res.status, error: err };
     }
     const data = (await res.json()) as { contact?: { id?: string } };
     return { ok: true, id: data.contact?.id };
   } catch (e) {
-    console.error("ghl upsert error:", e instanceof Error ? e.message : e);
-    return { ok: false };
+    const err = errorText(e);
+    console.error("ghl upsert error:", err);
+    return { ok: false, error: err };
   }
 }
 
@@ -143,7 +199,7 @@ export async function upsertGhlContact(input: GhlUpsertInput): Promise<{ ok: boo
 export async function ensureOpportunity(input: {
   contactId: string;
   name: string;
-}): Promise<{ ok: boolean; id?: string; existed?: boolean; skipped?: boolean }> {
+}): Promise<GhlStepResult & { existed?: boolean }> {
   if (!LOCATION_KEY) return { ok: false, skipped: true };
   const headers = {
     Authorization: `Bearer ${LOCATION_KEY}`,
@@ -177,13 +233,15 @@ export async function ensureOpportunity(input: {
       }),
     });
     if (!res.ok) {
-      console.error("ghl opportunity create failed:", res.status, (await res.text()).slice(0, 200));
-      return { ok: false };
+      const err = await readShortResponse(res);
+      console.error("ghl opportunity create failed:", res.status, err);
+      return { ok: false, status: res.status, error: err };
     }
     const data = (await res.json()) as { opportunity?: { id?: string } };
     return { ok: true, id: data.opportunity?.id };
   } catch (e) {
-    console.error("ghl opportunity error:", e instanceof Error ? e.message : e);
-    return { ok: false };
+    const err = errorText(e);
+    console.error("ghl opportunity error:", err);
+    return { ok: false, error: err };
   }
 }

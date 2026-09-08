@@ -10,7 +10,23 @@ import { VslPlayer } from "@/components/lp/VslPlayer";
 import { VSL_UNLOCK_KEY, VSL_CTA_KEY } from "@/lib/funnel";
 import { captureAttribution, track, trackServer } from "@/lib/tracking";
 
-export function VslWatch({ videoId }: { videoId: string }) {
+export function VslWatch({
+  videoId,
+  unlockKey = VSL_UNLOCK_KEY,
+  ctaKey = VSL_CTA_KEY,
+  backHref = "/fitsistem",
+  basvuruHref = "/fitsistem/basvuru",
+  ctaText = "Fitsistem'i Kendi İşime Uygulamak İstiyorum →",
+  location = "vsl",
+}: {
+  videoId: string;
+  unlockKey?: string;
+  ctaKey?: string;
+  backHref?: string;
+  basvuruHref?: string;
+  ctaText?: string;
+  location?: string;
+}) {
   const router = useRouter();
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
   const [allowed, setAllowed] = useState(false); // opt-in verilmiş mi
@@ -19,18 +35,18 @@ export function VslWatch({ videoId }: { videoId: string }) {
   useEffect(() => {
     captureAttribution();
     try {
-      if (!localStorage.getItem(VSL_UNLOCK_KEY)) {
-        router.replace("/fitsistem"); // opt-in yoksa kapıya geri
+      if (!localStorage.getItem(unlockKey)) {
+        router.replace(backHref); // opt-in yoksa kapıya geri
         return;
       }
       setAllowed(true);
-      if (localStorage.getItem(VSL_CTA_KEY)) setCtaReady(true); // daha önce 5 dk izlemiş
+      if (localStorage.getItem(ctaKey)) setCtaReady(true); // daha önce 5 dk izlemiş
     } catch {
-      router.replace("/fitsistem");
+      router.replace(backHref);
       return;
     }
     setReady(true);
-  }, [router]);
+  }, [router, unlockKey, ctaKey, backHref]);
 
   if (!ready || !allowed) {
     return <div className="aspect-video w-full rounded-2xl bg-[#0b1a3a]" />;
@@ -41,12 +57,13 @@ export function VslWatch({ videoId }: { videoId: string }) {
       <VslPlayer
         videoId={videoId}
         autoplay
+        location={location}
         onMilestone={(name) => {
           // CTA yalnız 10 dakika izlendikten sonra açılır (time-on-brand + niyet).
           if (name === "vsl_min10") {
             setCtaReady(true);
             try {
-              localStorage.setItem(VSL_CTA_KEY, "1");
+              localStorage.setItem(ctaKey, "1");
             } catch {}
           }
         }}
@@ -55,14 +72,14 @@ export function VslWatch({ videoId }: { videoId: string }) {
       {ctaReady && (
         <div className="mt-8 text-center">
           <Link
-            href="/fitsistem/basvuru"
+            href={basvuruHref}
             className="btn-primary inline-block px-8 py-4 text-base"
             onClick={() => {
-              track("cta_click", { location: "vsl" });
+              track("cta_click", { location });
               trackServer("cta_click", { video: videoId });
             }}
           >
-            Fitsistem&apos;i Kendi İşime Uygulamak İstiyorum →
+            {ctaText}
           </Link>
           <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
             İşinin bugün nerede olduğunu ve neyi değiştirmek istediğini

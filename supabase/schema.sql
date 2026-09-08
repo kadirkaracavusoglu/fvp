@@ -52,11 +52,17 @@ create table if not exists leads (
   cevaplar jsonb,                                -- başvuru formu cevapları (soru→değer)
   attribution jsonb,                             -- gclid / fbclid / utm_*
   source text,
+  ghl_ok boolean,                                -- null = eski/izlenmeyen kayıt; yeni route önce false yazar
+  ghl_last_status integer,
+  ghl_error text,
+  ghl_attempted_at timestamptz,
+  ghl_attempt_count integer not null default 0,
   created_at timestamptz not null default now()
 );
 create index if not exists leads_email_idx on leads (email);
 create index if not exists leads_form_type_idx on leads (form_type);
 create index if not exists leads_created_idx on leads (created_at);
+create index if not exists leads_ghl_ok_idx on leads (ghl_ok);
 
 -- RLS: tabloları kilitle (yalnızca service_role erişir, API route'lar üzerinden)
 alter table subscribers enable row level security;
