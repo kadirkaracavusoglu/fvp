@@ -637,7 +637,7 @@ function formLabel(type?: string | null): string {
 
 export async function getVslPanelData(
   range: PanelRange,
-  funnel: FunnelKey = "fitsistem",
+  funnelKey: FunnelKey = "fitsistem",
 ): Promise<VslPanelData> {
   const r = resolveRange(range);
   const base: VslPanelData = {
@@ -718,8 +718,8 @@ export async function getVslPanelData(
     // Funnel filtresi — iki funnel aynı event isimlerini paylaştığı için path ile ayır.
     // Event: fired-path (/fitsistem* vs /vaka-hande*). Lead: attribution landing_path.
     // vaka-hande AÇIK path ister; fitsistem legacy/null'ı da kapsar (geçmiş veri korunur).
-    const prefixes = PANEL_FUNNELS.find((f) => f.key === funnel)?.prefixes ?? ["/fitsistem", "/vsl"];
-    const isVaka = funnel === "vaka-hande";
+    const prefixes = PANEL_FUNNELS.find((f) => f.key === funnelKey)?.prefixes ?? ["/fitsistem", "/vsl"];
+    const isVaka = funnelKey === "vaka-hande";
     const inFunnel = (p?: string | null): boolean => {
       if (p && prefixes.some((pre) => p.startsWith(pre))) return true;
       return !isVaka && !p; // yol yoksa/eski → fitsistem'e say
