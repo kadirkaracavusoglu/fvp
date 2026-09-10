@@ -237,6 +237,37 @@ async function fetchAll<T extends object>(
   return all;
 }
 
+// Manuel günlük reklam harcaması — Supabase `ad_spend` tablosundan.
+// Kolonlar: date (date), funnel (text: 'fitsistem'|'vaka-hande'|'all'), spend (numeric).
+// Kadir günlük satır ekler. Tablo yoksa/boşsa null döner (Meta'ya fallback edilir).
+async function getManualSpend(
+  startDate: string,
+  endDate: string,
+  funnelKey: FunnelKey,
+): Promise<number | null> {
+  if (!supabaseAdmin) return null;
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("ad_spend")
+      .select("spend,funnel,date")
+      .gte("date", startDate)
+      .lte("date", endDate);
+    if (error || !data) return null;
+    let total = 0;
+    let any = false;
+    for (const row of data as { spend: number | string; funnel: string | null }[]) {
+      const f = row.funnel || "all";
+      if (f === funnelKey || f === "all") {
+        total += Number(row.spend) || 0;
+        any = true;
+      }
+    }
+    return any ? total : null;
+  } catch {
+    return null;
+  }
+}
+
 function uniqueBy(rows: EventRow[], name: string): number {
   const sessions = new Set<string>();
   let anonymous = 0;
@@ -793,8 +824,10 @@ export async function getVslPanelData(
     const reached = reachedRows.length;
     const sales = saleRows.length;
     const revenue = saleRows.reduce((sum, row) => sum + eventRevenue(row), 0);
-    const metaSpend = await getMetaSpend(r.startDate, r.endDate);
-    const spend = metaSpend.ok ? metaSpend.spend : null;
+    // Harcama: önce manuel (Supabase ad_spend, funnel bazlı), yoksa Meta'ya düş.
+    const manualSpend = await getManualSpend(r.startDate, r.endDate, funnelKey);
+    const metaSpend = manualSpend == null ? await getMetaSpend(r.startDate, r.endDate) : null;
+    const spend = manualSpend != null ? manualSpend : metaSpend?.ok ? metaSpend.spend : null;
 
     const optins = uniqueLeadCount(leads, "vsl_optin");
     const applicationRows = uniqueLeadRows(leads, "vsl_basvuru");

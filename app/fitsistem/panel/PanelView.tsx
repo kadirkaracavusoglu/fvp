@@ -225,7 +225,7 @@ export function PanelView({
             </p>
             {/* Para & verim — en üstte */}
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-              <Kpi label="Harcama" value={money(data.kpi.spend)} sub="Meta" />
+              <Kpi label="Harcama" value={money(data.kpi.spend)} sub="günlük (Supabase)" />
               <Kpi label="Ciro" value={money(data.kpi.revenue)} sub="GHL won" />
               <Kpi
                 label="ROAS"
@@ -254,6 +254,11 @@ export function PanelView({
                 label="Ziyaret"
                 value={String(data.kpi.visits)}
                 sub="VSL sayfasını gördü"
+              />
+              <Kpi
+                label="Opt-in"
+                value={String(data.kpi.optins)}
+                sub={`ziyaret → opt-in ${pct(data.kpi.optinRate)}`}
               />
               <Kpi
                 label="Conv. page %"
