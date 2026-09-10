@@ -18,6 +18,7 @@ export function VslWatch({
   basvuruHref = "/fitsistem/basvuru",
   ctaText = "Fitsistem'i Kendi İşime Uygulamak İstiyorum →",
   location = "vsl",
+  note,
 }: {
   videoId: string;
   unlockKey?: string;
@@ -26,6 +27,7 @@ export function VslWatch({
   basvuruHref?: string;
   ctaText?: string;
   location?: string;
+  note?: string;
 }) {
   const router = useRouter();
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
@@ -59,8 +61,8 @@ export function VslWatch({
         autoplay
         location={location}
         onMilestone={(name) => {
-          // CTA yalnız 10 dakika izlendikten sonra açılır (time-on-brand + niyet).
-          if (name === "vsl_min10") {
+          // CTA yalnız 5 dakika izlendikten sonra açılır (time-on-brand + niyet).
+          if (name === "vsl_min5") {
             setCtaReady(true);
             try {
               localStorage.setItem(ctaKey, "1");
@@ -68,7 +70,13 @@ export function VslWatch({
           }
         }}
       />
-      {/* CTA — yalnız 10 dk izlendikten sonra görünür. Sonraki adım: başvuru. */}
+      {/* Video altı kısa bilgi */}
+      {note && (
+        <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-gray-400">
+          {note}
+        </p>
+      )}
+      {/* CTA — yalnız 5 dk izlendikten sonra görünür. Sonraki adım: başvuru. */}
       {ctaReady && (
         <div className="mt-8 text-center">
           <Link

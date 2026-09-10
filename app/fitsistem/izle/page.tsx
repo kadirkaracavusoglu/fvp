@@ -32,7 +32,10 @@ export default function VslPage() {
       {/* Video + 5 dk sonra CTA (guard içeride) */}
       <section className="mx-auto max-w-4xl px-5 pb-16">
         <Reveal delay={0.1}>
-          <VslWatch videoId={VSL_VIDEO.videoId} />
+          <VslWatch
+            videoId={VSL_VIDEO.videoId}
+            note="Bu videoda bir fitness koçuyla 10 ayda 9 milyon TL'ye nasıl ulaştığımızı, Fitsistem'i nasıl kurduğumuzu ve aynı yaklaşımı kendi online koçluk işinde nasıl uygulayabileceğini gerçek rakamlarla anlatıyorum. Sesini açmayı unutma."
+          />
         </Reveal>
       </section>
     </>
