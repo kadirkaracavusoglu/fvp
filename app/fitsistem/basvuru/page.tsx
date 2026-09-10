@@ -193,7 +193,12 @@ export default function BasvuruPage() {
             <p className="mx-auto mt-1 max-w-xl text-sm text-gray-400">
               Aşağıdaki sorular işinin bugün nerede olduğunu, nereye ulaşmak
               istediğini ve sana gerçekten yardımcı olup olamayacağımızı
-              anlamamız için. Yaklaşık birkaç dakikanı alacak.
+              anlamamız için.
+            </p>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-gray-400">
+              Nasıl ilerleyeceksin: önce birkaç kısa soruyu cevaplıyorsun, sonra
+              iletişim bilgilerini bırakıyorsun, en son da sana uygun görüşme
+              saatini seçiyorsun. Hepsi yaklaşık 3 dakika sürüyor.
             </p>
           </div>
         )}
