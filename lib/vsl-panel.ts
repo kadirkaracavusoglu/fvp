@@ -3,7 +3,7 @@ import { BASVURU_SORULARI } from "@/lib/funnel";
 import { getMetaSpend } from "@/lib/meta-insights";
 import { getGhlBookings, type GhlBooking } from "@/lib/ghl-appointments";
 
-export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch";
+export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "custom";
 
 // İki VSL funnel'ı — panelde ayrı ayrı görüntülenir (event path / lead landing path ile filtre).
 export type FunnelKey = "fitsistem" | "vaka-hande";
@@ -155,8 +155,21 @@ function startIso(date: string): string {
   return new Date(`${date}T00:00:00+03:00`).toISOString();
 }
 
-function resolveRange(range: PanelRange) {
+function resolveRange(range: PanelRange, custom?: { from?: string; to?: string }) {
   const today = trToday();
+  const isDate = (v?: string): v is string => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v);
+  if (range === "custom" && custom && isDate(custom.from) && isDate(custom.to)) {
+    let from = custom.from;
+    let to = custom.to;
+    if (from > to) [from, to] = [to, from]; // ters girilirse düzelt
+    if (to > today) to = today; // geleceğe taşma engeli
+    return {
+      startDate: from,
+      endDate: to,
+      since: startIso(from),
+      until: startIso(addDays(to, 1)),
+    };
+  }
   if (range === "today") {
     return {
       startDate: today,
@@ -638,8 +651,9 @@ function formLabel(type?: string | null): string {
 export async function getVslPanelData(
   range: PanelRange,
   funnelKey: FunnelKey = "fitsistem",
+  custom?: { from?: string; to?: string },
 ): Promise<VslPanelData> {
-  const r = resolveRange(range);
+  const r = resolveRange(range, custom);
   const base: VslPanelData = {
     ok: false,
     generatedAt: new Date().toISOString(),

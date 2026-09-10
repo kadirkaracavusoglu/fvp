@@ -38,7 +38,13 @@ function isFunnel(value?: string): value is FunnelKey {
 export default async function VslPanelPage({
   searchParams,
 }: {
-  searchParams: Promise<{ range?: string; funnel?: string; e?: string }>;
+  searchParams: Promise<{
+    range?: string;
+    funnel?: string;
+    from?: string;
+    to?: string;
+    e?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const jar = await cookies();
@@ -80,9 +86,27 @@ export default async function VslPanelPage({
     );
   }
 
-  const range = isRange(sp.range) ? sp.range : "week";
+  const isDate = (v?: string) => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v);
+  const useCustom = sp.range === "custom" && isDate(sp.from) && isDate(sp.to);
+  const range: PanelRange = useCustom
+    ? "custom"
+    : isRange(sp.range)
+      ? sp.range
+      : "week";
   const funnel = isFunnel(sp.funnel) ? sp.funnel : "fitsistem";
-  const data = await getVslPanelData(range, funnel);
+  const data = await getVslPanelData(
+    range,
+    funnel,
+    useCustom ? { from: sp.from, to: sp.to } : undefined,
+  );
 
-  return <PanelView data={data} logout={logout} funnel={funnel} />;
+  return (
+    <PanelView
+      data={data}
+      logout={logout}
+      funnel={funnel}
+      customFrom={sp.from ?? ""}
+      customTo={sp.to ?? ""}
+    />
+  );
 }

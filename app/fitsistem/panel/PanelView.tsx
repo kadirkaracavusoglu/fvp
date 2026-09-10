@@ -117,10 +117,14 @@ export function PanelView({
   data,
   logout,
   funnel,
+  customFrom,
+  customTo,
 }: {
   data: VslPanelData;
   logout: () => void;
   funnel: FunnelKey;
+  customFrom: string;
+  customTo: string;
 }) {
   const active = data.range;
   const funnelLabel = PANEL_FUNNELS.find((f) => f.key === funnel)?.label ?? "Fitsistem";
@@ -143,7 +147,7 @@ export function PanelView({
               {PANEL_FUNNELS.map((f) => (
                 <a
                   key={f.key}
-                  href={`/fitsistem/panel?range=${active}&funnel=${f.key}`}
+                  href={`/fitsistem/panel?range=${active}&funnel=${f.key}${active === "custom" ? `&from=${customFrom}&to=${customTo}` : ""}`}
                   className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
                     funnel === f.key
                       ? "bg-[#0d204d] text-white"
@@ -167,6 +171,39 @@ export function PanelView({
                 {r.label}
               </a>
             ))}
+            {/* Özel tarih aralığı */}
+            <form
+              method="get"
+              action="/fitsistem/panel"
+              className="flex items-center gap-1"
+            >
+              <input type="hidden" name="range" value="custom" />
+              <input type="hidden" name="funnel" value={funnel} />
+              <input
+                type="date"
+                name="from"
+                defaultValue={customFrom}
+                aria-label="Başlangıç tarihi"
+                className="rounded-full border border-[#e6e8ea] bg-white px-2 py-1.5 text-xs text-[#0d204d] outline-none focus:border-[#0d204d]"
+              />
+              <span className="text-xs text-gray-400">–</span>
+              <input
+                type="date"
+                name="to"
+                defaultValue={customTo}
+                aria-label="Bitiş tarihi"
+                className="rounded-full border border-[#e6e8ea] bg-white px-2 py-1.5 text-xs text-[#0d204d] outline-none focus:border-[#0d204d]"
+              />
+              <button
+                className={`rounded-full border px-3 py-2 text-xs font-semibold ${
+                  active === "custom"
+                    ? "border-[#0d204d] bg-[#0d204d] text-white"
+                    : "border-[#e6e8ea] bg-white text-gray-400 hover:text-[#0d204d]"
+                }`}
+              >
+                Uygula
+              </button>
+            </form>
             <form action={logout}>
               <button className="rounded-full border border-[#e6e8ea] bg-white px-3 py-2 text-xs font-semibold text-gray-400 hover:text-[#0d204d]">
                 Çıkış
