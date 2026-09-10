@@ -36,7 +36,7 @@ export default function VakaHandeIzlePage() {
             basvuruHref="/vaka-hande/basvuru"
             ctaText="Aynı Sistemi Kendi İşime Kurmak İstiyorum →"
             location="vaka-hande"
-            note="Bu videoda Hande ile online koçluk işini sıfırdan nasıl kurduğumuzu ve tek bir reklam bile vermeden ilk 7 danışanı nasıl kazandığımızı anlatıyorum. Sesini açmayı unutma."
+            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 5 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
           />
         </Reveal>
       </section>
