@@ -9,6 +9,7 @@ import {
   track,
   trackServer,
 } from "@/lib/tracking";
+import { useBookingRedirect } from "@/lib/useBookingRedirect";
 
 const CALENDAR_UTM_FIELDS = [
   "utm_source",
@@ -23,6 +24,9 @@ const CALENDAR_UTM_FIELDS = [
 
 export default function VslRandevuPage() {
   const [calendarUrl, setCalendarUrl] = useState<string>(FUNNEL.calendarUrl);
+
+  // Randevu alınınca funnel'ın KENDİ teşekkür sayfasına yönlendir (ortak takvim düzeltmesi).
+  useBookingRedirect("vsl", "/fitsistem/tesekkurler");
 
   useEffect(() => {
     captureAttribution();
