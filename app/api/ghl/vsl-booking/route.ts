@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp } from "@/lib/spam";
 import { SITE } from "@/lib/site";
+import { resolveFunnelPath } from "@/lib/funnel-attribution";
 
 function pickString(obj: Record<string, unknown>, keys: string[]): string {
   for (const key of keys) {
@@ -66,9 +67,13 @@ export async function POST(req: Request) {
         source: SITE.domain,
       });
 
+      // Panel event'leri path ön ekiyle funnel'lara ayırıyor; sabit
+      // "/fitsistem/randevu" yazmak Vaka-Hande randevusunu Fitsistem'e
+      // yazardı. Kişinin funnel'ını lead kaydından çöz.
+      const bookingPath = await resolveFunnelPath(email, phone, "/randevu");
       await supabaseAdmin.from("events").insert({
         name: "vsl_calendar_booked",
-        path: "/fitsistem/randevu",
+        path: bookingPath,
         session_id: null,
         video: null,
         attribution: null,

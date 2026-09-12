@@ -238,6 +238,11 @@ export function PanelView({
                 sub="harcama ÷ satış"
               />
               <Kpi
+                label="Opt-in maliyeti"
+                value={money(data.kpi.optinCost)}
+                sub="harcama ÷ opt-in"
+              />
+              <Kpi
                 label="CPL"
                 value={money(data.kpi.leadCost)}
                 sub="harcama ÷ lead"

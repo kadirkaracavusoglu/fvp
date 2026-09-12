@@ -109,6 +109,7 @@ export type VslPanelData = {
     applicationRate: number | null;
     calendarLoadRate: number | null;
     bookedRate: number | null;
+    optinCost: number | null;
     leadCost: number | null;
     appointmentCost: number | null;
     salesConversionRate: number | null;
@@ -733,6 +734,7 @@ export async function getVslPanelData(
       applicationRate: null,
       calendarLoadRate: null,
       bookedRate: null,
+      optinCost: null,
       leadCost: null,
       appointmentCost: null,
       salesConversionRate: null,
@@ -1200,6 +1202,7 @@ export async function getVslPanelData(
         applicationRate: pct(applications, optins),
         calendarLoadRate: pct(calendarLoaded, calendarViews),
         bookedRate: pct(booked, applications),
+        optinCost: cost(spend, optins),
         leadCost: cost(spend, applications),
         appointmentCost: cost(spend, booked),
         salesConversionRate: ratio(sales, applications),
