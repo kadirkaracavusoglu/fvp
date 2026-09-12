@@ -563,36 +563,70 @@ function ghlNameTiming(appts: GhlBooking[] | undefined, leads: LeadRow[]) {
   };
 }
 
+// Kanal tespitinde İLK dokunuşu kullan.
+// Neden: son-dokunuş utm_* alanları eziliyor. Reklamı görüp siteye gelen, sonra
+// Instagram profilindeki bio linkiyle dönüp opt-in bırakan kişide reklamın izi
+// siliniyor ve dönüşüm organik görünüyordu. captureAttribution artık ilk
+// kampanyalı dokunuşu first_* alanlarında donduruyor; burada onu tercih ediyoruz.
+const FIRST_TOUCH_LIFT = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_content",
+  "utm_term",
+  "utm_id",
+  "fbclid",
+  "gclid",
+  "ttclid",
+  "msclkid",
+] as const;
+
+function firstTouchAttr(
+  attr?: Record<string, string> | null,
+): Record<string, string> {
+  if (!attr) return {};
+  const lifted: Record<string, string> = {};
+  for (const field of FIRST_TOUCH_LIFT) {
+    const v = attr[`first_${field}`];
+    if (typeof v === "string" && v) lifted[field] = v;
+  }
+  // İlk dokunuş kaydı yoksa (düzeltmeden önceki eski kayıtlar) son dokunuşa düş.
+  return Object.keys(lifted).length ? lifted : attr;
+}
+
 function channelKey(attr?: Record<string, string> | null): string {
-  const source = (attr?.utm_source || "").toLowerCase();
-  const medium = (attr?.utm_medium || "").toLowerCase();
-  if (attr?.fbclid || /meta|facebook|fb|instagram|ig/.test(source))
-    return "meta";
-  if (attr?.gclid || /google|youtube|yt/.test(source)) return "google";
-  if (/tiktok|tt/.test(source)) return "tiktok";
+  const a = firstTouchAttr(attr);
+  const source = (a.utm_source || "").toLowerCase();
+  const medium = (a.utm_medium || "").toLowerCase();
+  // ÖDENEN mi ORGANİK mi: yalnızca utm_medium ayırt eder.
+  // fbclid'e bakmak YANLIŞ — Instagram organik bio linklerine de fbclid ekliyor,
+  // bu yüzden bedava bio trafiği "Meta reklam" olarak sayılıyordu.
+  const paid = /paid|cpc|ppc|ads?$/.test(medium);
+
   if (/email|beehiiv|bulten|newsletter/.test(source) || /email/.test(medium))
     return "email";
-  if (/instagram|ig/.test(source)) return "instagram";
+  if (/google|youtube|yt/.test(source) || (a.gclid && paid)) return "google";
+  if (/tiktok|tt$/.test(source)) return paid ? "tiktok" : "tiktok_organik";
+  if (/meta|facebook|fb|instagram|ig/.test(source))
+    return paid ? "meta" : "instagram";
   return "organik";
 }
 
 function hasCampaign(attr?: Record<string, string> | null): boolean {
   if (!attr) return false;
+  const a = firstTouchAttr(attr);
   return Boolean(
-    attr.utm_source ||
-    attr.utm_campaign ||
-    attr.utm_content ||
-    attr.fbclid ||
-    attr.gclid,
+    a.utm_source || a.utm_campaign || a.utm_content || a.fbclid || a.gclid,
   );
 }
 
 const CHANNEL_LABELS: Record<string, string> = {
-  meta: "Meta / IG",
+  meta: "Meta reklam",
   google: "Google / YouTube",
-  tiktok: "TikTok",
+  tiktok: "TikTok reklam",
+  tiktok_organik: "TikTok organik",
   email: "E-posta",
-  instagram: "Instagram organik",
+  instagram: "Instagram organik (bio)",
   organik: "Organik / direkt",
 };
 
