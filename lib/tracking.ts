@@ -56,6 +56,9 @@ const ATTR_FIELDS = [
   "utm_marketing_tactic",
 ];
 
+// İlk kampanyalı dokunuşun kaydedildiğini işaretler (bir kez yazılır, bir daha ezilmez).
+const FIRST_TOUCH_MARK = "first_utm_captured";
+
 export type Attribution = Record<string, string>;
 
 /** Belirli bir çerezi oku (SSR güvenli) */
@@ -82,6 +85,38 @@ export function captureAttribution() {
     });
     const hasCampaign = Object.keys(found).length > 0;
 
+    // ---- İLK KAMPANYALI DOKUNUŞ (first_utm_*) ----
+    // Neden: yukarıdaki merged'de `...found` mevcut utm_* alanlarının ÜZERİNE yazıyor.
+    // Kişi önce reklamdan gelip (utm_content=ertelemek) sonra bio linkinden dönerse
+    // (utm_content=link_in_bio) reklamın izi siliniyordu → satış reklama değil bio'ya
+    // yazılıyordu. Burada ilk kampanyalı dokunuş ayrı alanlarda DONDURULUYOR.
+    // Ayırt edici: utm_medium = "paid_social" (reklam) vs "social" (organik bio linki).
+    const firstTouch: Attribution = {};
+    if (!existing[FIRST_TOUCH_MARK]) {
+      if (hasCampaign) {
+        // Bu ziyaret kampanyalı ve daha önce ilk dokunuş kaydedilmemiş → dondur.
+        Object.entries(found).forEach(([k, v]) => {
+          firstTouch[`first_${k}`] = v;
+        });
+        firstTouch[FIRST_TOUCH_MARK] = now;
+      } else if (existing.first_landing_url) {
+        // Geriye dönük kurtarma: eski ziyaretçide first_utm_* yok ama ilk inişin
+        // TAM URL'i saklanmış; UTM'leri oradan geri doldur (veri kaybını telafi eder).
+        try {
+          const firstUrl = new URL(existing.first_landing_url);
+          ATTR_FIELDS.forEach((f) => {
+            const v = firstUrl.searchParams.get(f);
+            if (v) firstTouch[`first_${f}`] = v;
+          });
+          if (Object.keys(firstTouch).length) {
+            firstTouch[FIRST_TOUCH_MARK] = existing.first_seen || now;
+          }
+        } catch {
+          /* bozuk URL → geç */
+        }
+      }
+    }
+
     // GA4 client id (_ga çerezi: "GA1.1.X.Y" → "X.Y")
     const ga = getCookie("_ga");
     const gaClientId = ga
@@ -96,6 +131,7 @@ export function captureAttribution() {
     const merged: Attribution = {
       ...existing,
       ...found,
+      ...firstTouch, // ilk dokunuş alanları — sonraki ziyaretler bunları EZEMEZ
       first_seen: existing.first_seen || now,
       first_landing_path: existing.first_landing_path || url.pathname,
       first_landing_url: existing.first_landing_url || url.href,

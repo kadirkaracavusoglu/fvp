@@ -69,3 +69,49 @@ alter table subscribers enable row level security;
 alter table contacts enable row level security;
 alter table events enable row level security;
 alter table leads enable row level security;
+
+-- ---------------------------------------------------------------------------
+-- Günlük reklam metrikleri (Meta) — funnel / kampanya / adset / kreatif kırılımı.
+-- Neden: panel ve aylık rapor "harcama"yı Meta'dan canlı çekemiyor (FvP reklam
+-- hesabının API token'ı yok/süresi dolmuş). Bu tablo tek doğru kaynak: ister
+-- Meta API'den otomatik doldurulur, ister elle girilir.
+--
+-- `aci` = kreatif adının numarasız hâli ("ertelemek - 3" → "ertelemek").
+-- Gerekli çünkü Meta'daki reklam numaraları ile UTM'e düşen numaralar
+-- birbirini tutmuyor (url_tags reklam oluşturulduktan sonra değişmiyor);
+-- dönüşüm eşleştirmesi bu yüzden numarayla değil AÇI ADIYLA yapılır.
+create table if not exists ad_daily (
+  -- PK dışarıya hiç verilmiyor; sıralı id index yerelliği için uuid'den iyi.
+  id bigint generated always as identity primary key,
+  date date not null,
+  funnel text not null,                        -- fitsistem | vaka-hande
+  campaign text not null default '',
+  adset text not null default '',              -- Meta adset adı (ör. "Broad 3")
+  creative text not null default '',           -- Meta reklam adı (ör. "ertelemek - 3")
+  aci text not null default '',                -- numarasız açı adı (eşleştirme anahtarı)
+  spend numeric(12,2) not null default 0,
+  impressions integer not null default 0,
+  clicks integer not null default 0,
+  ctr numeric(6,3),
+  cpc numeric(10,2),
+  cpm numeric(10,2),
+  meta_leads integer not null default 0,
+  landing_views integer not null default 0,
+  source text not null default 'manual',       -- manual | meta_api
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint ad_daily_funnel_chk check (funnel in ('fitsistem', 'vaka-hande')),
+  constraint ad_daily_source_chk check (source in ('manual', 'meta_api')),
+  -- Aynı gün/funnel/adset/kreatif tek satır → içe aktarım tekrar çalışsa da
+  -- veri KOPYALANMAZ, üzerine yazar (idempotent upsert).
+  -- adset/creative NOT NULL DEFAULT '' çünkü UNIQUE'te NULL'lar birbirinden
+  -- farklı sayılır ve çakışma yakalanmazdı.
+  constraint ad_daily_uniq unique (date, funnel, adset, creative)
+);
+-- Panel/rapor sorgusu: WHERE funnel = ? AND date BETWEEN ? AND ?
+-- Eşitlik kolonu önce, aralık kolonu sonra.
+create index if not exists ad_daily_funnel_date_idx on ad_daily (funnel, date);
+create index if not exists ad_daily_date_idx on ad_daily (date);
+create index if not exists ad_daily_aci_idx on ad_daily (aci);
+
+alter table ad_daily enable row level security;
