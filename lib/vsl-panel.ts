@@ -237,10 +237,14 @@ async function fetchAll<T extends object>(
   return all;
 }
 
-// Manuel günlük reklam harcaması — Supabase `ad_spend` tablosundan.
-// Kolonlar: date (date), funnel (text: 'fitsistem'|'vaka-hande'|'all'), spend (numeric).
-// Kadir günlük satır ekler. Tablo yoksa/boşsa null döner (Meta'ya fallback edilir).
-async function getManualSpend(
+// Günlük reklam harcaması — sırayla: ad_daily → ad_spend → (çağıran Meta'ya düşer).
+//
+// `ad_daily` asıl kaynak: gün / funnel / adset / kreatif kırılımında tutulur,
+// scripts/ad-daily-import.mjs ile Meta API'den veya CSV'den doldurulur.
+// `ad_spend` eski, kırılımsız tablo — geriye dönük uyumluluk için okunmaya devam eder.
+// İkisi de boşsa null döner ve panel Meta'ya fallback eder.
+async function readSpendTable(
+  table: "ad_daily" | "ad_spend",
   startDate: string,
   endDate: string,
   funnelKey: FunnelKey,
@@ -248,7 +252,7 @@ async function getManualSpend(
   if (!supabaseAdmin) return null;
   try {
     const { data, error } = await supabaseAdmin
-      .from("ad_spend")
+      .from(table)
       .select("spend,funnel,date")
       .gte("date", startDate)
       .lte("date", endDate);
@@ -256,6 +260,7 @@ async function getManualSpend(
     let total = 0;
     let any = false;
     for (const row of data as { spend: number | string; funnel: string | null }[]) {
+      // funnel'ı boş/'all' olan satır her iki funnel'a da sayılır (eski ad_spend alışkanlığı).
       const f = row.funnel || "all";
       if (f === funnelKey || f === "all") {
         total += Number(row.spend) || 0;
@@ -266,6 +271,16 @@ async function getManualSpend(
   } catch {
     return null;
   }
+}
+
+async function getManualSpend(
+  startDate: string,
+  endDate: string,
+  funnelKey: FunnelKey,
+): Promise<number | null> {
+  const daily = await readSpendTable("ad_daily", startDate, endDate, funnelKey);
+  if (daily != null) return daily;
+  return readSpendTable("ad_spend", startDate, endDate, funnelKey);
 }
 
 function uniqueBy(rows: EventRow[], name: string): number {
