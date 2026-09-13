@@ -84,7 +84,7 @@ create table if not exists ad_daily (
   -- PK dışarıya hiç verilmiyor; sıralı id index yerelliği için uuid'den iyi.
   id bigint generated always as identity primary key,
   date date not null,
-  funnel text not null,                        -- fitsistem | vaka-hande
+  funnel text not null,                        -- fitsistem | vaka-hande | macfit
   campaign text not null default '',
   adset text not null default '',              -- Meta adset adı (ör. "Broad 3")
   creative text not null default '',           -- Meta reklam adı (ör. "ertelemek - 3")
@@ -100,7 +100,7 @@ create table if not exists ad_daily (
   source text not null default 'manual',       -- manual | meta_api
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint ad_daily_funnel_chk check (funnel in ('fitsistem', 'vaka-hande')),
+  constraint ad_daily_funnel_chk check (funnel in ('fitsistem', 'vaka-hande', 'macfit')),
   constraint ad_daily_source_chk check (source in ('manual', 'meta_api')),
   -- Aynı gün/funnel/adset/kreatif tek satır → içe aktarım tekrar çalışsa da
   -- veri KOPYALANMAZ, üzerine yazar (idempotent upsert).

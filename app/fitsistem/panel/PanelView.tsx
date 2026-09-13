@@ -128,6 +128,8 @@ export function PanelView({
 }) {
   const active = data.range;
   const funnelLabel = PANEL_FUNNELS.find((f) => f.key === funnel)?.label ?? "Fitsistem";
+  // MACFit'te ayrı başvuru yok: salon formu hem opt-in hem lead → etiketler buna göre.
+  const isMacfit = funnel === "macfit";
   return (
     <div className="min-h-screen bg-[#f4f6f9] px-5 py-8 text-[#0d204d]">
       <div className="mx-auto max-w-6xl">
@@ -258,7 +260,7 @@ export function PanelView({
               <Kpi
                 label="Ziyaret"
                 value={String(data.kpi.visits)}
-                sub="VSL sayfasını gördü"
+                sub={isMacfit ? "salon sayfasını gördü" : "VSL sayfasını gördü"}
               />
               <Kpi
                 label="Opt-in"
@@ -268,17 +270,17 @@ export function PanelView({
               <Kpi
                 label="Conv. page %"
                 value={pct(data.kpi.visitToApplicationRate)}
-                sub="ziyaret → başvuru"
+                sub={isMacfit ? "ziyaret → salon formu" : "ziyaret → başvuru"}
               />
               <Kpi
                 label="Lead"
                 value={String(data.kpi.applications)}
-                sub="başvuru formu"
+                sub={isMacfit ? "salon formu" : "başvuru formu"}
               />
               <Kpi
                 label="Randevu"
                 value={String(data.kpi.booked)}
-                sub={`başvuru → randevu ${pct(data.kpi.bookedRate)}`}
+                sub={`${isMacfit ? "form" : "başvuru"} → randevu ${pct(data.kpi.bookedRate)}`}
               />
               <Kpi
                 label="Ulaşılma oranı"
@@ -317,7 +319,7 @@ export function PanelView({
 
             <div className="mb-4 grid gap-4 lg:grid-cols-[1.25fr_1fr]">
               <FunnelCard title="Ana Huni" steps={data.funnel} />
-              <FunnelCard title="Başvuru Formu" steps={data.form} />
+              <FunnelCard title={isMacfit ? "Salon Formu" : "Başvuru Formu"} steps={data.form} />
               <FunnelCard title="Video Derinliği" steps={data.video} />
             </div>
 
@@ -332,7 +334,7 @@ export function PanelView({
                       <th className="pb-2">Kanal</th>
                       <th className="pb-2 text-right">Ziyaret</th>
                       <th className="pb-2 text-right">Opt-in</th>
-                      <th className="pb-2 text-right">Başvuru</th>
+                      <th className="pb-2 text-right">{isMacfit ? "Lead" : "Başvuru"}</th>
                       <th className="pb-2 text-right">Takvim</th>
                       <th className="pb-2 text-right">Randevu</th>
                     </tr>

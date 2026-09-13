@@ -3,8 +3,18 @@ export const MACFIT = {
   formType: "macfit_optin",
   cookie: "fvp_macfit_access",
   // MACFit videosu hazır olduğunda bu alana YouTube video kimliği eklenecek.
+  // Boşken /izle'de yer tutucu gösterilir ve görüşme butonu hemen açık olur;
+  // dolunca butonu diğer funnel'lar gibi 5 dk izleme sonrasına kilitler.
   videoId: "",
-  calendarUrl: "https://link.fitsistem.co/widget/booking/SSw6HZHR3j9veTWH8xTp",
+  ctaKey: "fvp_macfit_cta",
+  // Salon sahiplerine ÖZEL GHL takvimi "Fitness ve Pazarlama | Analiz Görüşmesi"
+  // (13 Eyl 2026). Koç funnel'larının takviminden ayrı → panel MACFit
+  // randevularını yalnız bu takvimden sayar.
+  // GHL'de "randevu sonrası yönlendirme" şu olmalı:
+  //   https://fitnessvepazarlama.com/fitsistem-macfit-vaka/tesekkurler
+  // Dışarıya paylaşılan link: https://link.fitsistem.co/widget/bookings/analizgorusmesi
+  calendarUrl: "https://link.fitsistem.co/widget/booking/pnGEhOlcaumcO8YAaBqC",
+  calendarId: "pnGEhOlcaumcO8YAaBqC",
 } as const;
 
 export const MACFIT_QUESTIONS = [

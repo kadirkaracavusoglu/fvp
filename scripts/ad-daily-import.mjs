@@ -42,7 +42,7 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
 // ---- funnel eşlemesi ----
 // Hangi kampanya hangi funnel'a ait? Kampanya adı yeterli ayırt edici değilse
 // CSV'de funnel kolonunu elle doldur.
-const FUNNELS = ["fitsistem", "vaka-hande"];
+const FUNNELS = ["fitsistem", "vaka-hande", "macfit"];
 
 /** Kreatif adından numarayı at: "ertelemek - 3" → "ertelemek".
  *  Meta'daki numaralar ile UTM'e düşen numaralar tutmuyor (url_tags reklam
@@ -155,7 +155,7 @@ async function fromMeta(since, until) {
     const lpv = (r.actions || []).find((a) => /landing_page_view/i.test(a.action_type));
     // Funnel'ı kampanya adından çıkar; bulunamazsa boş bırakılır (elle düzelt).
     const camp = r.campaign_name || "";
-    const funnel = /hande|vaka/i.test(camp) ? "vaka-hande" : "fitsistem";
+    const funnel = /macfit|salon/i.test(camp) ? "macfit" : /hande|vaka/i.test(camp) ? "vaka-hande" : "fitsistem";
     return toRow({
       date: r.date_start,
       funnel,

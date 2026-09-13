@@ -41,7 +41,9 @@ export function MacfitOptin() {
       if (!normalizeMacfitPhone(contact.phone)) { setError("Telefonunu 05XX XXX XX XX biçiminde gir."); return; }
       if (!MACFIT_EMAIL_RE.test(contact.email.trim())) { setError("Geçerli bir e-posta adresi gir."); return; }
       if (!normalizeMacfitInstagram(contact.instagram)) { setError("Salonunun Instagram kullanıcı adını gir (ör. @salonadi)."); return; }
-      setStep(2); dialog.current?.scrollTo(0, 0); return;
+      setStep(2); dialog.current?.scrollTo(0, 0);
+      trackServer("macfit_form_step2"); // panel: formu açan → 2. adıma geçen → gönderen
+      return;
     }
     setSending(true);
     try {

@@ -9,7 +9,9 @@ const GHL_BASE = "https://services.leadconnectorhq.com";
 const LOCATION_ID = process.env.GHL_LOCATION_ID || "ui4C7FNVHfgWeZk9DQpB";
 const LOCATION_KEY = process.env.GHL_LOCATION_KEY || "";
 // VSL strateji görüşmesi takvimi (funnel.ts calendarUrl ile aynı).
-const CALENDAR_ID = "SSw6HZHR3j9veTWH8xTp";
+// Fitsistem + Vaka-Hande bu takvimi ORTAK kullanıyor; MACFit kendi takvimini
+// geçirerek çağırır (getGhlBookings'in 3. parametresi).
+const DEFAULT_CALENDAR_ID = "SSw6HZHR3j9veTWH8xTp";
 
 type ApptRaw = {
   contactId?: string;
@@ -30,8 +32,9 @@ export type GhlBookings = { count: number; appts: GhlBooking[] };
 export async function getGhlBookings(
   sinceISO: string,
   untilISO?: string,
+  calendarId: string = DEFAULT_CALENDAR_ID,
 ): Promise<GhlBookings | null> {
-  if (!LOCATION_KEY) return null;
+  if (!LOCATION_KEY || !calendarId) return null;
   try {
     const sinceMs = new Date(sinceISO).getTime();
     const untilMs = untilISO ? new Date(untilISO).getTime() : Date.now();
@@ -41,7 +44,7 @@ export async function getGhlBookings(
     const endMs = Date.now() + 90 * 86400000;
     const url =
       `${GHL_BASE}/calendars/events?locationId=${LOCATION_ID}` +
-      `&calendarId=${CALENDAR_ID}&startTime=${startMs}&endTime=${endMs}`;
+      `&calendarId=${calendarId}&startTime=${startMs}&endTime=${endMs}`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${LOCATION_KEY}`, Version: "2021-07-28" },
       cache: "no-store",

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { captureAttribution, track, trackServer } from "@/lib/tracking";
+import { isInFrame, thankYouTargetFor } from "@/lib/thankyou-router";
 
 const VIDEO_URL = "https://www.youtube.com/watch?v=L_2y4a_k5hY&t=24s";
 const EMBED_URL = "https://www.youtube.com/embed/L_2y4a_k5hY?start=24&rel=0";
@@ -12,11 +13,31 @@ const EMBED_URL = "https://www.youtube.com/embed/L_2y4a_k5hY?start=24&rel=0";
 const KANITLAR: { ad: string; sonuc: string; alinti: string; detay?: string }[] = [];
 
 export default function VslTesekkurlerPage() {
+  // Yönlendirme kararı verilene kadar içerik gösterilmez (yanlış sayfa bir an görünmesin).
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
+    // Ortak GHL takvimi herkesi buraya atıyor → kişi başka funnel'dan geldiyse oraya gönder.
+    // Bu kontrol captureAttribution'dan ÖNCE yapılmalı (o, son sayfa bilgisini ezer).
+    const target = thankYouTargetFor(window.location.pathname);
+    const framed = isInFrame();
+    if (target || framed) {
+      const dest = target ?? window.location.href;
+      try {
+        (framed && window.top ? window.top : window).location.replace(dest);
+      } catch {
+        window.location.replace(dest);
+      }
+      return; // Fitsistem ölçümü ATILMAZ — yanlış funnel'a sayılmasın.
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReady(true);
     captureAttribution();
     track("vsl_thankyou_view", { location: "vsl" });
     trackServer("vsl_thankyou_view");
   }, []);
+
+  if (!ready) return <div className="glow-bg min-h-screen" />;
 
   return (
     <div className="glow-bg min-h-screen px-5 py-10 sm:py-16">
