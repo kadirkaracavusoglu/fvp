@@ -4,6 +4,8 @@ import { clientIp, isBot, rateLimit } from "@/lib/spam";
 import { MACFIT, validateMacfitSubmission } from "@/lib/macfit-funnel";
 import { createMacfitAccess, readMacfitAccess } from "@/lib/macfit-access";
 import { cookies } from "next/headers";
+import { MACFIT_GHL_WEBHOOK, postMacfitWebhook, upsertMacfitContact } from "@/lib/ghl-macfit";
+import { markLeadGhlDelivery } from "@/lib/lead-ghl-status";
 
 export const maxDuration = 60;
 
@@ -35,7 +37,25 @@ export async function POST(req: Request) {
     console.error("macfit lead insert failed", error?.code);
     return NextResponse.json({ ok: false, error: "Bilgilerin kaydedilemedi. Lütfen tekrar dene." }, { status: 503 });
   }
-  // GHL webhook ve özel alan eşleştirmeleri sonraki aşamada bağlanacak.
+  // GHL — AWAIT şart: serverless'ta yanıt döndükten sonra istekler kesilir.
+  // 1) Kişiyi "MACFit Salon Funnel" alanları + macfit-optin etiketiyle yaz.
+  // 2) Workflow webhook'u (tanımlıysa). 3) Sonucu lead'e işle (ghl_ok).
+  // GHL hatası formu BOZMAZ: lead Supabase'de, kişi videoya geçer; ghl_ok=false kalır.
+  const ghlLead = { leadId: data.id, firstName, lastName, email, phone, instagram, answers, attribution };
+  const contact = await upsertMacfitContact(ghlLead);
+  const webhook = await postMacfitWebhook(process.env.GHL_MACFIT_WEBHOOK || MACFIT_GHL_WEBHOOK, ghlLead, contact.id);
+  const failures = [
+    !contact.ok && `contact_upsert: ${contact.status || ""} ${contact.error || "atlandı"}`.trim(),
+    !webhook.ok && !webhook.skipped && `macfit_webhook: ${webhook.status || ""} ${webhook.error || ""}`.trim(),
+  ].filter(Boolean) as string[];
+  // Kişi GHL'e yazılamadıysa (anahtar yok dahil) ghl_ok=false — "atlandı"yı başarı sayma.
+  await markLeadGhlDelivery(supabaseAdmin, data.id, {
+    ok: failures.length === 0,
+    status: (!contact.ok ? contact.status : !webhook.ok && !webhook.skipped ? webhook.status : contact.status) ?? null,
+    error: failures.length ? failures.join(" | ").slice(0, 1000) : null,
+  });
+  if (failures.length) console.error("macfit ghl delivery:", failures.join(" | "));
+
   const res = NextResponse.json({ ok: true });
   res.cookies.set(MACFIT.cookie, createMacfitAccess(data.id), {
     httpOnly: true, sameSite: "lax", secure: new URL(req.url).protocol === "https:",
