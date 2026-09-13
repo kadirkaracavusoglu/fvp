@@ -817,11 +817,12 @@ export async function getVslPanelData(
     const prefixes = PANEL_FUNNELS.find((f) => f.key === funnelKey)?.prefixes ?? ["/fitsistem", "/vsl"];
     const isVaka = funnelKey === "vaka-hande";
     const inFunnel = (p?: string | null): boolean => {
-      if (p && prefixes.some((pre) => p.startsWith(pre))) return true;
+      if (p && prefixes.some((pre) => p === pre || p.startsWith(`${pre}/`))) return true;
       return !isVaka && !p; // yol yoksa/eski → fitsistem'e say
     };
     const events = eventsRaw.filter((e) => inFunnel(e.path));
     const leads = leadsRaw.filter((l) => {
+      if (l.form_type === "macfit_optin" || l.attribution?.funnel === "fitsistem_macfit_vaka") return false;
       const a = (l.attribution || {}) as Record<string, unknown>;
       const lp =
         (typeof a.first_landing_path === "string" && a.first_landing_path) ||

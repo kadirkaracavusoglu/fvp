@@ -18,6 +18,7 @@ type LeadAttrRow = {
 
 function landingPath(row: LeadAttrRow): string | null {
   const a = row.attribution || {};
+  if (a.funnel === "fitsistem_macfit_vaka") return "/fitsistem-macfit-vaka";
   const first = a.first_landing_path;
   if (typeof first === "string" && first) return first;
   const last = a.landing_path;
@@ -60,6 +61,7 @@ export async function resolveFunnelPath(
     for (const row of data as LeadAttrRow[]) {
       const path = landingPath(row);
       if (!path) continue;
+      if (path === "/fitsistem-macfit-vaka" || path.startsWith("/fitsistem-macfit-vaka/")) return `/fitsistem-macfit-vaka${suffix}`;
       if (path.startsWith(VAKA_HANDE_PREFIX)) return `${VAKA_HANDE_PREFIX}${suffix}`;
       return fallback;
     }

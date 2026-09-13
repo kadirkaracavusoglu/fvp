@@ -1,0 +1,2 @@
+# Local operational tools are not needed by the Next.js production build.
+scripts/
