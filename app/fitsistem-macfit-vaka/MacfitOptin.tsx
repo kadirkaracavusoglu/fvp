@@ -42,7 +42,7 @@ export function MacfitOptin() {
       if (!MACFIT_EMAIL_RE.test(contact.email.trim())) { setError("Geçerli bir e-posta adresi gir."); return; }
       if (!normalizeMacfitInstagram(contact.instagram)) { setError("Salonunun Instagram kullanıcı adını gir (ör. @salonadi)."); return; }
       setStep(2); dialog.current?.scrollTo(0, 0);
-      trackServer("macfit_form_step2"); // panel: formu açan → 2. adıma geçen → gönderen
+      trackServer("form_macfit_step2"); // /api/track yalnız vsl_|cta_|form_|quiz_|page_ öneklerini kabul eder
       return;
     }
     setSending(true);

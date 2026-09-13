@@ -894,7 +894,7 @@ export async function getVslPanelData(
       `vsl_basvuru_s${contactStep}`,
     ]);
     const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
-    const macfitStep2 = uniqueBy(events, "macfit_form_step2");
+    const macfitStep2 = uniqueBy(events, "form_macfit_step2");
     const calendarViews = uniqueBy(events, "vsl_calendar_view");
     const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
     const calendarExternalClicks = uniqueBy(
