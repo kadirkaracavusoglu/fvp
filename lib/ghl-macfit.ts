@@ -35,6 +35,16 @@ const CF_INSTAGRAM = "XcU7bUnQZIEVYpvafllT";
 
 export const MACFIT_GHL_TAG = "macfit-optin";
 
+// "Sales Pipeline - Gym" (Kadir açtı, 14 Eyl 2026). Salon lead'i "Yeni Başvuru"da açılır;
+// sonraki aşamalara geçişi GHL tarafı (workflow / Kadir) yönetir.
+export const MACFIT_PIPELINE_ID = "Zzju7aBAkLYvGg7avO91";
+export const MACFIT_STAGE = {
+  yeniBasvuru: "a822deba-3b4d-4083-8300-f46fe3d9b150",
+  randevuAldi: "b540c9c3-c16e-4c0d-b71f-7efae0b7d4c0",
+} as const;
+// Salon lead'leri (kişi + fırsat) doğrudan Kadir'e atanır (GHL'deki tek kullanıcı).
+export const MACFIT_OWNER_USER_ID = "UcQPGqAeU1OXIaZuxe8l";
+
 // GHL workflow'undaki "Inbound Webhook" tetikleyicisinin adresi. Workflow kurulunca
 // buraya (veya Vercel env GHL_MACFIT_WEBHOOK) yazılır; boşken webhook adımı ATLANIR
 // ama kişi yine alanlarıyla + etiketle GHL'e yazılır (veri kaybı yok).
@@ -137,6 +147,7 @@ export async function upsertMacfitContact(
         email: lead.email,
         phone: lead.phone,
         source: "MACFit Salon Funnel",
+        assignedTo: MACFIT_OWNER_USER_ID,
         tags: [MACFIT_GHL_TAG],
         customFields,
       }),
@@ -144,6 +155,57 @@ export async function upsertMacfitContact(
     if (!res.ok) return { ok: false, status: res.status, error: (await res.text()).slice(0, 300) };
     const data = (await res.json()) as { contact?: { id?: string } };
     return { ok: true, status: res.status, id: data.contact?.id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/**
+ * "Sales Pipeline - Gym"de kişinin AÇIK fırsatı yoksa oluşturur (Kadir'e atanmış).
+ * Mükerrer açmaz: aynı kişi formu ikinci kez doldurursa mevcut fırsat kullanılır.
+ */
+export async function ensureMacfitOpportunity(
+  input: { contactId: string; name: string; stageId?: string },
+  opts: { locationKey?: string; locationId?: string } = {},
+): Promise<MacfitGhlStep & { existed?: boolean }> {
+  const key = opts.locationKey ?? process.env.GHL_LOCATION_KEY ?? "";
+  const locationId = opts.locationId ?? process.env.GHL_LOCATION_ID ?? "ui4C7FNVHfgWeZk9DQpB";
+  if (!key) return { ok: false, skipped: true, error: "GHL_LOCATION_KEY yok" };
+  const headers = {
+    Authorization: `Bearer ${key}`,
+    Version: "2021-07-28",
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  try {
+    const search = await fetch(
+      `${GHL_BASE}/opportunities/search?location_id=${locationId}` +
+        `&contact_id=${encodeURIComponent(input.contactId)}` +
+        `&pipeline_id=${MACFIT_PIPELINE_ID}&status=open`,
+      { headers },
+    );
+    if (search.ok) {
+      const data = (await search.json()) as { opportunities?: Array<{ id?: string }> };
+      const existing = data.opportunities?.[0]?.id;
+      if (existing) return { ok: true, id: existing, existed: true };
+    }
+    const res = await fetch(`${GHL_BASE}/opportunities/`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        pipelineId: MACFIT_PIPELINE_ID,
+        pipelineStageId: input.stageId || MACFIT_STAGE.yeniBasvuru,
+        locationId,
+        name: input.name,
+        status: "open",
+        contactId: input.contactId,
+        assignedTo: MACFIT_OWNER_USER_ID,
+        source: "MACFit Salon Funnel",
+      }),
+    });
+    if (!res.ok) return { ok: false, status: res.status, error: (await res.text()).slice(0, 300) };
+    const data = (await res.json()) as { opportunity?: { id?: string } };
+    return { ok: true, status: res.status, id: data.opportunity?.id };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }

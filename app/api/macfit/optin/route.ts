@@ -4,7 +4,7 @@ import { clientIp, isBot, rateLimit } from "@/lib/spam";
 import { MACFIT, validateMacfitSubmission } from "@/lib/macfit-funnel";
 import { createMacfitAccess, readMacfitAccess } from "@/lib/macfit-access";
 import { cookies } from "next/headers";
-import { MACFIT_GHL_WEBHOOK, postMacfitWebhook, upsertMacfitContact } from "@/lib/ghl-macfit";
+import { MACFIT_GHL_WEBHOOK, ensureMacfitOpportunity, postMacfitWebhook, upsertMacfitContact } from "@/lib/ghl-macfit";
 import { markLeadGhlDelivery } from "@/lib/lead-ghl-status";
 
 export const maxDuration = 60;
@@ -43,9 +43,14 @@ export async function POST(req: Request) {
   // GHL hatası formu BOZMAZ: lead Supabase'de, kişi videoya geçer; ghl_ok=false kalır.
   const ghlLead = { leadId: data.id, firstName, lastName, email, phone, instagram, answers, attribution };
   const contact = await upsertMacfitContact(ghlLead);
+  // "Sales Pipeline - Gym" → Yeni Başvuru (Kadir'e atanmış; açık fırsat varsa yenisi açılmaz).
+  const opportunity = contact.ok && contact.id
+    ? await ensureMacfitOpportunity({ contactId: contact.id, name: `${firstName} ${lastName}`.trim() || email })
+    : { ok: false, skipped: true };
   const webhook = await postMacfitWebhook(process.env.GHL_MACFIT_WEBHOOK || MACFIT_GHL_WEBHOOK, ghlLead, contact.id);
   const failures = [
     !contact.ok && `contact_upsert: ${contact.status || ""} ${contact.error || "atlandı"}`.trim(),
+    !opportunity.ok && !opportunity.skipped && `gym_opportunity: ${"status" in opportunity ? opportunity.status || "" : ""} ${"error" in opportunity ? opportunity.error || "" : ""}`.trim(),
     !webhook.ok && !webhook.skipped && `macfit_webhook: ${webhook.status || ""} ${webhook.error || ""}`.trim(),
   ].filter(Boolean) as string[];
   // Kişi GHL'e yazılamadıysa (anahtar yok dahil) ghl_ok=false — "atlandı"yı başarı sayma.
