@@ -117,6 +117,36 @@ export function macfitFieldValues(lead: MacfitGhlLead): Record<keyof typeof MACF
   };
 }
 
+/**
+ * Kişi GHL'de zaten var mı? (e-posta, sonra telefon). Kaynak alanını korumak için.
+ * Dönüş: "yok" (kesin yeni) · kişi nesnesi (var) · null (sorgu başarısız, bilinmiyor).
+ */
+async function findExistingContact(
+  key: string,
+  locationId: string,
+  email: string,
+  phone: string,
+): Promise<{ id?: string; source?: string } | "yok" | null> {
+  const headers = { Authorization: `Bearer ${key}`, Version: "2021-07-28", Accept: "application/json" };
+  let anyOk = false;
+  for (const [param, value] of [["email", email], ["number", phone]] as const) {
+    if (!value) continue;
+    try {
+      const res = await fetch(
+        `${GHL_BASE}/contacts/search/duplicate?locationId=${locationId}&${param}=${encodeURIComponent(value)}`,
+        { headers },
+      );
+      if (!res.ok) continue;
+      anyOk = true;
+      const data = (await res.json()) as { contact?: { id?: string; source?: string } };
+      if (data.contact?.id) return data.contact;
+    } catch {
+      /* bir sonraki anahtarla dene */
+    }
+  }
+  return anyOk ? "yok" : null;
+}
+
 export async function upsertMacfitContact(
   lead: MacfitGhlLead,
   opts: { locationKey?: string; locationId?: string } = {},
@@ -130,6 +160,13 @@ export async function upsertMacfitContact(
     .filter((k) => values[k] !== "")
     .map((k) => ({ id: MACFIT_CF[k], value: values[k] }));
   if (lead.instagram) customFields.push({ id: CF_INSTAGRAM, value: lead.instagram });
+
+  // KAYNAK ALANINI KORU (Kadir kararı, 14 Eyl): GHL'de zaten kayıtlı biri formu
+  // doldurursa eski kaynağı ("Webinar Kayıt" gibi) EZİLMEZ. MACFit'ten geldiği bilgisi
+  // etikette + MACFit alanlarında zaten var. Yalnız kesin YENİ kişide kaynak yazılır;
+  // sorgu başarısızsa da yazılmaz (boş kaynak, gerçek kaynağı ezmekten zararsız).
+  const existing = await findExistingContact(key, locationId, lead.email, lead.phone);
+  const writeSource = existing === "yok" || (existing !== null && !existing.source);
 
   try {
     const res = await fetch(`${GHL_BASE}/contacts/upsert`, {
@@ -146,7 +183,7 @@ export async function upsertMacfitContact(
         lastName: lead.lastName,
         email: lead.email,
         phone: lead.phone,
-        source: "MACFit Salon Funnel",
+        ...(writeSource ? { source: "MACFit Salon Funnel" } : {}),
         assignedTo: MACFIT_OWNER_USER_ID,
         tags: [MACFIT_GHL_TAG],
         customFields,
