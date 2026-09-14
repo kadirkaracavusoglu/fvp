@@ -894,7 +894,9 @@ export async function getVslPanelData(
       `vsl_basvuru_s${contactStep}`,
     ]);
     const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
-    const macfitStep2 = uniqueBy(events, "form_macfit_step2");
+    // 14 Eyl'den itibaren form sırası: salon soruları → İLETİŞİM. 2. adım = iletişim ekranı.
+    // (Eski "form_macfit_step2" = salon sorularına geçti; anlamı farklı olduğu için sayılmaz.)
+    const macfitStep2 = uniqueBy(events, "form_macfit_contact");
     const calendarViews = uniqueBy(events, "vsl_calendar_view");
     const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
     const calendarExternalClicks = uniqueBy(
@@ -1056,7 +1058,7 @@ export async function getVslPanelData(
 
     const macfitForm: FunnelStep[] = [
       { key: "start", label: "Formu açtı", count: popupOpens, pct: 100 },
-      { key: "step2", label: "Salon sorularına geçti", count: macfitStep2, pct: pct(macfitStep2, popupOpens), pctPrev: pct(macfitStep2, popupOpens) },
+      { key: "step2", label: "İletişim bilgilerine geçti", count: macfitStep2, pct: pct(macfitStep2, popupOpens), pctPrev: pct(macfitStep2, popupOpens) },
       { key: "submit", label: "Formu gönderdi", count: optins, pct: pct(optins, popupOpens), pctPrev: pct(optins, macfitStep2) },
     ];
 

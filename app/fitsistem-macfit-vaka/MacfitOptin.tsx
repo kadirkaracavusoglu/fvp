@@ -36,15 +36,24 @@ export function MacfitOptin() {
   function closeForm() { if (!sending) { dialog.current?.close(); setOpen(false); } }
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setError("");
+    // SIRA (14 Eyl): önce 5 salon sorusu, EN SONDA iletişim bilgileri.
+    // Eski sırada (iletişim önce) formu açan 37 kişiden yalnız 3'ü 2. adıma geçti ama
+    // 2. adıma geçenlerin hepsi gönderdi → kayıp iletişim ekranındaydı.
     if (step === 1) {
-      if (!contact.firstName.trim() || !contact.lastName.trim()) { setError("Adını ve soyadını gir."); return; }
-      if (!normalizeMacfitPhone(contact.phone)) { setError("Telefonunu 05XX XXX XX XX biçiminde gir."); return; }
-      if (!MACFIT_EMAIL_RE.test(contact.email.trim())) { setError("Geçerli bir e-posta adresi gir."); return; }
-      if (!normalizeMacfitInstagram(contact.instagram)) { setError("Salonunun Instagram kullanıcı adını gir (ör. @salonadi)."); return; }
+      // Seçimler tarayıcıda "required" ile zorunlu; "Başka" metin kutuları da öyle.
+      for (const q of MACFIT_QUESTIONS) {
+        if (!answers[q.key]) { setError(`Lütfen yanıtla: ${q.label}`); return; }
+      }
       setStep(2); dialog.current?.scrollTo(0, 0);
-      trackServer("form_macfit_step2"); // /api/track yalnız vsl_|cta_|form_|quiz_|page_ öneklerini kabul eder
+      // Yeni ad: eski "form_macfit_step2" (= salon sorularına geçti) ile anlamı karışmasın.
+      // /api/track yalnız vsl_|cta_|form_|quiz_|page_ öneklerini kabul eder.
+      trackServer("form_macfit_contact");
       return;
     }
+    if (!contact.firstName.trim() || !contact.lastName.trim()) { setError("Adını ve soyadını gir."); return; }
+    if (!MACFIT_EMAIL_RE.test(contact.email.trim())) { setError("Geçerli bir e-posta adresi gir."); return; }
+    if (!normalizeMacfitPhone(contact.phone)) { setError("Telefonunu 05XX XXX XX XX biçiminde gir."); return; }
+    if (!normalizeMacfitInstagram(contact.instagram)) { setError("Salonunun Instagram kullanıcı adını gir (ör. @salonadi)."); return; }
     setSending(true);
     try {
       captureAttribution();
@@ -82,20 +91,20 @@ export function MacfitOptin() {
     </section>
     <dialog ref={dialog} onClose={() => setOpen(false)} onCancel={e => { if (sending) e.preventDefault(); }} className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl border-0 bg-white p-6 text-[#0d204d] shadow-2xl backdrop:bg-[#071331]/75 backdrop:backdrop-blur-sm sm:p-8" aria-labelledby="macfit-form-title">
       <button type="button" onClick={closeForm} disabled={sending} className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full border border-[#e6e8ea] text-2xl disabled:opacity-50" aria-label="Formu kapat">×</button>
-      <div className="pr-7"><p className="text-xs font-medium text-gray-400">ADIM {step} / 2 · {step === 1 ? "İletişim bilgilerin" : "Salonun hakkında"}</p><h2 id="macfit-form-title" className="mt-2 text-xl font-bold sm:text-2xl">MACFit’in büyüme sistemini keşfet</h2><p className="mt-2 text-sm text-gray-400">Bilgilerini doldur, videoya ücretsiz eriş.</p></div>
+      <div className="pr-7"><p className="text-xs font-medium text-gray-400">ADIM {step} / 2 · {step === 1 ? "Salonun hakkında" : "İletişim bilgilerin"}</p><h2 id="macfit-form-title" className="mt-2 text-xl font-bold sm:text-2xl">MACFit’in büyüme sistemini keşfet</h2><p className="mt-2 text-sm text-gray-400">{step === 1 ? "Salonunla ilgili 5 kısa soruyu yanıtla." : "Son adım: bilgilerini gir, videoya ücretsiz eriş."}</p></div>
       <div className="mb-5 mt-4 flex gap-2" aria-hidden="true"><span className="h-1 flex-1 rounded-full bg-[#0d204d]"/><span className={`h-1 flex-1 rounded-full ${step === 2 ? "bg-[#0d204d]" : "bg-[#e6e8ea]"}`}/></div>
       <form onSubmit={submit} className="space-y-4">
         <input name="website" value={website} onChange={e => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px" />
         {step === 1 ? <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{([['firstName','Adın','given-name'],['lastName','Soyadın','family-name']] as const).map(([key,label,auto]) => <label key={key} className="block text-sm font-medium">{label}<input name={key} autoComplete={auto} value={contact[key]} onChange={e => setContact({ ...contact, [key]: e.target.value })} required maxLength={80} className={`${inputClass} mt-1.5`} /></label>)}</div>
-          <label className="block text-sm font-medium">E-posta adresin<input name="email" type="email" autoComplete="email" value={contact.email} onChange={e => setContact({ ...contact, email: e.target.value })} required maxLength={254} className={`${inputClass} mt-1.5`} /></label>
-          <label className="block text-sm font-medium">Telefon numaran<input name="phone" type="tel" autoComplete="tel" placeholder="05XX XXX XX XX" value={contact.phone} onChange={e => setContact({ ...contact, phone: e.target.value })} required maxLength={40} className={`${inputClass} mt-1.5`} /></label>
-          <label className="block text-sm font-medium">Salonunun Instagram hesabı<input name="instagram" placeholder="@salonadi" value={contact.instagram} onChange={e => setContact({ ...contact, instagram: e.target.value })} required maxLength={150} autoCapitalize="none" className={`${inputClass} mt-1.5`} /></label>
-        </> : <>
           {MACFIT_QUESTIONS.map(q => <div key={q.key}><label className="block text-sm font-medium" htmlFor={q.key}>{q.label}</label><select id={q.key} name={q.key} value={answers[q.key]} required onChange={e => setAnswers({ ...answers, [q.key]: e.target.value })} className={`${inputClass} mt-1.5`}><option value="" disabled>Seçimini yap</option>{q.options.map(option => <option key={option} value={option}>{option}</option>)}</select>
             {q.key === "problem" && answers.problem === "Başka bir sorun yaşıyorum." && <label className="mt-3 block text-sm">Sorununu kısaca anlat<textarea value={answers.problemOther} onChange={e => setAnswers({ ...answers, problemOther: e.target.value })} required maxLength={500} rows={2} className={`${inputClass} mt-1.5`} /></label>}
             {q.key === "goal" && answers.goal === "Başka bir hedefim var." && <label className="mt-3 block text-sm">Hedefini kısaca anlat<textarea value={answers.goalOther} onChange={e => setAnswers({ ...answers, goalOther: e.target.value })} required maxLength={500} rows={2} className={`${inputClass} mt-1.5`} /></label>}
           </div>)}
+        </> : <>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{([['firstName','Adın','given-name'],['lastName','Soyadın','family-name']] as const).map(([key,label,auto]) => <label key={key} className="block text-sm font-medium">{label}<input name={key} autoComplete={auto} value={contact[key]} onChange={e => setContact({ ...contact, [key]: e.target.value })} required maxLength={80} className={`${inputClass} mt-1.5`} /></label>)}</div>
+          <label className="block text-sm font-medium">E-posta adresin<input name="email" type="email" autoComplete="email" value={contact.email} onChange={e => setContact({ ...contact, email: e.target.value })} required maxLength={254} className={`${inputClass} mt-1.5`} /></label>
+          <label className="block text-sm font-medium">Telefon numaran<input name="phone" type="tel" autoComplete="tel" placeholder="05XX XXX XX XX" value={contact.phone} onChange={e => setContact({ ...contact, phone: e.target.value })} required maxLength={40} className={`${inputClass} mt-1.5`} /></label>
+          <label className="block text-sm font-medium">Salonunun Instagram hesabı<input name="instagram" placeholder="@salonadi" value={contact.instagram} onChange={e => setContact({ ...contact, instagram: e.target.value })} required maxLength={150} autoCapitalize="none" className={`${inputClass} mt-1.5`} /></label>
         </>}
         {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
         <div className="flex gap-3">{step === 2 && <button type="button" onClick={() => { setStep(1); setError(""); }} disabled={sending} className="rounded-lg border border-[#e6e8ea] px-4 py-3 text-sm">Geri</button>}<button type="submit" disabled={sending} className="btn-primary flex-1 px-6 py-3 text-sm disabled:opacity-60">{sending ? "Kaydediliyor..." : step === 1 ? "Devam Et →" : "Videoya Eriş →"}</button></div>
