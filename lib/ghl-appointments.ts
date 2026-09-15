@@ -18,9 +18,17 @@ type ApptRaw = {
   dateAdded?: string; // randevunun oluşturulduğu (booked) an
   title?: string; // kişi adı (ör. "Hüseyin Bediz")
   appointmentStatus?: string;
+  startTime?: string; // görüşmenin planlandığı saat
 };
 
-export type GhlBooking = { contactId: string; bookedMs: number; name: string };
+export type GhlBooking = {
+  contactId: string;
+  bookedMs: number;
+  name: string;
+  // GHL randevu durumu: confirmed | showed | noshow | cancelled | new | invalid
+  status: string;
+  startMs: number | null;
+};
 export type GhlBookings = { count: number; appts: GhlBooking[] };
 
 /**
@@ -59,13 +67,45 @@ export async function getGhlBookings(
       if (booked < sinceMs || booked >= untilMs) continue; // BOOKED aralıkta mı
       const cid = e.contactId;
       if (!cid) continue;
+      // İptal/geçersiz randevu randevu sayılmaz (yeniden planlayanın eski kaydı dahil).
+      const status = (e.appointmentStatus || "").toLowerCase();
+      if (status === "cancelled" || status === "invalid") continue;
+      const start = e.startTime ? new Date(e.startTime).getTime() : NaN;
       const prev = first.get(cid);
       if (!prev || booked < prev.bookedMs) {
-        first.set(cid, { contactId: cid, bookedMs: booked, name: e.title || "" });
+        first.set(cid, {
+          contactId: cid,
+          bookedMs: booked,
+          name: e.title || "",
+          status,
+          startMs: Number.isFinite(start) ? start : null,
+        });
       }
     }
     return { count: first.size, appts: [...first.values()] };
   } catch {
     return null;
+  }
+}
+
+/**
+ * Randevu kaydında yalnız contactId var; kişinin hangi funnel'dan geldiğini
+ * bulmak için e-posta/telefonu GHL kişisinden okunur. Erişim yoksa boş döner.
+ */
+export async function getGhlContactIdentity(
+  contactId: string,
+): Promise<{ email: string; phone: string }> {
+  const empty = { email: "", phone: "" };
+  if (!LOCATION_KEY || !contactId) return empty;
+  try {
+    const res = await fetch(`${GHL_BASE}/contacts/${contactId}`, {
+      headers: { Authorization: `Bearer ${LOCATION_KEY}`, Version: "2021-07-28" },
+      cache: "no-store",
+    });
+    if (!res.ok) return empty;
+    const data = (await res.json()) as { contact?: { email?: string; phone?: string } };
+    return { email: data.contact?.email || "", phone: data.contact?.phone || "" };
+  } catch {
+    return empty;
   }
 }

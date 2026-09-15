@@ -226,7 +226,7 @@ export function PanelView({
               sırasıyla okunur.
             </p>
             {/* Para & verim — en üstte */}
-            <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+            <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Kpi label="Harcama" value={money(data.kpi.spend)} sub="günlük (Supabase)" />
               <Kpi label="Ciro" value={money(data.kpi.revenue)} sub="GHL won" />
               <Kpi
@@ -254,9 +254,14 @@ export function PanelView({
                 value={money(data.kpi.appointmentCost)}
                 sub="harcama ÷ randevu"
               />
+              <Kpi
+                label="Görüşme maliyeti"
+                value={money(data.kpi.meetingCost)}
+                sub="harcama ÷ gerçekleşen görüşme"
+              />
             </div>
             {/* Huni — adetler */}
-            <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+            <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Kpi
                 label="Ziyaret"
                 value={String(data.kpi.visits)}
@@ -292,9 +297,14 @@ export function PanelView({
                 value={String(data.kpi.sales)}
                 sub="GHL won sinyali"
               />
+              <Kpi
+                label="Görüşme katılımı"
+                value={pct(data.kpi.attendanceRate)}
+                sub={`${data.kpi.meetingsShowed} görüşüldü · ${data.kpi.meetingsNoShow} gelmedi · ${data.kpi.meetingsUpcoming} bekliyor${data.kpi.meetingsUnmarked ? ` · ${data.kpi.meetingsUnmarked} işaretlenmedi` : ""}`}
+              />
             </div>
             {/* Dönüşüm oranları & süreler */}
-            <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
               <Kpi
                 label="Satış dönüşüm"
                 value={pct(data.kpi.salesConversionRate)}
@@ -314,6 +324,11 @@ export function PanelView({
                 label="Lead → satış süresi"
                 value={durationMinutes(data.kpi.leadToSaleMinutes)}
                 sub={`${data.kpi.leadToSaleMeasured} ölçüm · ort. ${durationMinutes(data.kpi.leadToSaleAvgMinutes)}`}
+              />
+              <Kpi
+                label="Randevu → görüşme süresi"
+                value={durationMinutes(data.kpi.bookingToMeetingMinutes)}
+                sub={`${data.kpi.bookingToMeetingMeasured} ölçüm · ort. ${durationMinutes(data.kpi.bookingToMeetingAvgMinutes)}`}
               />
             </div>
 

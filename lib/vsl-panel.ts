@@ -1,7 +1,12 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { BASVURU_SORULARI } from "@/lib/funnel";
 import { getMetaSpend } from "@/lib/meta-insights";
-import { getGhlBookings, type GhlBooking } from "@/lib/ghl-appointments";
+import {
+  getGhlBookings,
+  getGhlContactIdentity,
+  type GhlBooking,
+} from "@/lib/ghl-appointments";
+import { resolveFunnelPath } from "@/lib/funnel-attribution";
 import { MACFIT, MACFIT_QUESTIONS } from "@/lib/macfit-funnel";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "custom";
@@ -116,6 +121,15 @@ export type VslPanelData = {
     optinCost: number | null;
     leadCost: number | null;
     appointmentCost: number | null;
+    meetingCost: number | null;
+    meetingsShowed: number;
+    meetingsNoShow: number;
+    meetingsUpcoming: number;
+    meetingsUnmarked: number;
+    attendanceRate: number | null;
+    bookingToMeetingMinutes: number | null;
+    bookingToMeetingAvgMinutes: number | null;
+    bookingToMeetingMeasured: number;
     salesConversionRate: number | null;
     cpa: number | null;
     roas: number | null;
@@ -567,6 +581,58 @@ function ghlNameTiming(appts: GhlBooking[] | undefined, leads: LeadRow[]) {
   };
 }
 
+// Fitsistem ve Vaka-Hande AYNI GHL takvimini kullanıyor → takvimdeki randevular
+// funnel'a ayrılmadan sayılırsa iki panel de ikisinin randevusunu görür.
+// Kişinin e-posta/telefonu GHL'den okunur, ilk inişi Supabase lead kaydından
+// çözülür (satış webhook'uyla aynı kural). MACFit'in kendi takvimi var, ayrılmaz.
+async function bookingsForFunnel(
+  appts: GhlBooking[] | undefined,
+  funnelKey: FunnelKey,
+): Promise<GhlBooking[]> {
+  if (!appts?.length) return [];
+  if (funnelKey === "macfit") return appts;
+  const wanted = funnelKey === "vaka-hande" ? "/vaka-hande" : "/fitsistem";
+  const owned = await Promise.all(
+    appts.map(async (a) => {
+      const { email, phone } = await getGhlContactIdentity(a.contactId);
+      const path = await resolveFunnelPath(email, phone, "");
+      return path === wanted;
+    }),
+  );
+  return appts.filter((_, i) => owned[i]);
+}
+
+// Görüşme katılımı GHL randevu durumundan okunur (görüşmeyi yapan işaretler).
+function meetingStats(appts: GhlBooking[]) {
+  const now = Date.now();
+  let showed = 0;
+  let noShow = 0;
+  let upcoming = 0;
+  let unmarked = 0;
+  const leadTimes: number[] = [];
+  for (const a of appts) {
+    if (a.status === "showed") showed += 1;
+    else if (a.status === "noshow") noShow += 1;
+    else if (a.startMs != null && a.startMs > now) upcoming += 1;
+    else unmarked += 1;
+    if (a.startMs != null && a.startMs >= a.bookedMs) {
+      leadTimes.push(Math.round((a.startMs - a.bookedMs) / 60000));
+    }
+  }
+  return {
+    showed,
+    noShow,
+    upcoming,
+    unmarked,
+    attendanceRate: pct(showed, showed + noShow),
+    bookingToMeeting: {
+      measured: leadTimes.length,
+      medianMinutes: median(leadTimes),
+      avgMinutes: average(leadTimes),
+    },
+  };
+}
+
 // Kanal tespitinde İLK dokunuşu kullan.
 // Neden: son-dokunuş utm_* alanları eziliyor. Reklamı görüp siteye gelen, sonra
 // Instagram profilindeki bio linkiyle dönüp opt-in bırakan kişide reklamın izi
@@ -795,6 +861,15 @@ export async function getVslPanelData(
       optinCost: null,
       leadCost: null,
       appointmentCost: null,
+      meetingCost: null,
+      meetingsShowed: 0,
+      meetingsNoShow: 0,
+      meetingsUpcoming: 0,
+      meetingsUnmarked: 0,
+      attendanceRate: null,
+      bookingToMeetingMinutes: null,
+      bookingToMeetingAvgMinutes: null,
+      bookingToMeetingMeasured: 0,
       salesConversionRate: null,
       cpa: null,
       roas: null,
@@ -946,14 +1021,16 @@ export async function getVslPanelData(
         ? await getGhlBookings(r.since, r.until, MACFIT.calendarId)
         : null
       : await getGhlBookings(r.since, r.until);
+    const funnelAppts = await bookingsForFunnel(ghl?.appts, funnelKey);
+    const meetings = meetingStats(funnelAppts);
     const booked = Math.max(
       uniqueLeadCount(leads, "vsl_randevu"),
       bookedEvent,
-      ghl?.count ?? 0,
+      funnelAppts.length,
     );
-    // Lead→randevu süresi: GHL randevusunu (aynı çağrı) isimden lead'e eşle (ek çağrı YOK).
+    // Lead→randevu süresi: funnel'a ait GHL randevusunu isimden lead'e eşle.
     // Eşleşme yoksa eldeki webhook sinyaline düş.
-    const ghlTiming = ghlNameTiming(ghl?.appts, leads);
+    const ghlTiming = ghlNameTiming(funnelAppts, leads);
     const leadToAppointment =
       ghlTiming.measured > 0 ? ghlTiming : leadToAppointmentSignal;
     const qualifiedApplications = applicationRows.filter((row) => {
@@ -1300,6 +1377,15 @@ export async function getVslPanelData(
         optinCost: cost(spend, optins),
         leadCost: cost(spend, applications),
         appointmentCost: cost(spend, booked),
+        meetingCost: cost(spend, meetings.showed),
+        meetingsShowed: meetings.showed,
+        meetingsNoShow: meetings.noShow,
+        meetingsUpcoming: meetings.upcoming,
+        meetingsUnmarked: meetings.unmarked,
+        attendanceRate: meetings.attendanceRate,
+        bookingToMeetingMinutes: meetings.bookingToMeeting.medianMinutes,
+        bookingToMeetingAvgMinutes: meetings.bookingToMeeting.avgMinutes,
+        bookingToMeetingMeasured: meetings.bookingToMeeting.measured,
         salesConversionRate: ratio(sales, applications),
         cpa: cost(spend, sales),
         roas:
