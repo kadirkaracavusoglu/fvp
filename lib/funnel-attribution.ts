@@ -18,6 +18,15 @@ type LeadAttrRow = {
 
 function landingPath(row: LeadAttrRow): string | null {
   const a = row.attribution || {};
+  // Elle düzeltme: ölçüm kişiyi organik/bio yazmış ama gerçek kaynağı biliniyorsa
+  // (kişi görüşmede söylediyse) `funnel_override` yazılır. Ham utm/landing verisi
+  // DEĞİŞTİRİLMEZ; yalnız funnel ataması bu alanla ezilir.
+  const ov = a.funnel_override;
+  if (typeof ov === "string" && ov) {
+    if (ov === "macfit") return "/fitsistem-macfit-vaka";
+    if (ov === "vaka-hande") return VAKA_HANDE_PREFIX;
+    return "/fitsistem";
+  }
   if (a.funnel === "fitsistem_macfit_vaka") return "/fitsistem-macfit-vaka";
   const first = a.first_landing_path;
   if (typeof first === "string" && first) return first;
@@ -57,8 +66,13 @@ export async function resolveFunnelPath(
       .limit(20);
     if (error || !data?.length) return fallback;
 
+    // Elle düzeltilmiş kayıt varsa o belirler (ilk dokunuştan önce gelir).
+    const rows = data as LeadAttrRow[];
+    const overridden = rows.find(
+      (r) => typeof (r.attribution || {}).funnel_override === "string",
+    );
     // İLK kaydın yolu esas alınır (ilk dokunuş); yolu olmayan kayıtlar atlanır.
-    for (const row of data as LeadAttrRow[]) {
+    for (const row of overridden ? [overridden] : rows) {
       const path = landingPath(row);
       if (!path) continue;
       if (path === "/fitsistem-macfit-vaka" || path.startsWith("/fitsistem-macfit-vaka/")) return `/fitsistem-macfit-vaka${suffix}`;

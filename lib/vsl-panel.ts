@@ -993,7 +993,17 @@ export async function getVslPanelData(
       if (isMacfit) return isMacfitLead;
       if (isMacfitLead) return false;
       const a = (l.attribution || {}) as Record<string, unknown>;
+      // funnel_override: elle düzeltilmiş kaynak (bkz. lib/funnel-attribution.ts).
+      const override =
+        typeof a.funnel_override === "string" && a.funnel_override
+          ? a.funnel_override === "vaka-hande"
+            ? "/vaka-hande"
+            : a.funnel_override === "macfit"
+              ? "/fitsistem-macfit-vaka"
+              : "/fitsistem"
+          : null;
       const lp =
+        override ||
         (typeof a.first_landing_path === "string" && a.first_landing_path) ||
         (typeof a.landing_path === "string" && a.landing_path) ||
         null;
