@@ -38,22 +38,41 @@ function durationMinutes(value: number | null) {
   return remHours ? `${days} gün ${remHours} sa` : `${days} gün`;
 }
 
+/** Önceki döneme göre değişim oku (16 Eyl — Mert panelinden taşındı).
+ *  Payda 0 ise oran yok: "yeni" der, %∞ göstermez. */
+function Delta({ cur, prev }: { cur: number; prev: number | null | undefined }) {
+  if (prev == null) return null;
+  if (prev === 0) return cur > 0 ? <span className="text-xs font-bold text-emerald-600">yeni</span> : null;
+  const d = Math.round(((cur - prev) / prev) * 100);
+  if (d === 0) return <span className="text-xs font-semibold text-gray-400">=</span>;
+  return (
+    <span className={`text-xs font-bold ${d > 0 ? "text-emerald-600" : "text-red-500"}`}>
+      {d > 0 ? "▲" : "▼"} %{Math.abs(d)}
+    </span>
+  );
+}
+
 function Kpi({
   label,
   value,
   sub,
+  cur,
+  prev,
 }: {
   label: string;
   value: string;
   sub?: string;
+  cur?: number;
+  prev?: number | null;
 }) {
   return (
     <div className="rounded-xl border border-[#e6e8ea] bg-white p-4 shadow-[0_10px_30px_rgba(13,32,77,0.04)]">
       <div className="text-xs font-semibold uppercase tracking-wide text-gray-400">
         {label}
       </div>
-      <div className="mt-1 text-3xl font-black tabular-nums text-[#0d204d]">
-        {value}
+      <div className="mt-1 flex items-baseline gap-2">
+        <span className="text-3xl font-black tabular-nums text-[#0d204d]">{value}</span>
+        {cur != null && <Delta cur={cur} prev={prev} />}
       </div>
       {sub && <div className="mt-1 text-xs text-gray-400">{sub}</div>}
     </div>
@@ -228,7 +247,7 @@ export function PanelView({
             {/* Para & verim — en üstte */}
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Kpi label="Harcama" value={money(data.kpi.spend)} sub="günlük (Supabase)" />
-              <Kpi label="Ciro" value={money(data.kpi.revenue)} sub="GHL won" />
+              <Kpi label="Ciro" value={money(data.kpi.revenue)} sub="GHL won" cur={data.kpi.revenue} prev={data.prev?.revenue} />
               <Kpi
                 label="ROAS"
                 value={multiple(data.kpi.roas)}
@@ -265,11 +284,15 @@ export function PanelView({
               <Kpi
                 label="Ziyaret"
                 value={String(data.kpi.visits)}
+                cur={data.kpi.visits}
+                prev={data.prev?.visits}
                 sub={isMacfit ? "salon sayfasını gördü" : "VSL sayfasını gördü"}
               />
               <Kpi
                 label="Opt-in"
                 value={String(data.kpi.optins)}
+                cur={data.kpi.optins}
+                prev={data.prev?.optins}
                 sub={`ziyaret → opt-in ${pct(data.kpi.optinRate)}`}
               />
               <Kpi
@@ -280,11 +303,15 @@ export function PanelView({
               <Kpi
                 label="Lead"
                 value={String(data.kpi.applications)}
+                cur={data.kpi.applications}
+                prev={data.prev?.applications}
                 sub={isMacfit ? "salon formu" : "başvuru formu"}
               />
               <Kpi
                 label="Randevu"
                 value={String(data.kpi.booked)}
+                cur={data.kpi.booked}
+                prev={data.prev?.booked}
                 sub={`${isMacfit ? "form" : "başvuru"} → randevu ${pct(data.kpi.bookedRate)}`}
               />
               <Kpi
@@ -295,6 +322,8 @@ export function PanelView({
               <Kpi
                 label="Satış"
                 value={String(data.kpi.sales)}
+                cur={data.kpi.sales}
+                prev={data.prev?.sales}
                 sub="GHL won sinyali"
               />
               <Kpi
@@ -343,7 +372,7 @@ export function PanelView({
                 Kanal Kırılımı
               </h2>
               <div className="mt-4 overflow-x-auto">
-                <table className="w-full min-w-[760px] text-left text-sm">
+                <table className="w-full min-w-[980px] text-left text-sm">
                   <thead className="text-xs uppercase tracking-wide text-gray-400">
                     <tr>
                       <th className="pb-2">Kanal</th>
@@ -352,6 +381,9 @@ export function PanelView({
                       <th className="pb-2 text-right">{isMacfit ? "Lead" : "Başvuru"}</th>
                       <th className="pb-2 text-right">Takvim</th>
                       <th className="pb-2 text-right">Randevu</th>
+                      <th className="pb-2 text-right">Satış</th>
+                      <th className="pb-2 text-right">Ciro</th>
+                      <th className="pb-2 text-right">ROAS</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -372,6 +404,13 @@ export function PanelView({
                         </td>
                         <td className="py-3 text-right tabular-nums">
                           {ch.booked}
+                        </td>
+                        <td className="py-3 text-right tabular-nums">{ch.sales}</td>
+                        <td className="py-3 text-right tabular-nums">
+                          {ch.revenue > 0 ? money(ch.revenue) : "—"}
+                        </td>
+                        <td className="py-3 text-right tabular-nums">
+                          {ch.roas != null ? multiple(ch.roas) : "—"}
                         </td>
                       </tr>
                     ))}

@@ -57,6 +57,13 @@ export type ChannelRow = {
   applications: number;
   calendarViews: number;
   booked: number;
+  /** 16 Eyl 2026 — Mert panelinden taşındı: kanal tablosunda PARA yoktu,
+   *  hangi kanalın kazandırdığı görünmüyordu. */
+  sales: number;
+  revenue: number;
+  /** Harcama kanal bazında ölçülmüyor; tamamı ücretli kanala yazılır (Mert panelindeki kural). */
+  spend: number;
+  roas: number | null;
 };
 
 export type RecentLead = {
@@ -143,6 +150,10 @@ export type VslPanelData = {
     leadToSaleMeasured: number;
     utmRate: number | null;
   };
+  /** Önceki EŞİT UZUNLUKTA dönem (16 Eyl 2026 — Mert panelinden taşındı):
+   *  rakamın iyi mi kötü mü olduğu ancak kıyasla anlaşılır. Hesap hafif tutuldu
+   *  (yalnız 6 sayı), panelin açılış süresini bozmasın. */
+  prev: { visits: number; optins: number; applications: number; booked: number; sales: number; revenue: number } | null;
   funnel: FunnelStep[];
   form: FunnelStep[];
   video: FunnelStep[];
@@ -230,6 +241,38 @@ function resolveRange(range: PanelRange, custom?: { from?: string; to?: string }
     since: startIso(s),
     until: startIso(addDays(today, 1)),
   };
+}
+
+/** Önceki eşit uzunlukta dönemin özet sayıları. Hata olursa null — panel yine açılır. */
+async function oncekiDonem(
+  startDate: string,
+  endDate: string,
+  optinType: string,
+  applicationType: string,
+): Promise<VslPanelData["prev"]> {
+  try {
+    const gun = Math.max(
+      1,
+      Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000) + 1,
+    );
+    const oncekiBitis = addDays(startDate, -1);
+    const oncekiBas = addDays(startDate, -gun);
+    const [ev, ld] = await Promise.all([
+      fetchAll<EventRow>("events", "name, session_id, path, meta, attribution, created_at", startIso(oncekiBas), startIso(addDays(oncekiBitis, 1))),
+      fetchAll<LeadRow>("leads", "form_type, email, created_at", startIso(oncekiBas), startIso(addDays(oncekiBitis, 1))),
+    ]);
+    const satislar = uniqueEvents(ev, ["vsl_sale", "vsl_closed_won"]);
+    return {
+      visits: uniqueBy(ev, "vsl_optin_view"),
+      optins: uniqueLeadCount(ld, optinType),
+      applications: uniqueLeadCount(ld, applicationType),
+      booked: uniqueBy(ev, "vsl_calendar_booked"),
+      sales: satislar.length,
+      revenue: satislar.reduce((t, r) => t + eventRevenue(r), 0),
+    };
+  } catch {
+    return null;
+  }
 }
 
 async function fetchAll<T extends object>(
@@ -708,16 +751,34 @@ function bump(
     "visits" | "optins" | "applications" | "calendarViews" | "booked"
   >,
 ) {
-  const row = map.get(key) || {
-    key,
-    label: CHANNEL_LABELS[key] || key,
-    visits: 0,
-    optins: 0,
-    applications: 0,
-    calendarViews: 0,
-    booked: 0,
-  };
+  const row = bosSatir(map, key);
   row[field] += 1;
+  map.set(key, row);
+}
+
+function bosSatir(map: Map<string, ChannelRow>, key: string): ChannelRow {
+  return (
+    map.get(key) || {
+      key,
+      label: CHANNEL_LABELS[key] || key,
+      visits: 0,
+      optins: 0,
+      applications: 0,
+      calendarViews: 0,
+      booked: 0,
+      sales: 0,
+      revenue: 0,
+      spend: 0,
+      roas: null,
+    }
+  );
+}
+
+/** Satış ve ciroyu kanala ekle (sayaç değil, tutar). */
+function bumpPara(map: Map<string, ChannelRow>, key: string, ciro: number) {
+  const row = bosSatir(map, key);
+  row.sales += 1;
+  row.revenue += ciro;
   map.set(key, row);
 }
 
@@ -883,6 +944,7 @@ export async function getVslPanelData(
       leadToSaleMeasured: 0,
       utmRate: null,
     },
+    prev: null,
     funnel: [],
     form: [],
     video: [],
@@ -990,6 +1052,9 @@ export async function getVslPanelData(
     const manualSpend = await getManualSpend(r.startDate, r.endDate, funnelKey);
     const metaSpend = manualSpend == null ? await getMetaSpend(r.startDate, r.endDate) : null;
     const spend = manualSpend != null ? manualSpend : metaSpend?.ok ? metaSpend.spend : null;
+
+    // Önceki eşit dönem (hafif sorgu) — KPI oklarını besler.
+    const prev = await oncekiDonem(r.startDate, r.endDate, OPTIN_TYPE, APPLICATION_TYPE);
 
     const optins = uniqueLeadCount(leads, OPTIN_TYPE);
     const applicationRows = uniqueLeadRows(leads, APPLICATION_TYPE);
@@ -1270,6 +1335,21 @@ export async function getVslPanelData(
       if (type === "vsl_randevu") bump(channelMap, key, "booked");
     }
 
+    // 💰 Satış + ciro kanal bazında (16 Eyl 2026 — Mert panelinden taşındı).
+    // Satış olayı (vsl_sale / vsl_closed_won) kendi attribution'ını taşıyor,
+    // kanal aynı first-touch kuralıyla çıkarılıyor → kanal tablosuyla tutarlı.
+    for (const row of saleRows) bumpPara(channelMap, channelKey(row.attribution), eventRevenue(row));
+    // Harcama kanal kırılımlı ölçülmüyor (Meta toplamı / manuel giriş) → tamamı
+    // "meta" satırına yazılır; organik kanalın ROAS'ı bu yüzden boş kalır.
+    if (spend != null && spend > 0) {
+      const meta = bosSatir(channelMap, "meta");
+      meta.spend = spend;
+      channelMap.set("meta", meta);
+    }
+    for (const row of channelMap.values()) {
+      row.roas = row.spend > 0 && row.revenue > 0 ? Math.round((row.revenue / row.spend) * 100) / 100 : null;
+    }
+
     const recentLeads = leads
       .filter(
         (l) => l.form_type === APPLICATION_TYPE || l.form_type === "vsl_randevu",
@@ -1402,6 +1482,7 @@ export async function getVslPanelData(
         leadToSaleMeasured: leadToSale.measured,
         utmRate: pct(utmCaptured, optins + applications),
       },
+      prev,
       funnel,
       form,
       video,
