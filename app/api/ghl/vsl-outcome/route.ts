@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp } from "@/lib/spam";
-import { resolveFunnelPath } from "@/lib/funnel-attribution";
+import { resolveFunnelPath, resolveLeadAttribution } from "@/lib/funnel-attribution";
 
 // GHL workflow → funnel sonucu (ulaşıldı / satış) webhook'u.
 //
@@ -102,6 +102,9 @@ export async function POST(req: Request) {
     // gerçek funnel'ını lead kaydından çöz (sabit yazmak yanlış funnel'a yazar).
     const suffix = event === "vsl_reached" ? "/ulasildi" : "/satis";
     const path = await resolveFunnelPath(email, phone, suffix);
+    // Kaynak: kişinin İLK lead kaydından. Boş bırakılırsa panelin kanal
+    // kırılımında satış "organik" sayılıyordu (16 Eyl düzeltmesi).
+    const attribution = await resolveLeadAttribution(email, phone);
 
     if (supabaseAdmin) {
       await supabaseAdmin.from("events").insert({
@@ -109,7 +112,7 @@ export async function POST(req: Request) {
         path,
         session_id: null,
         video: null,
-        attribution: null,
+        attribution,
         // Panel bu alanlardan kişiyi tekilleştirir ve ciroyu okur.
         meta: {
           contactId,
@@ -122,6 +125,36 @@ export async function POST(req: Request) {
         },
         ua: (req.headers.get("user-agent") || "").slice(0, 300),
       });
+    }
+
+    // 📒 KALICI SATIŞ DEFTERİ (16 Eyl 2026). Event tablosu ölçüm/temizlik alanı;
+    // satış geçmişi ayrı tabloda kalmalı ki bir olay silme işlemi ciroyu götürmesin
+    // (Mert projesindeki `sales` tablosunun karşılığı). Fırsat kimliği varsa tekil.
+    if (supabaseAdmin && event !== "vsl_reached") {
+      const funnel = path.startsWith("/vaka-hande")
+        ? "vaka-hande"
+        : path.startsWith("/fitsistem-macfit-vaka")
+          ? "fitsistem-macfit-vaka"
+          : "fitsistem";
+      const satir = {
+        event,
+        ghl_opportunity_id: pickString(body, ["opportunityId", "opportunity_id"]) || null,
+        ghl_contact_id: contactId || null,
+        email: email || null,
+        phone: phone || null,
+        value: revenue,
+        currency: "TRY",
+        funnel,
+        path,
+        attribution,
+        won_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = satir.ghl_opportunity_id
+        ? await supabaseAdmin.from("sales").upsert(satir, { onConflict: "ghl_opportunity_id" })
+        : await supabaseAdmin.from("sales").insert(satir);
+      // Defter yazılamazsa akış BOZULMAZ: event zaten yazıldı, panel çalışmaya devam eder.
+      if (error) console.error("sales defteri yazılamadı:", error.message);
     }
 
     return NextResponse.json({ ok: true, event, path, revenue });

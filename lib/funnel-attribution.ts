@@ -70,3 +70,36 @@ export async function resolveFunnelPath(
     return fallback;
   }
 }
+
+/** Kişinin İLK lead kaydındaki attribution'ı döndürür (first-touch kaynak).
+ *  🔴 16 Eyl 2026: GHL sonuç webhook'u satış event'ini `attribution: null` ile
+ *  yazıyordu → panelin kanal kırılımında her satış "organik" görünüyordu.
+ *  Aynı lead aramasını tekrar kullanıyoruz; ekstra maliyeti yok. */
+export async function resolveLeadAttribution(
+  email: string,
+  phone: string,
+): Promise<Record<string, unknown> | null> {
+  if (!supabaseAdmin) return null;
+  const cleanEmail = (email || "").toLowerCase().trim();
+  const digits = (phone || "").replace(/\D/g, "");
+  const tail = digits.length >= 9 ? digits.slice(-9) : "";
+  if (!cleanEmail && !tail) return null;
+  try {
+    const filters: string[] = [];
+    if (cleanEmail) filters.push(`email.eq.${cleanEmail}`);
+    if (tail) filters.push(`phone.like.*${tail}`);
+    const { data, error } = await supabaseAdmin
+      .from("leads")
+      .select("attribution,created_at")
+      .or(filters.join(","))
+      .order("created_at", { ascending: true })
+      .limit(20);
+    if (error || !data?.length) return null;
+    for (const row of data as LeadAttrRow[]) {
+      if (row.attribution && Object.keys(row.attribution).length) return row.attribution;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
