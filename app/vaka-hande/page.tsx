@@ -104,17 +104,18 @@ export default function VakaHandeOptinPage() {
       <section className="glow-bg">
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            ONLINE KOÇLUK İŞİNİ KURMAK VEYA BÜYÜTMEK İSTEYEN FITNESS KOÇLARI İÇİN
+            ÜCRETSİZ VAKA ANALİZİ · ONLINE KOÇLUĞA GEÇMEK İSTEYEN FITNESS KOÇLARI İÇİN
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Amerika&apos;da tam zamanlı çalışan bir fitness koçuyla, tek bir
-            reklam bile vermeden, 1,5 ayda ilk 7 online danışanını nasıl
-            kazandığımızı gösteriyorum.
+            Yıllardır online koçluğu düşünüp bir türlü başlayamayan koçların
+            gerçek engeli ve Hande&apos;nin 1,5 ayda 7 danışan kazandığı
+            Fitsistem&apos;i kendi işinde nasıl kuracağın.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            Bu videoda Hande ile sıfırdan online koçluk sistemini nasıl
-            kurduğumuzu, hangi adımları attığımızı ve aynı yaklaşımı kendi
-            işinde nasıl uygulayabileceğini gerçek rakamlarla anlatıyorum.
+            27 dakikalık vaka analizinde Hande kendi hikâyesini anlatıyor:
+            Amerika&apos;da tam zamanlı çalışırken sistemi nasıl kurdu, duyurduğu
+            gün başvuru formunu 65 kişi doldurdu, üçüncü günde ilk satış geldi ve
+            1,5 ayda 7 danışana ulaştı. Reklam harcaması sıfır.
           </p>
         </div>
       </section>
@@ -148,12 +149,52 @@ export default function VakaHandeOptinPage() {
             onClick={openModal}
             className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
           >
-            Hande&apos;nin Sürecini İzle →
+            ÜCRETSİZ EĞİTİMİ ŞİMDİ İZLE →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Adını ve e-posta adresini bırak, video hemen açılsın.
+            Adını ve e-postanı bırak, video hemen açılsın. 27 dakika.
           </p>
         </div>
+      </section>
+
+      {/* Ortak düşman — "onlar vs biz" konumlandırması. Metinler Hande'nin
+          video içindeki kendi sözlerinden çıkarıldı; uydurma iddia yok. */}
+      <section className="mx-auto max-w-3xl px-5 pb-14">
+        <div className="rounded-2xl border border-[#e6e8ea] bg-white/70 p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-[#0d204d] sm:text-2xl">
+            Online koçluğa başlamanı engelleyen üç şey
+          </h2>
+          <div className="mt-5 space-y-4 text-base text-gray-500">
+            <p>
+              <b className="text-[#0d204d]">Doğru zamanı beklemek.</b> &quot;Şu iş
+              bitsin, şartlar düzelsin, sonra başlarım.&quot; Hande de tam böyle
+              düşünüyordu. O zaman hiçbir zaman gelmiyor.
+            </p>
+            <p>
+              <b className="text-[#0d204d]">Önce her şeyi öğrenmeye çalışmak.</b>{" "}
+              Hande aylarca web sitesi ve funnel araştırdı, tek bir adım atmadı.
+              Bilginin ucu bucağı yok; araştırmak eylem değil.
+            </p>
+            <p>
+              <b className="text-[#0d204d]">Kendinden daha iyisi var sanmak.</b>{" "}
+              Her zaman daha iyisi olacak. Ama senden duymak isteyen, seninle
+              çalışmak isteyen insanlar var.
+            </p>
+          </div>
+          <p className="mt-5 text-base text-gray-500">
+            Hande bu üçünü de aştı. Nasıl yaptığını videoda kendisi anlatıyor.
+          </p>
+          <button
+            type="button"
+            onClick={openModal}
+            className="btn-primary mt-6 w-full px-8 py-4 text-base sm:w-auto"
+          >
+            ÜCRETSİZ EĞİTİMİ ŞİMDİ İZLE →
+          </button>
+        </div>
+        <p className="mt-8 text-center text-xs text-gray-400">
+          Fitness ve Pazarlama · Kadir Karaçavuşoğlu
+        </p>
       </section>
 
       {modalOpen && (
@@ -178,10 +219,11 @@ export default function VakaHandeOptinPage() {
               </svg>
             </div>
             <h2 id="vh-optin-title" className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-              Videoyu hemen izlemeye başla
+              Vaka analizini aç
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Adını ve e-posta adresini bırak, video hemen açılsın.
+              Videoyu nereye göndereceğimizi bilelim diye adın ve e-postan
+              yeterli.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
@@ -223,7 +265,7 @@ export default function VakaHandeOptinPage() {
                 disabled={sending}
                 className="btn-primary w-full px-6 py-3 text-sm disabled:opacity-60"
               >
-                {sending ? "Açılıyor..." : "Videoyu Aç →"}
+                {sending ? "Açılıyor..." : "ÜCRETSİZ EĞİTİMİ AÇ →"}
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
