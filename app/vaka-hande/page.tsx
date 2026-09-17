@@ -107,15 +107,16 @@ export default function VakaHandeOptinPage() {
             ÜCRETSİZ VAKA ANALİZİ · ONLINE KOÇLUĞA GEÇMEK İSTEYEN FITNESS KOÇLARI İÇİN
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Yıllardır online koçluğu düşünüp bir türlü başlayamayan koçların
-            gerçek engeli ve Hande&apos;nin 1,5 ayda 7 danışan kazandığı
-            Fitsistem&apos;i kendi işinde nasıl kuracağın.
+            Online koçluğa başlamak istiyor ama nereden başlayacağını bilmiyor
+            musun? Hande Hoca ile Fitsistem&apos;i 1,5 ayda kurduk; 65 başvuru
+            geldi, 7 danışan kazandı. Sen de kendi online koçluk işini nasıl
+            kurabilirsin, videoda anlatıyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            27 dakikalık vaka analizinde Hande kendi hikâyesini anlatıyor:
-            Amerika&apos;da tam zamanlı çalışırken sistemi nasıl kurdu, duyurduğu
-            gün başvuru formunu 65 kişi doldurdu, üçüncü günde ilk satış geldi ve
-            1,5 ayda 7 danışana ulaştı. Reklam harcaması sıfır.
+            Hande, Amerika&apos;da tam zamanlı çalışırken bu sistemi kurdu.
+            Duyurduğu gün formu 65 kişi doldurdu, üçüncü günde ilk satışı geldi.
+            Tek kuruş reklam harcamadı. Hepsini 27 dakikalık videoda kendisi
+            anlatıyor.
           </p>
         </div>
       </section>
@@ -168,7 +169,7 @@ export default function VakaHandeOptinPage() {
             <p>
               <b className="text-[#0d204d]">Doğru zamanı beklemek.</b> &quot;Şu iş
               bitsin, şartlar düzelsin, sonra başlarım.&quot; Hande de tam böyle
-              düşünüyordu. O zaman hiçbir zaman gelmiyor.
+              düşünüyordu. Beklenen o gün hiç gelmiyor.
             </p>
             <p>
               <b className="text-[#0d204d]">Önce her şeyi öğrenmeye çalışmak.</b>{" "}
