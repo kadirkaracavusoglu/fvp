@@ -114,7 +114,7 @@ export default function VakaAnaliziOptinPage() {
             kurduğumuzu adım adım gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            Bu 27 dakikalık vaka analizinde Hande&apos;nin sıfırdan online
+            Bu 27 dakikalık vaka analizinde Hande Hoca&apos;nın sıfırdan online
             koçluğa geçerken yaşadığı kafa karışıklığını, Fitsistem&apos;i hangi
             sırayla kurduğumuzu ve içerikten başvuruya, satıştan işin
             sistemleşmesine kadar nasıl ilerlediğimizi gerçek süreç üzerinden
@@ -170,15 +170,15 @@ export default function VakaAnaliziOptinPage() {
             {[
               {
                 t: "Online koçluk işini hangi sırayla kurman gerektiğini.",
-                d: "Hande nereden başlayacağını bilmiyordu; web sitesi, funnel, satış ve pazarlama gibi birçok konu aynı anda kafasını karıştırıyordu. Videoda bütün bunları hangi sırayla ele aldığımızı ve Fitsistem’i adım adım nasıl kurduğumuzu göreceksin.",
+                d: "Hande Hoca nereden başlayacağını bilmiyordu; web sitesi, funnel, satış ve pazarlama gibi birçok konu aynı anda kafasını karıştırıyordu. Videoda bütün bunları hangi sırayla ele aldığımızı ve Fitsistem’i adım adım nasıl kurduğumuzu göreceksin.",
               },
               {
                 t: "İçerik üretmekle düzenli danışan kazanmak arasındaki sistemi.",
-                d: "İnsanların seni takip etmesi tek başına bir online koçluk işi oluşturmuyor. Hande’nin mevcut kitlesini nasıl bir hizmete, başvuru sürecine ve satışa bağladığımızı gerçek çalışma üzerinden göreceksin. İlk duyurusunda 65 başvuru gelmesi ve kısa süre içerisinde ilk satışların oluşması da bu sürecin sonucu oldu.",
+                d: "İnsanların seni takip etmesi tek başına bir online koçluk işi oluşturmuyor. Hande Hoca’nın mevcut kitlesini nasıl bir hizmete, başvuru sürecine ve satışa bağladığımızı gerçek çalışma üzerinden göreceksin. İlk duyurusunda 65 başvuru gelmesi ve kısa süre içerisinde ilk satışların oluşması da bu sürecin sonucu oldu.",
               },
               {
                 t: "Her şey mükemmel olmadan da sistemi nasıl kurabileceğini.",
-                d: "Hande Amerika’da tam zamanlı çalışırken ve online koçluk tarafında hiç deneyimi yokken başladı. Süreci bir anda kusursuz hale getirmeye çalışmak yerine haftalık adımlarla ilerledik, eksikleri süreç içerisinde tamamladık ve işi çalışır hale getirdik.",
+                d: "Hande Hoca Amerika’da tam zamanlı çalışırken ve online koçluk tarafında hiç deneyimi yokken başladı. Süreci bir anda kusursuz hale getirmeye çalışmak yerine haftalık adımlarla ilerledik, eksikleri süreç içerisinde tamamladık ve işi çalışır hale getirdik.",
               },
             ].map((m, i) => (
               <li key={m.t} className="flex gap-4">

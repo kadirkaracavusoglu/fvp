@@ -19,7 +19,7 @@ export default function VakaHandeIzlePage() {
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-              Önce Hande&apos;nin başlangıçtaki kafa karışıklığını, sonra
+              Önce Hande Hoca&apos;nın başlangıçtaki kafa karışıklığını, sonra
               Fitsistem&apos;i hangi sırayla kurduğumuzu ve ilk duyuruda 65
               başvurunun nasıl geldiğini göreceksin. İzlerken kendi işinde hangi
               parçanın eksik olduğunu not al; videonun sonunda bir sonraki

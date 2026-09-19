@@ -69,7 +69,7 @@ export default function VakaAnaliziTesekkurlerPage() {
         {/* 3. HANDE HATIRLATMASI — video zaten izlendi, sadece bağ kuruyoruz */}
         <div className="mt-10 rounded-2xl border border-[#e6e8ea] bg-white p-6 text-center shadow-sm sm:p-8">
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-500">
-            Az önce Hande&apos;nin vaka analizini izledin. Onun da başında aynı
+            Az önce Hande Hoca&apos;nın vaka analizini izledin. Onun da başında aynı
             sorular vardı: &quot;Nereden başlamalıyım, zamanım olur mu, teknik
             kısımları kaldırabilir miyim?&quot; Görüşmede senin işine bakacağız;
             Fitsistem&apos;in hangi parçasından başlaman gerektiğini ve mükemmeli
