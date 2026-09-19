@@ -4,6 +4,7 @@
 
 import { useEffect } from "react";
 import { captureAttribution, track, trackServer } from "@/lib/tracking";
+import { OnGorusmeEgitimi } from "@/components/lp/OnGorusmeEgitimi";
 
 // SOSYAL KANIT — gerçek içerik Kadir'den gelir (uydurma YASAK).
 // Doldurulunca aşağıdaki bölüm otomatik görünür; boşken hiç render olmaz.
@@ -77,7 +78,10 @@ export default function VakaAnaliziTesekkurlerPage() {
           </p>
         </div>
 
-        {/* 4. SOSYAL KANIT — yalnızca gerçek içerik girilince görünür */}
+        {/* 4. GÖRÜŞME ÖNCESİ EĞİTİM — sayfa boş kalmasın, görüşmeye hazırlıklı gelsin */}
+        <OnGorusmeEgitimi location="vaka-analizi" />
+
+        {/* 5. SOSYAL KANIT — yalnızca gerçek içerik girilince görünür */}
         {KANITLAR.length > 0 && (
           <div className="mt-14">
             <h2 className="text-center text-xl font-bold text-[#0d204d] sm:text-2xl">
