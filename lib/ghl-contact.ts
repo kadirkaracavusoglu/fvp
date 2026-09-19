@@ -41,6 +41,7 @@ const CF = {
   utm_content: "Z3S3Lcz0eogkqd8ldztz",
   funnel_stage: "WtECgb4zZB3QV5h89nNF",
   instagram: "XcU7bUnQZIEVYpvafllT",
+  neden_simdi: "JvY4PT39cqTpC9VyXb6M", // VSL Neden Şimdi (19 Eyl 2026)
 } as const;
 
 type CustomField = { id: string; value: string | number };
@@ -142,6 +143,7 @@ export async function upsertGhlContact(input: GhlUpsertInput): Promise<GhlStepRe
   push(CF.yatirim, a.yatirim);
   push(CF.karar_hizi, a.karar_hizi);
   push(CF.basari_kriteri, a.basari_kriteri);
+  push(CF.neden_simdi, a.neden_simdi);
   push(CF.businessName, input.businessName);
   push(CF.websiteUrl, input.websiteUrl);
   push(CF.instagram, input.instagram);

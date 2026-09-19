@@ -5,8 +5,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AcikUcluSoru } from "@/components/lp/AcikUcluSoru";
 import {
   BASVURU_SORULARI,
+  adimSayaci,
+  gorunurCevaplar,
+  oncekiAdim,
+  sonrakiAdim,
   VSL_OPTIN_CONTACT_KEY,
   type BasvuruCevaplar,
   type BasvuruSoru,
@@ -18,7 +23,6 @@ import {
   getAttribution,
 } from "@/lib/tracking";
 
-const TOTAL = BASVURU_SORULARI.length + 1; // sorular + iletişim ekranı
 const fieldClass =
   "w-full rounded-lg border border-[#e6e8ea] bg-white px-4 py-3 text-[#0d204d] outline-none transition focus:border-[#0d204d]";
 
@@ -93,9 +97,11 @@ export default function BasvuruPage() {
 
   function choose(q: BasvuruSoru, value: string) {
     setErr("");
-    setAnswers((a) => ({ ...a, [q.key]: value }));
+    // Yeni cevapla birlikte hesapla: koşullu sorular (ör. 2. soru) buna göre atlanır.
+    const nextAnswers = { ...answers, [q.key]: value };
+    setAnswers(nextAnswers);
     recordAnswer(q);
-    setTimeout(() => setStep((s) => Math.min(s + 1, TOTAL - 1)), 180);
+    setTimeout(() => setStep((s) => sonrakiAdim(s, nextAnswers)), 180);
   }
 
   function toggle(q: BasvuruSoru, value: string) {
@@ -118,13 +124,13 @@ export default function BasvuruPage() {
     if (!answerValid(q)) {
       setErr(
         q.tip === "coklu"
-          ? "En az bir seçenek seçin."
-          : "Kısa bir cevap yazın.",
+          ? "En az bir seçenek seç."
+          : "Birkaç kelimeyle de olsa yazman yeterli.",
       );
       return;
     }
     recordAnswer(q);
-    setStep((s) => Math.min(s + 1, TOTAL - 1));
+    setStep((s) => sonrakiAdim(s, answers));
   }
 
   async function submit(e: React.FormEvent) {
@@ -150,7 +156,7 @@ export default function BasvuruPage() {
           email,
           phone,
           instagram,
-          cevaplar: answers,
+          cevaplar: gorunurCevaplar(answers),
           website,
           attribution,
         }),
@@ -172,10 +178,11 @@ export default function BasvuruPage() {
 
   const isContact = step === BASVURU_SORULARI.length;
   const soru = isContact ? undefined : BASVURU_SORULARI[step];
-  const pct = Math.round(((step + 1) / TOTAL) * 100);
+  const sayac = adimSayaci(step, answers);
+  const pct = Math.round((sayac.sira / sayac.toplam) * 100);
 
   return (
-    <div className="glow-bg min-h-screen">
+    <div className="glow-bg min-h-screen pb-40 sm:pb-0">
       {/* İlerleme */}
       <div className="fixed inset-x-0 top-0 z-10 h-1.5 bg-[#e6e8ea]">
         <div
@@ -206,14 +213,14 @@ export default function BasvuruPage() {
           <div className="flex items-center gap-3">
             {step > 0 && (
               <button
-                onClick={() => setStep((s) => Math.max(0, s - 1))}
+                onClick={() => setStep((s) => oncekiAdim(s, answers))}
                 className="hover:text-[#0d204d]"
               >
                 ← Geri
               </button>
             )}
             <span>
-              {step + 1} / {TOTAL}
+              {sayac.sira} / {sayac.toplam}
             </span>
           </div>
           <span>Yaklaşık 3 dk</span>
@@ -228,29 +235,21 @@ export default function BasvuruPage() {
               <p className="mt-2 text-sm text-gray-400">{soru.aciklama}</p>
             )}
             {soru.tip === "metin" ? (
-              <div className="mt-6">
-                <textarea
-                  rows={5}
-                  name={soru.key}
-                  aria-label={soru.soru}
-                  placeholder={soru.placeholder}
-                  value={
-                    typeof answers[soru.key] === "string"
-                      ? (answers[soru.key] as string)
-                      : ""
-                  }
-                  onChange={(e) => updateText(soru, e.target.value)}
-                  className={`${fieldClass} resize-none`}
-                />
-                {err && <p className="mt-3 text-sm text-red-600">{err}</p>}
-                <button
-                  type="button"
-                  onClick={() => next(soru)}
-                  className="btn-primary mt-5 w-full px-6 py-4 text-base sm:w-auto"
-                >
-                  Devam et →
-                </button>
-              </div>
+              <AcikUcluSoru
+                name={soru.key}
+                label={soru.soru}
+                value={
+                  typeof answers[soru.key] === "string"
+                    ? (answers[soru.key] as string)
+                    : ""
+                }
+                onChange={(v) => updateText(soru, v)}
+                onNext={() => next(soru)}
+                ornekler={soru.ornekler}
+                minLength={soru.minLength}
+                error={err}
+                fieldClass={fieldClass}
+              />
             ) : (
               <div className="mt-6 space-y-3">
                 {(soru.secenekler || []).map((opt) => {
@@ -306,11 +305,12 @@ export default function BasvuruPage() {
         ) : (
           <form onSubmit={submit}>
             <h1 className="text-2xl font-bold leading-tight text-[#0d204d] sm:text-3xl">
-              İletişim bilgileri
+              İletişim bilgilerin
             </h1>
             <p className="mt-2 text-sm text-gray-400">
-              Görüşme bağlantısını buraya göndereceğiz. Ardından sana uygun
-              görüşme saatini seçeceksin.
+              Görüşme ve başvurunla ilgili gerektiğinde sana buradan ulaşacağız.
+              Başvurunu tamamladıktan sonra sana uygun görüşme saatini
+              seçebileceksin.
             </p>
             <input
               type="text"
