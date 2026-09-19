@@ -1,9 +1,9 @@
 "use client";
 
 // A/B TESTİ — B VARYANTI (Hande vakası, yeni metin). A varyantı: /vaka-hande.
-// İki sayfa yalnızca opt-in metninde ayrışır; opt-in sonrası akış ORTAK:
-// /vaka-hande/izle → başvuru → randevu → teşekkür. Panelde ikisi de Vaka-Hande
-// funnel'ına sayılır; varyant ayrımı lead'in first_landing_path'inden yapılır.
+// Video, başvuru formu, takvim ve teşekkür sayfaları A ile aynı içerikte ama
+// kendi /vaka-analizi/* adreslerinde → panelde "Hande Vaka Analizi" ayrı funnel.
+// Video kilidi (localStorage) ve GHL akışları A ile ortak.
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ export default function VakaAnaliziOptinPage() {
         localStorage.removeItem(VAKA_HANDE.unlockKey);
         localStorage.removeItem(VAKA_HANDE.ctaKey);
       } else if (localStorage.getItem(VAKA_HANDE.unlockKey)) {
-        router.replace("/vaka-hande/izle");
+        router.replace("/vaka-analizi/izle");
         return;
       }
     } catch {}
@@ -92,7 +92,7 @@ export default function VakaAnaliziOptinPage() {
       } catch {}
       track("vsl_optin_submit", { location: "vaka-analizi" });
       trackServer("vsl_optin_submit", { video: VAKA_HANDE.videoId });
-      router.push("/vaka-hande/izle");
+      router.push("/vaka-analizi/izle");
     } catch {
       setErr("Bağlantı sorunu, tekrar dene.");
       setSending(false);

@@ -17,7 +17,7 @@ const ATTR_KEY = "fvp_attribution";
 const ROUTES: { prefix: string; target: string }[] = [
   { prefix: "/fitsistem-macfit-vaka", target: "/fitsistem-macfit-vaka/tesekkurler" },
   { prefix: "/vaka-hande", target: "/vaka-hande/tesekkurler" },
-  { prefix: "/vaka-analizi", target: "/vaka-hande/tesekkurler" },
+  { prefix: "/vaka-analizi", target: "/vaka-analizi/tesekkurler" },
 ];
 
 /** ÖNEMLİ: captureAttribution()'dan ÖNCE çağır — o, page_url'i bu sayfayla ezer. */

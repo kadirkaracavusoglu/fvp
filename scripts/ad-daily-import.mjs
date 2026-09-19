@@ -42,7 +42,7 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
 // ---- funnel eşlemesi ----
 // Hangi kampanya hangi funnel'a ait? Kampanya adı yeterli ayırt edici değilse
 // CSV'de funnel kolonunu elle doldur.
-const FUNNELS = ["fitsistem", "vaka-hande", "macfit"];
+const FUNNELS = ["fitsistem", "vaka-hande", "vaka-analizi", "macfit"];
 
 /** Kreatif adından numarayı at: "ertelemek - 3" → "ertelemek".
  *  Meta'daki numaralar ile UTM'e düşen numaralar tutmuyor (url_tags reklam

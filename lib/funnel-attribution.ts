@@ -25,6 +25,7 @@ function landingPath(row: LeadAttrRow): string | null {
   if (typeof ov === "string" && ov) {
     if (ov === "macfit") return "/fitsistem-macfit-vaka";
     if (ov === "vaka-hande") return VAKA_HANDE_PREFIX;
+    if (ov === "vaka-analizi") return "/vaka-analizi";
     return "/fitsistem";
   }
   if (a.funnel === "fitsistem_macfit_vaka") return "/fitsistem-macfit-vaka";
@@ -76,9 +77,9 @@ export async function resolveFunnelPath(
       const path = landingPath(row);
       if (!path) continue;
       if (path === "/fitsistem-macfit-vaka" || path.startsWith("/fitsistem-macfit-vaka/")) return `/fitsistem-macfit-vaka${suffix}`;
-      // /vaka-analizi = Vaka-Hande A/B testinin B varyantı → aynı funnel.
-      if (path.startsWith(VAKA_HANDE_PREFIX) || path === "/vaka-analizi" || path.startsWith("/vaka-analizi/"))
-        return `${VAKA_HANDE_PREFIX}${suffix}`;
+      // /vaka-analizi = Vaka-Hande A/B testinin B varyantı → kendi funnel'ı.
+      if (path === "/vaka-analizi" || path.startsWith("/vaka-analizi/")) return `/vaka-analizi${suffix}`;
+      if (path.startsWith(VAKA_HANDE_PREFIX)) return `${VAKA_HANDE_PREFIX}${suffix}`;
       return fallback;
     }
     return fallback;

@@ -131,7 +131,9 @@ export async function POST(req: Request) {
     // satış geçmişi ayrı tabloda kalmalı ki bir olay silme işlemi ciroyu götürmesin
     // (Mert projesindeki `sales` tablosunun karşılığı). Fırsat kimliği varsa tekil.
     if (supabaseAdmin && event !== "vsl_reached") {
-      const funnel = path.startsWith("/vaka-hande")
+      const funnel = path.startsWith("/vaka-analizi")
+        ? "vaka-analizi"
+        : path.startsWith("/vaka-hande")
         ? "vaka-hande"
         : path.startsWith("/fitsistem-macfit-vaka")
           ? "fitsistem-macfit-vaka"

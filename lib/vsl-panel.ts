@@ -14,10 +14,12 @@ export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "
 // Funnel'lar — panelde ayrı ayrı görüntülenir (event path / lead landing path ile filtre).
 // MACFit salon SAHİPLERİNE yönelik: ayrı başvuru formu yok, opt-in formu eleme
 // sorularını da içeriyor → "lead" = MACFit formu (macfit_optin).
-export type FunnelKey = "fitsistem" | "vaka-hande" | "macfit";
+export type FunnelKey = "fitsistem" | "vaka-hande" | "vaka-analizi" | "macfit";
 export const PANEL_FUNNELS: { key: FunnelKey; label: string; prefixes: string[] }[] = [
   { key: "fitsistem", label: "Fitsistem", prefixes: ["/fitsistem", "/vsl"] },
-  { key: "vaka-hande", label: "Vaka-Hande", prefixes: ["/vaka-hande", "/vaka-analizi"] },
+  { key: "vaka-hande", label: "Vaka-Hande", prefixes: ["/vaka-hande"] },
+  // A/B testi B varyantı (19 Eyl 2026): aynı video, yeni opt-in metni.
+  { key: "vaka-analizi", label: "Hande Vaka Analizi", prefixes: ["/vaka-analizi"] },
   { key: "macfit", label: "MACFit", prefixes: [MACFIT.path] },
 ];
 
@@ -634,7 +636,12 @@ async function bookingsForFunnel(
 ): Promise<GhlBooking[]> {
   if (!appts?.length) return [];
   if (funnelKey === "macfit") return appts;
-  const wanted = funnelKey === "vaka-hande" ? "/vaka-hande" : "/fitsistem";
+  const wanted =
+    funnelKey === "vaka-hande"
+      ? "/vaka-hande"
+      : funnelKey === "vaka-analizi"
+        ? "/vaka-analizi"
+        : "/fitsistem";
   const owned = await Promise.all(
     appts.map(async (a) => {
       const { email, phone } = await getGhlContactIdentity(a.contactId);
@@ -998,6 +1005,8 @@ export async function getVslPanelData(
         typeof a.funnel_override === "string" && a.funnel_override
           ? a.funnel_override === "vaka-hande"
             ? "/vaka-hande"
+            : a.funnel_override === "vaka-analizi"
+            ? "/vaka-analizi"
             : a.funnel_override === "macfit"
               ? "/fitsistem-macfit-vaka"
               : "/fitsistem"
