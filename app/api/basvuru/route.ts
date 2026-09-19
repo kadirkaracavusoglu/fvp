@@ -1,3 +1,4 @@
+import { createWatchToken, WATCH_COOKIE, watchCookieOptions } from "@/lib/watch-access";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
@@ -146,7 +147,10 @@ export async function POST(req: Request) {
     ]);
     await markLeadGhlDelivery(supabaseAdmin, leadId, delivery);
 
-    return NextResponse.json({ ok: true });
+    const res = NextResponse.json({ ok: true });
+    const watchToken = createWatchToken(email);
+    if (watchToken) res.cookies.set(WATCH_COOKIE, watchToken, watchCookieOptions);
+    return res;
   } catch {
     return NextResponse.json({ ok: false, error: "Beklenmeyen bir hata." }, { status: 500 });
   }

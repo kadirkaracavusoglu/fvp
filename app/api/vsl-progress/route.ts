@@ -1,42 +1,45 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp } from "@/lib/spam";
 import { updateVideoWatch } from "@/lib/ghl-contact";
 import { WATCH_MINUTES, watchLevel } from "@/lib/video-watch";
+import { readWatchToken, WATCH_COOKIE } from "@/lib/watch-access";
 
 // VSL izleme ilerlemesi → GHL kişi alanı ("VSL Video İzleme (dk)" + seviye).
-// İstemci (VslWatch) her dakika eşiğinde bir kez çağırır. Yalnız sitemizde
-// opt-in yapmış bir e-posta için yazılır; rastgele e-postaya alan yazılamaz.
+// Güvenlik: e-posta istek gövdesinden DEĞİL, opt-in/başvuru anında yazılan
+// imzalı httpOnly çerezden okunur → kimse başkasının kaydını değiştiremez.
+// Yanıt her durumda aynıdır (e-posta listede mi sorusuna cevap vermez);
+// veritabanı erişimi yoksa hiçbir şey yazılmaz.
+const DONE = () => NextResponse.json({ ok: true });
+
 export async function POST(req: Request) {
   try {
-    if (!rateLimit(`vsl-progress:${clientIp(req)}`, 30, 60_000)) {
-      return NextResponse.json({ ok: true, skipped: "rate" });
-    }
-    const body = (await req.json().catch(() => ({}))) as { email?: unknown; milestone?: unknown };
-    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    if (!rateLimit(`vsl-progress:${clientIp(req)}`, 30, 60_000)) return DONE();
+
+    const email = readWatchToken((await cookies()).get(WATCH_COOKIE)?.value);
+    if (!email) return DONE();
+
+    const body = (await req.json().catch(() => ({}))) as { milestone?: unknown };
     const milestone = typeof body.milestone === "string" ? body.milestone : "";
     const minutes = WATCH_MINUTES[milestone];
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || minutes === undefined) {
-      return NextResponse.json({ ok: false, error: "bad_request" }, { status: 400 });
-    }
+    if (minutes === undefined) return DONE();
 
-    let phone = "";
-    if (supabaseAdmin) {
-      const { data } = await supabaseAdmin
-        .from("leads")
-        .select("phone")
-        .eq("email", email)
-        .in("form_type", ["vsl_optin", "vsl_basvuru"])
-        .order("created_at", { ascending: false })
-        .limit(5);
-      if (!data?.length) return NextResponse.json({ ok: true, skipped: "unknown_email" });
-      phone = data.find((r) => r.phone)?.phone || "";
-    }
+    if (!supabaseAdmin) return DONE();
+    const { data } = await supabaseAdmin
+      .from("leads")
+      .select("phone")
+      .eq("email", email)
+      .in("form_type", ["vsl_optin", "vsl_basvuru"])
+      .order("created_at", { ascending: false })
+      .limit(5);
+    if (!data?.length) return DONE();
+    const phone = data.find((r) => r.phone)?.phone || "";
 
     // Serverless: yanıt dönmeden GHL yazımı bitmeli (await şart).
-    const r = await updateVideoWatch(email, phone, minutes, watchLevel(minutes));
-    return NextResponse.json({ ok: r.ok, updated: r.updated ?? false, reason: r.reason });
+    await updateVideoWatch(email, phone, minutes, watchLevel(minutes));
+    return DONE();
   } catch {
-    return NextResponse.json({ ok: false }, { status: 500 });
+    return DONE();
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { rateLimit, clientIp, isBot } from "@/lib/spam";
 import { FUNNEL } from "@/lib/funnel";
+import { createWatchToken, WATCH_COOKIE, watchCookieOptions } from "@/lib/watch-access";
 import { ghlAttributionPayload } from "@/lib/ghl";
 import { postGhlWebhook, summarizeGhlDelivery, upsertGhlContact, type GhlStepResult } from "@/lib/ghl-contact";
 import { markLeadGhlDelivery } from "@/lib/lead-ghl-status";
@@ -75,7 +76,11 @@ export async function POST(req: Request) {
     ]);
     await markLeadGhlDelivery(supabaseAdmin, leadId, delivery);
 
-    return NextResponse.json({ ok: true });
+    const res = NextResponse.json({ ok: true });
+    // İzleme süresi yazımı için sahiplik çerezi (bkz. lib/watch-access.ts).
+    const watchToken = createWatchToken(mail);
+    if (watchToken) res.cookies.set(WATCH_COOKIE, watchToken, watchCookieOptions);
+    return res;
   } catch {
     return NextResponse.json({ ok: false, error: "Beklenmeyen bir hata oluştu." }, { status: 500 });
   }
