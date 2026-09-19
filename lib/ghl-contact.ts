@@ -245,3 +245,69 @@ export async function ensureOpportunity(input: {
     return { ok: false, error: err };
   }
 }
+
+// ── Video izleme süresi (19 Eyl 2026) ───────────────────────────────────────
+// Kişinin videoyu en ileri nerede bıraktığı GHL'ye yazılır; satış görüşmesi
+// öncesi önceliklendirme ve izleme süresine göre e-posta segmentasyonu için.
+// Değer yalnızca ARTAR: videoyu baştan açan biri 20 dk'dan 1 dk'ya düşmez.
+const CF_WATCH_MIN = "6mfHsFMeUboVFAadejsj"; // VSL Video İzleme (dk) — sayı
+const CF_WATCH_LEVEL = "3hCzzVItx0BTmLmoxIgK"; // VSL Video İzleme Seviyesi — seçim
+
+const ghlHeaders = () => ({
+  Authorization: `Bearer ${LOCATION_KEY}`,
+  Version: "2021-07-28",
+  "Content-Type": "application/json",
+  Accept: "application/json",
+});
+
+async function findContactId(param: "email" | "number", value: string): Promise<string | null> {
+  const res = await fetch(
+    `${GHL_BASE}/contacts/search/duplicate?locationId=${LOCATION_ID}&${param}=${encodeURIComponent(value)}`,
+    { headers: ghlHeaders(), cache: "no-store" },
+  );
+  if (!res.ok) return null;
+  const found = (await res.json()) as { contact?: { id?: string } };
+  return found.contact?.id || null;
+}
+
+export async function updateVideoWatch(
+  email: string,
+  phone: string,
+  minutes: number,
+  level: string,
+): Promise<{ ok: boolean; updated?: boolean; reason?: string }> {
+  if (!LOCATION_KEY) return { ok: false, reason: "no_key" };
+  try {
+    // Önce e-posta; GHL'de e-postası değişmiş kişi için telefonla dene.
+    const id =
+      (await findContactId("email", email)) ||
+      (phone ? await findContactId("number", phone) : null);
+    if (!id) return { ok: false, reason: "no_contact" };
+
+    const cur = await fetch(`${GHL_BASE}/contacts/${id}`, { headers: ghlHeaders(), cache: "no-store" });
+    if (cur.ok) {
+      const data = (await cur.json()) as {
+        contact?: { customFields?: { id: string; value?: unknown }[] };
+      };
+      const prev = data.contact?.customFields?.find((f) => f.id === CF_WATCH_MIN)?.value;
+      const prevNum = typeof prev === "number" ? prev : Number(prev);
+      if (Number.isFinite(prevNum) && prevNum >= minutes) return { ok: true, updated: false };
+    }
+
+    const res = await fetch(`${GHL_BASE}/contacts/${id}`, {
+      method: "PUT",
+      headers: ghlHeaders(),
+      body: JSON.stringify({
+        customFields: [
+          { id: CF_WATCH_MIN, value: minutes },
+          { id: CF_WATCH_LEVEL, value: level },
+        ],
+      }),
+    });
+    if (!res.ok) return { ok: false, reason: `put_${res.status}` };
+    return { ok: true, updated: true };
+  } catch (e) {
+    return { ok: false, reason: errorText(e) };
+  }
+}
+

@@ -7,13 +7,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { VslPlayer } from "@/components/lp/VslPlayer";
-import { VSL_UNLOCK_KEY, VSL_CTA_KEY } from "@/lib/funnel";
+import { VSL_UNLOCK_KEY, VSL_CTA_KEY, VSL_OPTIN_CONTACT_KEY } from "@/lib/funnel";
+import { WATCH_MINUTES } from "@/lib/video-watch";
 import { captureAttribution, track, trackServer } from "@/lib/tracking";
 
 export function VslWatch({
   videoId,
   unlockKey = VSL_UNLOCK_KEY,
   ctaKey = VSL_CTA_KEY,
+  contactKey = VSL_OPTIN_CONTACT_KEY,
   backHref = "/fitsistem",
   basvuruHref = "/fitsistem/basvuru",
   ctaText = "Fitsistem'i Kendi İşime Uygulamak İstiyorum →",
@@ -23,6 +25,7 @@ export function VslWatch({
   videoId: string;
   unlockKey?: string;
   ctaKey?: string;
+  contactKey?: string;
   backHref?: string;
   basvuruHref?: string;
   ctaText?: string;
@@ -61,6 +64,20 @@ export function VslWatch({
         autoplay
         location={location}
         onMilestone={(name) => {
+          // İzleme süresini GHL kişi kartına yaz (opt-in e-postasıyla; bir kez/eşik).
+          if (name in WATCH_MINUTES) {
+            try {
+              const c = JSON.parse(localStorage.getItem(contactKey) || "{}") as { email?: string };
+              if (c.email) {
+                void fetch("/api/vsl-progress", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ email: c.email, milestone: name }),
+                  keepalive: true,
+                }).catch(() => {});
+              }
+            } catch {}
+          }
           // CTA yalnız 10 dakika izlendikten sonra açılır (time-on-brand + niyet). 19 Eyl: 5→10.
           if (name === "vsl_min10") {
             setCtaReady(true);

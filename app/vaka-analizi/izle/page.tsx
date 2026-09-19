@@ -35,6 +35,7 @@ export default function VakaHandeIzlePage() {
             videoId={VAKA_HANDE.videoId}
             unlockKey={VAKA_HANDE.unlockKey}
             ctaKey={VAKA_HANDE.ctaKey}
+            contactKey={VAKA_HANDE.contactKey}
             backHref="/vaka-analizi"
             basvuruHref="/vaka-analizi/basvuru"
             ctaText="Fitsistem’i Kendi İşime Kurmak İstiyorum →"
