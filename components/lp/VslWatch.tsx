@@ -1,7 +1,7 @@
 "use client";
 
 // VSL İZLEME görünümü — /fitsistem/izle. Opt-in SONRASI uzun video sayfası.
-// Guard: opt-in vermemişse /fitsistem'e geri yollar. CTA yalnız 5 dk izlenince açılır.
+// Guard: opt-in vermemişse /fitsistem'e geri yollar. CTA yalnız 10 dk izlenince açılır.
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -32,7 +32,7 @@ export function VslWatch({
   const router = useRouter();
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
   const [allowed, setAllowed] = useState(false); // opt-in verilmiş mi
-  const [ctaReady, setCtaReady] = useState(false); // 5 dk izlendi mi
+  const [ctaReady, setCtaReady] = useState(false); // 10 dk izlendi mi
 
   useEffect(() => {
     captureAttribution();
@@ -42,7 +42,7 @@ export function VslWatch({
         return;
       }
       setAllowed(true);
-      if (localStorage.getItem(ctaKey)) setCtaReady(true); // daha önce 5 dk izlemiş
+      if (localStorage.getItem(ctaKey)) setCtaReady(true); // daha önce 10 dk izlemiş
     } catch {
       router.replace(backHref);
       return;
@@ -61,8 +61,8 @@ export function VslWatch({
         autoplay
         location={location}
         onMilestone={(name) => {
-          // CTA yalnız 5 dakika izlendikten sonra açılır (time-on-brand + niyet).
-          if (name === "vsl_min5") {
+          // CTA yalnız 10 dakika izlendikten sonra açılır (time-on-brand + niyet). 19 Eyl: 5→10.
+          if (name === "vsl_min10") {
             setCtaReady(true);
             try {
               localStorage.setItem(ctaKey, "1");
@@ -76,7 +76,7 @@ export function VslWatch({
           {note}
         </p>
       )}
-      {/* CTA — yalnız 5 dk izlendikten sonra görünür. Sonraki adım: başvuru. */}
+      {/* CTA — yalnız 10 dk izlendikten sonra görünür. Sonraki adım: başvuru. */}
       {ctaReady && (
         <div className="mt-8 text-center">
           <Link

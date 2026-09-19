@@ -39,7 +39,7 @@ export default function VakaHandeIzlePage() {
             basvuruHref="/vaka-analizi/basvuru"
             ctaText="Fitsistem’i Kendi İşime Kurmak İstiyorum →"
             location="vaka-analizi"
-            note="Sesini açmayı unutma. Yaklaşık 5 dakika sonra bu videonun altında başvuru butonu açılacak. Kısa bir başvuruyla işini anlatıp sana uygun görüşme saatini seçebileceksin."
+            note="Sesini açmayı unutma. Yaklaşık 10 dakika sonra bu videonun altında başvuru butonu açılacak. Kısa bir başvuruyla işini anlatıp sana uygun görüşme saatini seçebileceksin."
           />
         </Reveal>
       </section>

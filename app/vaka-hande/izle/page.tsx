@@ -36,7 +36,7 @@ export default function VakaHandeIzlePage() {
             basvuruHref="/vaka-hande/basvuru"
             ctaText="Aynı Sistemi Kendi İşime Kurmak İstiyorum →"
             location="vaka-hande"
-            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 5 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
+            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 10 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
           />
         </Reveal>
       </section>

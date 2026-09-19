@@ -34,7 +34,7 @@ export default function VslPage() {
         <Reveal delay={0.1}>
           <VslWatch
             videoId={VSL_VIDEO.videoId}
-            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 5 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
+            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 10 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
           />
         </Reveal>
       </section>
