@@ -76,7 +76,9 @@ export async function resolveFunnelPath(
       const path = landingPath(row);
       if (!path) continue;
       if (path === "/fitsistem-macfit-vaka" || path.startsWith("/fitsistem-macfit-vaka/")) return `/fitsistem-macfit-vaka${suffix}`;
-      if (path.startsWith(VAKA_HANDE_PREFIX)) return `${VAKA_HANDE_PREFIX}${suffix}`;
+      // /vaka-analizi = Vaka-Hande A/B testinin B varyantı → aynı funnel.
+      if (path.startsWith(VAKA_HANDE_PREFIX) || path === "/vaka-analizi" || path.startsWith("/vaka-analizi/"))
+        return `${VAKA_HANDE_PREFIX}${suffix}`;
       return fallback;
     }
     return fallback;

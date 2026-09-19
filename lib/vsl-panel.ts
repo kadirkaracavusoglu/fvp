@@ -17,7 +17,7 @@ export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "
 export type FunnelKey = "fitsistem" | "vaka-hande" | "macfit";
 export const PANEL_FUNNELS: { key: FunnelKey; label: string; prefixes: string[] }[] = [
   { key: "fitsistem", label: "Fitsistem", prefixes: ["/fitsistem", "/vsl"] },
-  { key: "vaka-hande", label: "Vaka-Hande", prefixes: ["/vaka-hande"] },
+  { key: "vaka-hande", label: "Vaka-Hande", prefixes: ["/vaka-hande", "/vaka-analizi"] },
   { key: "macfit", label: "MACFit", prefixes: [MACFIT.path] },
 ];
 
