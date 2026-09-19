@@ -13,15 +13,17 @@ export default function VakaHandeIzlePage() {
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <Reveal delay={0.08}>
             <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-              Hande ile 1,5 ayda ve tek bir reklam vermeden ilk 7 danışanı nasıl
-              kazandığımızı şimdi adım adım göreceksin.
+              Vaka analizi başlıyor: Hande Hoca ile Fitsistem&apos;i 1,5 ayda
+              nasıl kurduk?
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-              Önce Hande&apos;nin nereden başladığını ve süreçte birlikte neleri
-              değiştirdiğimizi göreceksin. Sonra aynı sistemi kendi online
-              koçluk işinde nasıl kurabileceğini anlatacağım.
+              Önce Hande&apos;nin başlangıçtaki kafa karışıklığını, sonra
+              Fitsistem&apos;i hangi sırayla kurduğumuzu ve ilk duyuruda 65
+              başvurunun nasıl geldiğini göreceksin. İzlerken kendi işinde hangi
+              parçanın eksik olduğunu not al; videonun sonunda bir sonraki
+              adımın netleşecek.
             </p>
           </Reveal>
         </div>
@@ -35,9 +37,9 @@ export default function VakaHandeIzlePage() {
             ctaKey={VAKA_HANDE.ctaKey}
             backHref="/vaka-analizi"
             basvuruHref="/vaka-analizi/basvuru"
-            ctaText="Aynı Sistemi Kendi İşime Kurmak İstiyorum →"
+            ctaText="Fitsistem’i Kendi İşime Kurmak İstiyorum →"
             location="vaka-analizi"
-            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 5 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
+            note="Sesini açmayı unutma. Yaklaşık 5 dakika sonra bu videonun altında başvuru butonu açılacak. Kısa bir başvuruyla işini anlatıp sana uygun görüşme saatini seçebileceksin."
           />
         </Reveal>
       </section>

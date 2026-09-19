@@ -190,12 +190,12 @@ export default function VakaHandeBasvuruPage() {
         {step === 0 && (
           <div className="mb-5 text-center">
             <h2 className="text-lg font-bold text-[#0d204d]">
-              Şimdi biraz senin işine bakalım.
+              Şimdi senin işine bakalım: hangi parçalar eksik?
             </h2>
             <p className="mx-auto mt-1 max-w-xl text-sm text-gray-400">
               Aşağıdaki sorular işinin bugün nerede olduğunu, nereye ulaşmak
-              istediğini ve sana gerçekten yardımcı olup olamayacağımızı
-              anlamamız için.
+            istediğini ve Fitsistem&apos;in sana gerçekten yardımcı olup
+            olamayacağını anlamamız için.
             </p>
             <p className="mx-auto mt-2 max-w-xl text-sm text-gray-400">
               Nasıl ilerleyeceksin: önce birkaç kısa soruyu cevaplıyorsun, sonra

@@ -9,7 +9,7 @@ import { captureAttribution, track, trackServer } from "@/lib/tracking";
 // Doldurulunca aşağıdaki bölüm otomatik görünür; boşken hiç render olmaz.
 const KANITLAR: { ad: string; sonuc: string; alinti: string; detay?: string }[] = [];
 
-export default function VakaHandeTesekkurlerPage() {
+export default function VakaAnaliziTesekkurlerPage() {
   useEffect(() => {
     captureAttribution();
     track("vsl_thankyou_view", { location: "vaka-analizi" });
@@ -69,11 +69,11 @@ export default function VakaHandeTesekkurlerPage() {
         {/* 3. HANDE HATIRLATMASI — video zaten izlendi, sadece bağ kuruyoruz */}
         <div className="mt-10 rounded-2xl border border-[#e6e8ea] bg-white p-6 text-center shadow-sm sm:p-8">
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-500">
-            Az önce Hande&apos;nin sürecini izledin. Onun da başında aynı
-            soruları vardı: &quot;Zamanım olur mu, teknik kısımları kaldırabilir
-            miyim, doğru zaman mı?&quot; Görüşmede tam olarak senin durumuna
-            bakacağız ve mükemmeli beklemeden nereden başlayabileceğini birlikte
-            netleştireceğiz.
+            Az önce Hande&apos;nin vaka analizini izledin. Onun da başında aynı
+            sorular vardı: &quot;Nereden başlamalıyım, zamanım olur mu, teknik
+            kısımları kaldırabilir miyim?&quot; Görüşmede senin işine bakacağız;
+            Fitsistem&apos;in hangi parçasından başlaman gerektiğini ve mükemmeli
+            beklemeden nasıl ilerleyebileceğini birlikte netleştireceğiz.
           </p>
         </div>
 

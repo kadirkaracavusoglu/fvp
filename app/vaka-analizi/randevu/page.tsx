@@ -52,14 +52,15 @@ export default function VakaHandeRandevuPage() {
             Başvurun tamamlandı. Şimdi sana uygun görüşme saatini seç.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Bu 30 dakikalık görüşmede işinin bugün nerede olduğunu, nereye
-            ulaşmak istediğini ve bunun önündeki en önemli problemi birlikte
-            değerlendireceğiz.
+            Bu 30 dakikalık görüşmede işinin bugün nerede olduğuna, nereye
+            ulaşmak istediğine ve arada eksik kalan parçalara birlikte
+            bakacağız.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Sana gerçekten yardımcı olabileceğimizi düşünürsek, Hande ile
-            kurduğumuz sistemi kendi işinde nasıl uygulayabileceğimizi ve
-            birlikte nasıl ilerleyebileceğimizi de konuşacağız.
+            Sana gerçekten yardımcı olabileceğimizi düşünürsek, Hande Hoca ile
+            kurduğumuz Fitsistem&apos;i kendi işinde hangi sırayla
+            kurabileceğini ve birlikte nasıl ilerleyebileceğimizi de
+            konuşacağız.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400">
             Aşağıdaki takvimden gerçekten katılabileceğin bir gün ve saat seç.

@@ -105,25 +105,20 @@ export default function VakaAnaliziOptinPage() {
       <section className="glow-bg">
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            ONLINE KOÇLUK İŞİNİ KURMAK VEYA BÜYÜTMEK İSTEYEN FITNESS KOÇLARI İÇİN
+            ÜCRETSİZ VAKA ANALİZİ · ONLINE KOÇLUK İŞİNİ KURMAK VEYA BÜYÜTMEK
+            İSTEYEN FITNESS KOÇLARI İÇİN
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Hande Hoca ile 1,5 ayda ilk 7 online danışana ulaştık ve kısa
-            sürede 65 başvuru aldık. Şimdi bu sistemi nasıl kurduğumuzu adım
-            adım gösteriyorum.
+            Hande Hoca ile Fitsistem&apos;i 1,5 ayda kurduk; ilk duyuruda 65
+            başvuru geldi ve 7 online danışan kazandı. Şimdi bu sistemi nasıl
+            kurduğumuzu adım adım gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            Bu ücretsiz vaka analizinde Hande Hoca ile nereden başladığımızı,
-            hangi problemleri tespit ettiğimizi, online koçluk işini nasıl
-            kurduğumuzu ve içerikten başvuruya kadar bütün süreci nasıl
-            birbirine bağladığımızı gerçek çalışmalar üzerinden göreceksin.
-          </p>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-400">
-            İster online koçluğa yeni başlıyor ol ister başlamış fakat düzenli
-            danışan kazanacak bir yapı kuramamış ol, videonun sonunda kendi
-            işinde hangi parçaların eksik olduğunu, neye öncelik vermen
-            gerektiğini ve Fitsistem&apos;in sana nasıl yardımcı olabileceğini
-            çok daha net anlayacaksın.
+            Bu 27 dakikalık vaka analizinde Hande&apos;nin sıfırdan online
+            koçluğa geçerken yaşadığı kafa karışıklığını, Fitsistem&apos;i hangi
+            sırayla kurduğumuzu ve içerikten başvuruya, satıştan işin
+            sistemleşmesine kadar nasıl ilerlediğimizi gerçek süreç üzerinden
+            göreceksin.
           </p>
         </div>
       </section>
@@ -157,7 +152,7 @@ export default function VakaAnaliziOptinPage() {
             onClick={openModal}
             className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
           >
-            Tüm Süreci Ücretsiz İzle →
+            VAKA ANALİZİNİ ÜCRETSİZ İZLE →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
             Vaka analizine erişmek için videoyu ücretsiz aç.
@@ -165,39 +160,50 @@ export default function VakaAnaliziOptinPage() {
         </div>
       </section>
 
-      {/* Ortak düşman — "onlar vs biz" konumlandırması. Metinler Hande'nin
-          video içindeki kendi sözlerinden çıkarıldı; uydurma iddia yok. */}
+      {/* Vaka analizinin içeriği — Kadir'in metni (19 Eyl 2026). */}
       <section className="mx-auto max-w-3xl px-5 pb-14">
         <div className="rounded-2xl border border-[#e6e8ea] bg-white/70 p-6 sm:p-8">
           <h2 className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-            Online koçluğa başlamanı engelleyen üç şey
+            Bu vaka analizinde göreceğin 3 şey
           </h2>
-          <div className="mt-5 space-y-4 text-base text-gray-500">
-            <p>
-              <b className="text-[#0d204d]">Doğru zamanı beklemek.</b> &quot;Şu iş
-              bitsin, şartlar düzelsin, sonra başlarım.&quot; Hande de tam böyle
-              düşünüyordu. Beklenen o gün hiç gelmiyor.
-            </p>
-            <p>
-              <b className="text-[#0d204d]">Önce her şeyi öğrenmeye çalışmak.</b>{" "}
-              Hande aylarca web sitesi ve funnel araştırdı, tek bir adım atmadı.
-              Bilginin ucu bucağı yok; araştırmak eylem değil.
-            </p>
-            <p>
-              <b className="text-[#0d204d]">Kendinden daha iyisi var sanmak.</b>{" "}
-              Her zaman daha iyisi olacak. Ama senden duymak isteyen, seninle
-              çalışmak isteyen insanlar var.
-            </p>
-          </div>
-          <p className="mt-5 text-base text-gray-500">
-            Hande bu üçünü de aştı. Nasıl yaptığını videoda kendisi anlatıyor.
+          <ol className="mt-6 space-y-6">
+            {[
+              {
+                t: "Online koçluk işini hangi sırayla kurman gerektiğini.",
+                d: "Hande nereden başlayacağını bilmiyordu; web sitesi, funnel, satış ve pazarlama gibi birçok konu aynı anda kafasını karıştırıyordu. Videoda bütün bunları hangi sırayla ele aldığımızı ve Fitsistem’i adım adım nasıl kurduğumuzu göreceksin.",
+              },
+              {
+                t: "İçerik üretmekle düzenli danışan kazanmak arasındaki sistemi.",
+                d: "İnsanların seni takip etmesi tek başına bir online koçluk işi oluşturmuyor. Hande’nin mevcut kitlesini nasıl bir hizmete, başvuru sürecine ve satışa bağladığımızı gerçek çalışma üzerinden göreceksin. İlk duyurusunda 65 başvuru gelmesi ve kısa süre içerisinde ilk satışların oluşması da bu sürecin sonucu oldu.",
+              },
+              {
+                t: "Her şey mükemmel olmadan da sistemi nasıl kurabileceğini.",
+                d: "Hande Amerika’da tam zamanlı çalışırken ve online koçluk tarafında hiç deneyimi yokken başladı. Süreci bir anda kusursuz hale getirmeye çalışmak yerine haftalık adımlarla ilerledik, eksikleri süreç içerisinde tamamladık ve işi çalışır hale getirdik.",
+              },
+            ].map((m, i) => (
+              <li key={m.t} className="flex gap-4">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
+                  {i + 1}
+                </span>
+                <div>
+                  <p className="font-bold text-[#0d204d]">{m.t}</p>
+                  <p className="mt-1 text-base text-gray-500">{m.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 text-base text-gray-500">
+            İster online koçluğa yeni başlıyor ol ister birkaç danışanın olmasına
+            rağmen işi düzenli büyütemiyor ol, videonun sonunda kendi işinde
+            hangi parçaların eksik olduğunu ve bir sonraki adımının ne olması
+            gerektiğini çok daha net göreceksin.
           </p>
           <button
             type="button"
             onClick={openModal}
             className="btn-primary mt-6 w-full px-8 py-4 text-base sm:w-auto"
           >
-            Tüm Süreci Ücretsiz İzle →
+            VAKA ANALİZİNİ ÜCRETSİZ İZLE →
           </button>
         </div>
         <p className="mt-8 text-center text-xs text-gray-400">
