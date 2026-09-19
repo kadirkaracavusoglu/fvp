@@ -232,8 +232,6 @@ export function scoreApplication(answers: BasvuruCevaplar) {
     score += 2;
   } else if (/1[–-]2 ay/.test(karar)) {
     score += 1;
-  } else if (/sadece araştırıyorum/.test(karar)) {
-    score -= 1;
   }
 
   const segment =
