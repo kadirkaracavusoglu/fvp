@@ -107,8 +107,8 @@ export default function VakaHandeOptinPage() {
             ONLINE KOÇLUK İŞİNİ KURMAK VEYA BÜYÜTMEK İSTEYEN FITNESS KOÇLARI İÇİN
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Hande Hoca ile 1,5 ayda ilk 7 online danışanına ulaştık ve ilk
-            duyuruda 60 başvuru aldık. Şimdi bu sistemi nasıl kurduğumuzu adım
+            Hande Hoca ile 1,5 ayda ilk 7 online danışana ulaştık ve kısa
+            sürede 65 başvuru aldık. Şimdi bu sistemi nasıl kurduğumuzu adım
             adım gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
@@ -121,7 +121,7 @@ export default function VakaHandeOptinPage() {
             İster online koçluğa yeni başlıyor ol ister başlamış fakat düzenli
             danışan kazanacak bir yapı kuramamış ol, videonun sonunda kendi
             işinde hangi parçaların eksik olduğunu, neye öncelik vermen
-            gerektiğini ve FitSistem&apos;in sana nasıl yardımcı olabileceğini
+            gerektiğini ve Fitsistem&apos;in sana nasıl yardımcı olabileceğini
             çok daha net anlayacaksın.
           </p>
         </div>
