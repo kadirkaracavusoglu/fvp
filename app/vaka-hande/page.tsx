@@ -104,19 +104,25 @@ export default function VakaHandeOptinPage() {
       <section className="glow-bg">
         <div className="mx-auto max-w-4xl px-5 pb-8 pt-16 text-center sm:pt-20">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            ÜCRETSİZ VAKA ANALİZİ · ONLINE KOÇLUĞA GEÇMEK İSTEYEN FITNESS KOÇLARI İÇİN
+            ONLINE KOÇLUK İŞİNİ KURMAK VEYA BÜYÜTMEK İSTEYEN FITNESS KOÇLARI İÇİN
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Online koçluğa başlamak istiyor ama nereden başlayacağını bilmiyor
-            musun? Hande Hoca ile Fitsistem&apos;i 1,5 ayda kurduk; 65 başvuru
-            geldi, 7 danışan kazandı. Sen de kendi online koçluk işini nasıl
-            kurabilirsin, videoda anlatıyorum.
+            Hande Hoca ile 1,5 ayda ilk 7 online danışanına ulaştık ve ilk
+            duyuruda 60 başvuru aldık. Şimdi bu sistemi nasıl kurduğumuzu adım
+            adım gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
-            Hande, Amerika&apos;da tam zamanlı çalışırken bu sistemi kurdu.
-            Duyurduğu gün formu 65 kişi doldurdu, üçüncü günde ilk satışı geldi.
-            Tek kuruş reklam harcamadı. Hepsini 27 dakikalık videoda kendisi
-            anlatıyor.
+            Bu ücretsiz vaka analizinde Hande Hoca ile nereden başladığımızı,
+            hangi problemleri tespit ettiğimizi, online koçluk işini nasıl
+            kurduğumuzu ve içerikten başvuruya kadar bütün süreci nasıl
+            birbirine bağladığımızı gerçek çalışmalar üzerinden göreceksin.
+          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-400">
+            İster online koçluğa yeni başlıyor ol ister başlamış fakat düzenli
+            danışan kazanacak bir yapı kuramamış ol, videonun sonunda kendi
+            işinde hangi parçaların eksik olduğunu, neye öncelik vermen
+            gerektiğini ve FitSistem&apos;in sana nasıl yardımcı olabileceğini
+            çok daha net anlayacaksın.
           </p>
         </div>
       </section>
@@ -150,10 +156,10 @@ export default function VakaHandeOptinPage() {
             onClick={openModal}
             className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
           >
-            ÜCRETSİZ EĞİTİMİ ŞİMDİ İZLE →
+            Tüm Süreci Ücretsiz İzle →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Adını ve e-postanı bırak, video hemen açılsın. 27 dakika.
+            Vaka analizine erişmek için videoyu ücretsiz aç.
           </p>
         </div>
       </section>
@@ -190,7 +196,7 @@ export default function VakaHandeOptinPage() {
             onClick={openModal}
             className="btn-primary mt-6 w-full px-8 py-4 text-base sm:w-auto"
           >
-            ÜCRETSİZ EĞİTİMİ ŞİMDİ İZLE →
+            Tüm Süreci Ücretsiz İzle →
           </button>
         </div>
         <p className="mt-8 text-center text-xs text-gray-400">
@@ -220,11 +226,10 @@ export default function VakaHandeOptinPage() {
               </svg>
             </div>
             <h2 id="vh-optin-title" className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-              Vaka analizini aç
+              Vaka analizini hemen izle
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Videoyu nereye göndereceğimizi bilelim diye adın ve e-postan
-              yeterli.
+              Adını ve e-posta adresini bırak, video hemen açılsın.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
@@ -266,11 +271,12 @@ export default function VakaHandeOptinPage() {
                 disabled={sending}
                 className="btn-primary w-full px-6 py-3 text-sm disabled:opacity-60"
               >
-                {sending ? "Açılıyor..." : "ÜCRETSİZ EĞİTİMİ AÇ →"}
+                {sending ? "Açılıyor..." : "Vaka Analizini Aç →"}
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
-              Bilgilerin güvende, istediğin an çıkabilirsin.
+              Bilgilerin yalnızca vaka analizine erişim ve ilgili içerikler
+              için kullanılacaktır.
             </p>
           </div>
         </div>
