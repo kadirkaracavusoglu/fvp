@@ -14,6 +14,19 @@ function isValidEmail(email: string) {
 
 // VSL opt-in kapısı — videoyu açmak için ad+soyad+e-posta.
 // Kişiyi ERKEN yakalar (videoyu yarıda bırakan da kayıtlı olur).
+// GHL "Kaynak" alanı: kişinin hangi funnel sayfasından geldiğini gösterir.
+// (Önceden sabit "/fitsistem" yazıyordu; Vaka-Hande ve Vaka Analizi lead'leri
+// de Fitsistem'den gelmiş gibi görünüyordu.)
+function kaynakEtiketi(attr: Record<string, string> | undefined, tip: "opt-in" | "başvuru") {
+  const yol = String(attr?.first_landing_path || attr?.landing_path || "/fitsistem");
+  const funnel = yol.startsWith("/vaka-analizi")
+    ? "/vaka-analizi"
+    : yol.startsWith("/vaka-hande")
+      ? "/vaka-hande"
+      : "/fitsistem";
+  return tip === "opt-in" ? `VSL opt-in (${funnel})` : `VSL başvuru (${funnel}/basvuru)`;
+}
+
 export async function POST(req: Request) {
   try {
     const { firstName, lastName, email, website, attribution } = await req.json();
@@ -46,7 +59,7 @@ export async function POST(req: Request) {
     const contact = await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail,
       tags: ["vsl-optin"],
-      source: "VSL opt-in (/fitsistem)",
+      source: kaynakEtiketi(attr, "opt-in"),
       funnelStage: "video_unlocked",
       attribution: attr,
     });
@@ -60,7 +73,7 @@ export async function POST(req: Request) {
         {
           firstName: fn, lastName: ln, first_name: fn, last_name: ln, name: `${fn} ${ln}`.trim(),
           email: mail,
-          source: "VSL opt-in (/fitsistem)",
+          source: kaynakEtiketi(attr, "opt-in"),
           formType: "vsl_optin",
           leadStage: "video_unlocked",
           funnel: "fvp_vsl",

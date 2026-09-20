@@ -42,6 +42,19 @@ function answerSummary(answers: BasvuruCevaplar) {
 }
 
 // VSL detaylı başvuru — opt-in sonrası zenginleştirme. Cevaplar + iletişim.
+// GHL "Kaynak" alanı: kişinin hangi funnel sayfasından geldiğini gösterir.
+// (Önceden sabit "/fitsistem" yazıyordu; Vaka-Hande ve Vaka Analizi lead'leri
+// de Fitsistem'den gelmiş gibi görünüyordu.)
+function kaynakEtiketi(attr: Record<string, string> | undefined, tip: "opt-in" | "başvuru") {
+  const yol = String(attr?.first_landing_path || attr?.landing_path || "/fitsistem");
+  const funnel = yol.startsWith("/vaka-analizi")
+    ? "/vaka-analizi"
+    : yol.startsWith("/vaka-hande")
+      ? "/vaka-hande"
+      : "/fitsistem";
+  return tip === "opt-in" ? `VSL opt-in (${funnel})` : `VSL başvuru (${funnel}/basvuru)`;
+}
+
 export async function POST(req: Request) {
   try {
     const { firstName, lastName, email, phone, instagram, businessName, websiteUrl, cevaplar, website, attribution } = await req.json();
@@ -93,7 +106,7 @@ export async function POST(req: Request) {
     const ghlRes = await upsertGhlContact({
       firstName: fn, lastName: ln, email: mail, phone: tel,
       tags: ["vsl-basvuru"],
-      source: "VSL başvuru (/fitsistem/basvuru)",
+      source: kaynakEtiketi(attr, "başvuru"),
       funnelStage: "application_submitted",
       instagram: ig,
       businessName: business,
@@ -125,7 +138,7 @@ export async function POST(req: Request) {
           instagram: ig,
           businessName: business,
           websiteUrl: web,
-          source: "VSL başvuru (/fitsistem/basvuru)",
+          source: kaynakEtiketi(attr, "başvuru"),
           formType: "vsl_basvuru",
           leadStage: "application_submitted",
           funnel: "fvp_vsl",
