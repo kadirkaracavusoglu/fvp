@@ -23,24 +23,37 @@ export default function VakaAnaliziTesekkurlerPage() {
         {/* 1. ONAY */}
         <div className="text-center">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            Randevun tamamlandı
+            Randevun oluşturuldu
           </span>
           <h1 className="mx-auto mt-5 max-w-2xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Görüşmeden önce iki şeye hazırlan.
+            Randevun hazır. Görüşmeden önce üç şey yeterli.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Görüşmede zamanı genel şeyler konuşarak geçirmek yerine doğrudan
-            senin işine odaklanmak istiyorum. Bu yüzden görüşmeden önce iki şeyi
-            düşünmen yeterli.
+            Görüşmede zamanı genel konulara ayırmak yerine doğrudan senin işine
+            odaklanmak istiyorum. Aşağıdaki üç adım bunun için yeterli.
           </p>
         </div>
 
-        {/* 2. İKİ HAZIRLIK */}
+        {/* 2. ÜÇ HAZIRLIK — ilk adım: randevu maili (katılımı artırır) */}
         <div className="mt-10 rounded-2xl border border-[#e6e8ea] bg-white p-6 shadow-sm sm:p-8">
           <ul className="space-y-6 text-sm text-gray-500">
             <li className="flex gap-4">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
                 1
+              </span>
+              <span>
+                <strong className="text-[#0d204d]">
+                  E-posta kutunu kontrol et.
+                </strong>{" "}
+                Görüşmenin saati ve bağlantısı e-posta adresine gönderildi.
+                Birkaç dakika içinde gelmediyse spam ve promosyonlar
+                klasörlerine bak. Maili bulduğunda görüşmeyi takvimine ekle;
+                o saatte aklında olsun.
+              </span>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
+                2
               </span>
               <span>
                 <strong className="text-[#0d204d]">
@@ -53,7 +66,7 @@ export default function VakaAnaliziTesekkurlerPage() {
             </li>
             <li className="flex gap-4">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
-                2
+                3
               </span>
               <span>
                 <strong className="text-[#0d204d]">

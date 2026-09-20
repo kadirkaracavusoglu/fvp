@@ -37,9 +37,9 @@ export default function VakaHandeIzlePage() {
             ctaKey={VAKA_HANDE.ctaKey}
             backHref="/vaka-analizi"
             basvuruHref="/vaka-analizi/basvuru"
-            ctaText="Fitsistem’i Kendi İşime Kurmak İstiyorum →"
+            ctaText="Başvurumu Doldur →"
             location="vaka-analizi"
-            note="Sesini açmayı unutma. Yaklaşık 10 dakika sonra bu videonun altında başvuru butonu açılacak. Kısa bir başvuruyla işini anlatıp sana uygun görüşme saatini seçebileceksin."
+            note="Sesini aç ve videoyu baştan izle. 10. dakikada bu videonun altında başvuru butonu açılacak."
           />
         </Reveal>
       </section>

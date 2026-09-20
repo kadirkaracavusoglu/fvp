@@ -17,7 +17,7 @@ export function VslWatch({
   ctaKey = VSL_CTA_KEY,
   backHref = "/fitsistem",
   basvuruHref = "/fitsistem/basvuru",
-  ctaText = "Fitsistem'i Kendi İşime Uygulamak İstiyorum →",
+  ctaText = "Başvurumu Doldur →",
   location = "vsl",
   note,
 }: {
@@ -101,9 +101,7 @@ export function VslWatch({
             {ctaText}
           </Link>
           <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
-            İşinin bugün nerede olduğunu ve neyi değiştirmek istediğini
-            anlatacağın kısa başvuruyu tamamla. Ardından sana uygun görüşme
-            saatini seçebilirsin.
+            Birkaç soruyu cevapla, ardından sana uygun görüşme saatini seç.
           </p>
         </div>
       )}

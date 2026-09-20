@@ -34,9 +34,9 @@ export default function VakaHandeIzlePage() {
             ctaKey={VAKA_HANDE.ctaKey}
             backHref="/vaka-hande"
             basvuruHref="/vaka-hande/basvuru"
-            ctaText="Aynı Sistemi Kendi İşime Kurmak İstiyorum →"
+            ctaText="Başvurumu Doldur →"
             location="vaka-hande"
-            note="Videoyu izlemeye başla ve sesini açmayı unutma. Yaklaşık 10 dakika sonra, tam bu videonun altında başvuru butonu açılacak. Oradan işini anlatacağın kısa başvuruyu doldurup sana uygun görüşme saatini seçebileceksin."
+            note="Sesini aç ve videoyu baştan izle. 10. dakikada bu videonun altında başvuru butonu açılacak."
           />
         </Reveal>
       </section>
