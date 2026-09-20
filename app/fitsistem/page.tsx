@@ -123,7 +123,7 @@ export default function VslOptinPage() {
       </section>
 
       {/* Kilitli video + aç butonu */}
-      <section className="mx-auto max-w-4xl px-5 pb-16">
+      <section className="mx-auto max-w-4xl px-5 pb-40 sm:pb-16">
         <div className="relative overflow-hidden rounded-2xl bg-black shadow-2xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
