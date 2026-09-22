@@ -1,7 +1,8 @@
 "use client";
 
 // VSL İZLEME görünümü — /fitsistem/izle. Opt-in SONRASI uzun video sayfası.
-// Guard: opt-in vermemişse /fitsistem'e geri yollar. CTA yalnız 10 dk izlenince açılır.
+// Guard: opt-in vermemişse /fitsistem'e geri yollar. Başvuru butonu sayfa açılınca görünür
+// (22 Eyl 2026: süre sınırı kaldırıldı — Kadir kararı).
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -33,7 +34,6 @@ export function VslWatch({
   const router = useRouter();
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
   const [allowed, setAllowed] = useState(false); // opt-in verilmiş mi
-  const [ctaReady, setCtaReady] = useState(false); // 10 dk izlendi mi
 
   useEffect(() => {
     captureAttribution();
@@ -43,7 +43,6 @@ export function VslWatch({
         return;
       }
       setAllowed(true);
-      if (localStorage.getItem(ctaKey)) setCtaReady(true); // daha önce 10 dk izlemiş
     } catch {
       router.replace(backHref);
       return;
@@ -72,13 +71,6 @@ export function VslWatch({
               keepalive: true,
             }).catch(() => {});
           }
-          // CTA yalnız 10 dakika izlendikten sonra açılır (time-on-brand + niyet). 19 Eyl: 5→10.
-          if (name === "vsl_min10") {
-            setCtaReady(true);
-            try {
-              localStorage.setItem(ctaKey, "1");
-            } catch {}
-          }
         }}
       />
       {/* Video altı kısa bilgi */}
@@ -87,8 +79,8 @@ export function VslWatch({
           {note}
         </p>
       )}
-      {/* CTA — yalnız 10 dk izlendikten sonra görünür. Sonraki adım: başvuru. */}
-      {ctaReady && (
+      {/* CTA — her zaman görünür. Sonraki adım: başvuru. */}
+      {(
         <div className="mt-8 text-center">
           <Link
             href={basvuruHref}

@@ -39,7 +39,7 @@ export default function VakaHandeIzlePage() {
             basvuruHref="/vaka-analizi/basvuru"
             ctaText="Başvurumu Doldur →"
             location="vaka-analizi"
-            note="Sesini aç ve videoyu baştan izle. 10. dakikada bu videonun altında başvuru butonu açılacak."
+            note="Sesini aç ve videoyu baştan izle. Kendi işin için yol haritasını konuşmak istediğinde aşağıdaki butondan başvurabilirsin."
           />
         </Reveal>
       </section>
