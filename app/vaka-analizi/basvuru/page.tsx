@@ -138,9 +138,9 @@ export default function VakaHandeBasvuruPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
+    if (!firstName.trim()) return setErr("Adını gir.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      router.push("/vaka-analizi");
-      return;
+      return setErr("Geçerli bir e-posta gir.");
     }
     if (phone.trim().length < 7) return setErr("Telefon numaranı gir.");
     if (!instagram.trim()) return setErr("Instagram kullanıcı adını gir.");
@@ -330,6 +330,28 @@ export default function VakaHandeBasvuruPage() {
               aria-hidden="true"
             />
             <div className="mt-6 space-y-3">
+              <input
+                type="text"
+                name="firstName"
+                aria-label="Adın"
+                placeholder="Adın"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={fieldClass}
+                autoComplete="given-name"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                aria-label="E-posta adresin"
+                placeholder="E-posta adresin"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={fieldClass}
+                autoComplete="email"
+                required
+              />
               <input
                 type="tel"
                 name="phone"
