@@ -105,8 +105,8 @@ export default function BioPage() {
             Fitness işi şansa değil, sisteme dayanır.
           </h1>
           <p className="mt-3 text-base text-white/70">
-            Fitness koçları ve salon sahipleri için bülten, vaka analizleri ve
-            podcast. Nereden başlayacağını aşağıdan seç.
+            Fitness koçları için bülten, vaka analizleri ve podcast. Nereden
+            başlayacağını aşağıdan seç.
           </p>
         </div>
 
