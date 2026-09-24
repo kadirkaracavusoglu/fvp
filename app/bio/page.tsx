@@ -33,12 +33,6 @@ const BAGLANTILAR: Baglanti[] = [
     one: true,
   },
   {
-    etiket: "salon",
-    baslik: "Salon sahibiysen: üye kazanma sistemi",
-    alt: "Reklam veriyorsun ama yeterli üye gelmiyorsa buradan başla.",
-    href: "/fitsistem-macfit-vaka",
-  },
-  {
     etiket: "bulten",
     baslik: "Ücretsiz bülten",
     alt: "Haftada iki kez, fitness işini büyüten stratejiler. Spam yok.",
@@ -96,21 +90,21 @@ export default function BioPage() {
   }
 
   return (
-    <div className="glow-bg min-h-screen px-5 py-12 sm:py-16">
+    <div className="min-h-screen bg-[#0d204d] px-5 py-12 text-white sm:py-16">
       <div className="mx-auto max-w-lg">
         <div className="text-center">
           <Image
-            src="/fvp-logo.png"
+            src="/fvp-logo-beyaz.png"
             alt="Fitness ve Pazarlama"
             width={220}
             height={88}
             className="mx-auto h-auto w-[180px]"
             priority
           />
-          <h1 className="mt-6 text-2xl font-bold text-[#0d204d] sm:text-3xl">
+          <h1 className="mt-6 text-2xl font-bold text-white sm:text-3xl">
             Fitness işi şansa değil, sisteme dayanır.
           </h1>
-          <p className="mt-3 text-base text-gray-500">
+          <p className="mt-3 text-base text-white/70">
             Fitness koçları ve salon sahipleri için bülten, vaka analizleri ve
             podcast. Nereden başlayacağını aşağıdan seç.
           </p>
@@ -123,24 +117,26 @@ export default function BioPage() {
               href={hedef(b)}
               onClick={(e) => tikla(b, e)}
               {...(b.dis ? { target: "_blank", rel: "noreferrer" } : {})}
-              className={`card block px-5 py-4 text-left transition ${
-                b.one ? "!border-[#0d204d] ring-1 ring-[#0d204d]" : ""
+              className={`block rounded-2xl border px-5 py-4 text-left transition hover:bg-white/10 ${
+                b.one
+                  ? "border-white bg-white/10"
+                  : "border-white/25 bg-white/5"
               }`}
             >
-              <span className="block font-bold text-[#0d204d]">{b.baslik}</span>
-              <span className="mt-1 block text-sm text-gray-500">{b.alt}</span>
+              <span className="block font-bold text-white">{b.baslik}</span>
+              <span className="mt-1 block text-sm text-white/70">{b.alt}</span>
             </a>
           ))}
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-gray-400">
-          <a href={SITE.social.instagram} target="_blank" rel="noreferrer" className="hover:text-[#0d204d]">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-white/60">
+          <a href={SITE.social.instagram} target="_blank" rel="noreferrer" className="hover:text-white">
             Instagram
           </a>
-          <a href={SITE.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-[#0d204d]">
+          <a href={SITE.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-white">
             LinkedIn
           </a>
-          <Link href="/" className="hover:text-[#0d204d]">
+          <Link href="/" className="hover:text-white">
             fitnessvepazarlama.com
           </Link>
         </div>
