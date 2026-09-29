@@ -1,8 +1,10 @@
 "use client";
 
 // VSL İZLEME görünümü — /fitsistem/izle. Opt-in SONRASI uzun video sayfası.
-// Guard: opt-in vermemişse /fitsistem'e geri yollar. Başvuru butonu sayfa açılınca görünür
-// (22 Eyl 2026: süre sınırı kaldırıldı — Kadir kararı).
+// Guard: opt-in vermemişse /fitsistem'e geri yollar.
+// Başvuru butonu varsayılan olarak sayfa açılınca görünür (22 Eyl 2026 kararı).
+// ctaAfterMinutes verilirse buton o dakika izlenene kadar gizlenir — 29 Eyl 2026'da
+// yalnız /vaka-analizi için geri açıldı; Fitsistem ve Vaka-Hande kapısız kalır.
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -21,6 +23,7 @@ export function VslWatch({
   ctaText = "Başvurumu Doldur →",
   location = "vsl",
   note,
+  ctaAfterMinutes,
 }: {
   videoId: string;
   unlockKey?: string;
@@ -30,10 +33,13 @@ export function VslWatch({
   ctaText?: string;
   location?: string;
   note?: string;
+  ctaAfterMinutes?: number;
 }) {
   const router = useRouter();
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
   const [allowed, setAllowed] = useState(false); // opt-in verilmiş mi
+  // Süre kapısı yoksa buton baştan açık; varsa eşiğe kadar kapalı.
+  const [ctaReady, setCtaReady] = useState(ctaAfterMinutes === undefined);
 
   useEffect(() => {
     captureAttribution();
@@ -43,12 +49,16 @@ export function VslWatch({
         return;
       }
       setAllowed(true);
+      // Daha önce eşiği geçmişse tekrar beklemesin.
+      if (ctaAfterMinutes !== undefined && localStorage.getItem(ctaKey)) {
+        setCtaReady(true);
+      }
     } catch {
       router.replace(backHref);
       return;
     }
     setReady(true);
-  }, [router, unlockKey, ctaKey, backHref]);
+  }, [router, unlockKey, ctaKey, backHref, ctaAfterMinutes]);
 
   if (!ready || !allowed) {
     return <div className="aspect-video w-full rounded-2xl bg-[#0b1a3a]" />;
@@ -70,6 +80,16 @@ export function VslWatch({
               body: JSON.stringify({ milestone: name }),
               keepalive: true,
             }).catch(() => {});
+            // Süre kapısı: eşiğe ulaşan ilk olayda butonu açar ve hatırlar.
+            if (
+              ctaAfterMinutes !== undefined &&
+              WATCH_MINUTES[name] >= ctaAfterMinutes
+            ) {
+              setCtaReady(true);
+              try {
+                localStorage.setItem(ctaKey, "1");
+              } catch {}
+            }
           }
         }}
       />
@@ -79,8 +99,8 @@ export function VslWatch({
           {note}
         </p>
       )}
-      {/* CTA — her zaman görünür. Sonraki adım: başvuru. */}
-      {(
+      {/* CTA — kapı yoksa hemen, varsa eşik geçilince. Sonraki adım: başvuru. */}
+      {ctaReady && (
         <div className="mt-8 text-center">
           <Link
             href={basvuruHref}
