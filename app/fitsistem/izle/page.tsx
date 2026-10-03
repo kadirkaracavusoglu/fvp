@@ -15,14 +15,14 @@ export default function VslPage() {
           <Reveal delay={0.08}>
             <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
               10 ayda 9 milyon TL&apos;ye ulaşmamızı sağlayan Fitsistem&apos;i
-              şimdi adım adım göreceksin.
+              şimdi adım adım göreceksiniz.
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
               Önce gerçek rakamları ve süreç boyunca neleri değiştirdiğimizi
               göstereceğim. Sonra Fitsistem&apos;i nasıl kurduğumuzu ve aynı
-              yaklaşımı kendi online koçluk işinde nasıl kullanabileceğini
+              yaklaşımı kendi online koçluk işinizde nasıl kullanabileceğinizi
               anlatacağım.
             </p>
           </Reveal>
@@ -34,7 +34,7 @@ export default function VslPage() {
         <Reveal delay={0.1}>
           <VslWatch
             videoId={VSL_VIDEO.videoId}
-            note="Sesini aç ve videoyu baştan izle. Kendi işin için yol haritasını konuşmak istediğinde aşağıdaki butondan başvurabilirsin."
+            note="Sesinizi açın ve videoyu baştan izleyin. Kendi işiniz için yol haritasını konuşmak istediğinizde aşağıdaki butondan başvurabilirsiniz."
           />
         </Reveal>
       </section>

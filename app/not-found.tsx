@@ -14,7 +14,7 @@ export default function NotFound() {
         Aradığın sayfa burada değil.
       </h1>
       <p className="mt-4 text-gray-400">
-        Bağlantı taşınmış ya da hiç var olmamış olabilir. Aşağıdan devam edebilirsin.
+        Bağlantı taşınmış ya da hiç var olmamış olabilir. Aşağıdan devam edebilirsiniz.
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link

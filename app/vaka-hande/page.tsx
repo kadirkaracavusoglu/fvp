@@ -60,9 +60,9 @@ export default function VakaHandeOptinPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    if (!firstName.trim()) return setErr("Adını gir.");
+    if (!firstName.trim()) return setErr("Adınızı girin.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return setErr("Geçerli bir e-posta gir.");
+      return setErr("Geçerli bir e-posta girin.");
     setSending(true);
     try {
       captureAttribution();
@@ -74,7 +74,7 @@ export default function VakaHandeOptinPage() {
       });
       const data = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !data.ok) {
-        setErr(data.error || "Bir sorun oluştu, tekrar dene.");
+        setErr(data.error || "Bir sorun oluştu, tekrar deneyin.");
         setSending(false);
         return;
       }
@@ -93,7 +93,7 @@ export default function VakaHandeOptinPage() {
       trackServer("vsl_optin_submit", { video: VAKA_HANDE.videoId });
       router.push("/vaka-hande/izle");
     } catch {
-      setErr("Bağlantı sorunu, tekrar dene.");
+      setErr("Bağlantı sorunu, tekrar deneyin.");
       setSending(false);
     }
   }
@@ -114,7 +114,7 @@ export default function VakaHandeOptinPage() {
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
             Bu videoda Hande ile sıfırdan online koçluk sistemini nasıl
             kurduğumuzu, hangi adımları attığımızı ve aynı yaklaşımı kendi
-            işinde nasıl uygulayabileceğini gerçek rakamlarla anlatıyorum.
+            işinizde nasıl uygulayabileceğinizi gerçek rakamlarla anlatıyorum.
           </p>
         </div>
       </section>
@@ -151,7 +151,7 @@ export default function VakaHandeOptinPage() {
             Hande&apos;nin Sürecini İzle →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Adını ve e-posta adresini bırak, video hemen açılsın.
+            Adınızı ve e-posta adresinizi bırakın, video hemen açılsın.
           </p>
         </div>
       </section>
@@ -181,7 +181,7 @@ export default function VakaHandeOptinPage() {
               Videoyu hemen izlemeye başla
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Adını ve e-posta adresini bırak, video hemen açılsın.
+              Adınızı ve e-posta adresinizi bırakın, video hemen açılsın.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
@@ -198,8 +198,8 @@ export default function VakaHandeOptinPage() {
               <input
                 type="text"
                 name="firstName"
-                aria-label="Adın"
-                placeholder="Adın"
+                aria-label="Adınız"
+                placeholder="Adınız"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 autoComplete="given-name"
@@ -209,8 +209,8 @@ export default function VakaHandeOptinPage() {
               <input
                 type="email"
                 name="email"
-                aria-label="E-posta adresin"
-                placeholder="E-posta adresin"
+                aria-label="E-posta adresiniz"
+                placeholder="E-posta adresiniz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -227,7 +227,7 @@ export default function VakaHandeOptinPage() {
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
-              Bilgilerin güvende, istediğin an çıkabilirsin.
+              Bilgileriniz güvende, istediğiniz an çıkabilirsiniz.
             </p>
           </div>
         </div>

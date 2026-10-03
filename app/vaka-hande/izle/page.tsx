@@ -13,14 +13,14 @@ export default function VakaHandeIzlePage() {
           <Reveal delay={0.08}>
             <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
               Hande ile 1,5 ayda ve tek bir reklam vermeden ilk 7 danışanı nasıl
-              kazandığımızı şimdi adım adım göreceksin.
+              kazandığımızı şimdi adım adım göreceksiniz.
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
               Önce Hande&apos;nin nereden başladığını ve süreçte birlikte neleri
-              değiştirdiğimizi göreceksin. Sonra aynı sistemi kendi online
-              koçluk işinde nasıl kurabileceğini anlatacağım.
+              değiştirdiğimizi göreceksiniz. Sonra aynı sistemi kendi online
+              koçluk işinizde nasıl kurabileceğinizi anlatacağım.
             </p>
           </Reveal>
         </div>
@@ -36,7 +36,7 @@ export default function VakaHandeIzlePage() {
             basvuruHref="/vaka-hande/basvuru"
             ctaText="Başvurumu Doldur →"
             location="vaka-hande"
-            note="Sesini aç ve videoyu baştan izle. Kendi işin için yol haritasını konuşmak istediğinde aşağıdaki butondan başvurabilirsin."
+            note="Sesinizi açın ve videoyu baştan izleyin. Kendi işiniz için yol haritasını konuşmak istediğinizde aşağıdaki butondan başvurabilirsiniz."
           />
         </Reveal>
       </section>

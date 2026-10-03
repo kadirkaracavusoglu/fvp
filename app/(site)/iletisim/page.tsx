@@ -46,7 +46,7 @@ export default function IletisimPage() {
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-gray-400">
               Sorun, iş birliği fikrin ya da işini büyütmek için bir planın mı var?
-              Sana en uygun kanaldan ulaş.
+              Size en uygun kanaldan ulaşın.
             </p>
           </Reveal>
         </div>

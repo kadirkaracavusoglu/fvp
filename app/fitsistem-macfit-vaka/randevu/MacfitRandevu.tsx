@@ -49,7 +49,7 @@ export function MacfitRandevu() {
             birlikte nasıl ilerleyebileceğimizi de konuşacağız.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400">
-            Aşağıdaki takvimden gerçekten katılabileceğin bir gün ve saat seç.
+            Aşağıdaki takvimden gerçekten katılabileceğiniz bir gün ve saat seçin.
           </p>
         </div>
 

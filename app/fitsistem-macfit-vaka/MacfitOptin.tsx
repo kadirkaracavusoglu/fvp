@@ -50,9 +50,9 @@ export function MacfitOptin() {
       trackServer("form_macfit_contact");
       return;
     }
-    if (!contact.firstName.trim() || !contact.lastName.trim()) { setError("Adını ve soyadını gir."); return; }
-    if (!MACFIT_EMAIL_RE.test(contact.email.trim())) { setError("Geçerli bir e-posta adresi gir."); return; }
-    if (!normalizeMacfitPhone(contact.phone)) { setError("Telefonunu 05XX XXX XX XX biçiminde gir."); return; }
+    if (!contact.firstName.trim() || !contact.lastName.trim()) { setError("Adınızı ve soyadınızı girin."); return; }
+    if (!MACFIT_EMAIL_RE.test(contact.email.trim())) { setError("Geçerli bir e-posta adresi girin."); return; }
+    if (!normalizeMacfitPhone(contact.phone)) { setError("Telefonunuzu 05XX XXX XX XX biçiminde girin."); return; }
     if (!normalizeMacfitInstagram(contact.instagram)) { setError("Salonunun Instagram kullanıcı adını gir (ör. @salonadi)."); return; }
     setSending(true);
     try {

@@ -102,7 +102,7 @@ export default function SponsorlukPage() {
               medya kiti ve güncel erişim rakamlarıyla dönelim.
             </p>
           </div>
-          <ContactForm multi multiTitle="Hangi alanlarla ilgileniyorsun? (birden fazla seçebilirsin)" />
+          <ContactForm multi multiTitle="Hangi alanlarla ilgileniyorsunuz? (birden fazla seçebilirsiniz)" />
         </Reveal>
       </section>
     </>

@@ -60,9 +60,9 @@ export function validateMacfitSubmission(input: unknown): { data: MacfitSubmissi
   const email = value(body.email, 254).toLowerCase();
   const phone = normalizeMacfitPhone(value(body.phone, 40));
   const instagram = normalizeMacfitInstagram(value(body.instagram, 150));
-  if (!firstName || !lastName) return { error: "Adını ve soyadını gir." };
-  if (!MACFIT_EMAIL_RE.test(email)) return { error: "Geçerli bir e-posta adresi gir." };
-  if (!phone) return { error: "Telefonunu 05XX XXX XX XX biçiminde gir." };
+  if (!firstName || !lastName) return { error: "Adınızı ve soyadınızı girin." };
+  if (!MACFIT_EMAIL_RE.test(email)) return { error: "Geçerli bir e-posta adresi girin." };
+  if (!phone) return { error: "Telefonunuzu 05XX XXX XX XX biçiminde girin." };
   if (!instagram) return { error: "Salonunun Instagram kullanıcı adını gir (ör. @salonadi)." };
   const raw = body.answers && typeof body.answers === "object" ? body.answers as Record<string, unknown> : {};
   const answers = {} as MacfitAnswers;

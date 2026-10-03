@@ -61,9 +61,9 @@ export default function VakaAnaliziOptinPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    if (!firstName.trim()) return setErr("Adını gir.");
+    if (!firstName.trim()) return setErr("Adınızı girin.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return setErr("Geçerli bir e-posta gir.");
+      return setErr("Geçerli bir e-posta girin.");
     setSending(true);
     try {
       captureAttribution();
@@ -75,7 +75,7 @@ export default function VakaAnaliziOptinPage() {
       });
       const data = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !data.ok) {
-        setErr(data.error || "Bir sorun oluştu, tekrar dene.");
+        setErr(data.error || "Bir sorun oluştu, tekrar deneyin.");
         setSending(false);
         return;
       }
@@ -94,7 +94,7 @@ export default function VakaAnaliziOptinPage() {
       trackServer("vsl_optin_submit", { video: VAKA_HANDE.videoId });
       router.push("/vaka-analizi/izle");
     } catch {
-      setErr("Bağlantı sorunu, tekrar dene.");
+      setErr("Bağlantı sorunu, tekrar deneyin.");
       setSending(false);
     }
   }
@@ -118,7 +118,7 @@ export default function VakaAnaliziOptinPage() {
             koçluğa geçerken yaşadığı kafa karışıklığını, Fitsistem&apos;i hangi
             sırayla kurduğumuzu ve içerikten başvuruya, satıştan işin
             sistemleşmesine kadar nasıl ilerlediğimizi gerçek süreç üzerinden
-            göreceksin.
+            göreceksiniz.
           </p>
         </div>
       </section>
@@ -155,7 +155,7 @@ export default function VakaAnaliziOptinPage() {
             VAKA ANALİZİNİ ÜCRETSİZ İZLE →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Vaka analizine erişmek için videoyu ücretsiz aç.
+            Vaka analizine erişmek için videoyu ücretsiz açın.
           </p>
         </div>
       </section>
@@ -169,15 +169,15 @@ export default function VakaAnaliziOptinPage() {
           <ol className="mt-6 space-y-6">
             {[
               {
-                t: "Online koçluk işini hangi sırayla kurman gerektiğini.",
-                d: "Hande Hoca nereden başlayacağını bilmiyordu; web sitesi, funnel, satış ve pazarlama gibi birçok konu aynı anda kafasını karıştırıyordu. Videoda bütün bunları hangi sırayla ele aldığımızı ve Fitsistem’i adım adım nasıl kurduğumuzu göreceksin.",
+                t: "Online koçluk işinizi hangi sırayla kurmanız gerektiğini.",
+                d: "Hande Hoca nereden başlayacağını bilmiyordu; web sitesi, funnel, satış ve pazarlama gibi birçok konu aynı anda kafasını karıştırıyordu. Videoda bütün bunları hangi sırayla ele aldığımızı ve Fitsistem’i adım adım nasıl kurduğumuzu göreceksiniz.",
               },
               {
                 t: "İçerik üretmekle düzenli danışan kazanmak arasındaki sistemi.",
-                d: "İnsanların seni takip etmesi tek başına bir online koçluk işi oluşturmuyor. Hande Hoca’nın mevcut kitlesini nasıl bir hizmete, başvuru sürecine ve satışa bağladığımızı gerçek çalışma üzerinden göreceksin. İlk duyurusunda 65 başvuru gelmesi ve kısa süre içerisinde ilk satışların oluşması da bu sürecin sonucu oldu.",
+                d: "İnsanların sizi takip etmesi tek başına bir online koçluk işi oluşturmuyor. Hande Hoca’nın mevcut kitlesini nasıl bir hizmete, başvuru sürecine ve satışa bağladığımızı gerçek çalışma üzerinden göreceksiniz. İlk duyurusunda 65 başvuru gelmesi ve kısa süre içerisinde ilk satışların oluşması da bu sürecin sonucu oldu.",
               },
               {
-                t: "Her şey mükemmel olmadan da sistemi nasıl kurabileceğini.",
+                t: "Her şey mükemmel olmadan da sistemi nasıl kurabileceğinizi.",
                 d: "Hande Hoca Amerika’da tam zamanlı çalışırken ve online koçluk tarafında hiç deneyimi yokken başladı. Süreci bir anda kusursuz hale getirmeye çalışmak yerine haftalık adımlarla ilerledik, eksikleri süreç içerisinde tamamladık ve işi çalışır hale getirdik.",
               },
             ].map((m, i) => (
@@ -193,10 +193,10 @@ export default function VakaAnaliziOptinPage() {
             ))}
           </ol>
           <p className="mt-6 text-base text-gray-500">
-            İster online koçluğa yeni başlıyor ol ister birkaç danışanın olmasına
-            rağmen işi düzenli büyütemiyor ol, videonun sonunda kendi işinde
+            Online koçluğa yeni başlıyor da olabilirsiniz, birkaç danışanınız olmasına
+            rağmen işi düzenli büyütemiyor da olabilirsiniz. Videonun sonunda kendi işinizde
             hangi parçaların eksik olduğunu ve bir sonraki adımının ne olması
-            gerektiğini çok daha net göreceksin.
+            gerektiğini çok daha net göreceksiniz.
           </p>
           <button
             type="button"
@@ -236,7 +236,7 @@ export default function VakaAnaliziOptinPage() {
               Vaka analizini hemen izle
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Adını ve e-posta adresini bırak, video hemen açılsın.
+              Adınızı ve e-posta adresinizi bırakın, video hemen açılsın.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
@@ -253,8 +253,8 @@ export default function VakaAnaliziOptinPage() {
               <input
                 type="text"
                 name="firstName"
-                aria-label="Adın"
-                placeholder="Adın"
+                aria-label="Adınız"
+                placeholder="Adınız"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 autoComplete="given-name"
@@ -264,8 +264,8 @@ export default function VakaAnaliziOptinPage() {
               <input
                 type="email"
                 name="email"
-                aria-label="E-posta adresin"
-                placeholder="E-posta adresin"
+                aria-label="E-posta adresiniz"
+                placeholder="E-posta adresiniz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -282,7 +282,7 @@ export default function VakaAnaliziOptinPage() {
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
-              Bilgilerin yalnızca vaka analizine erişim ve ilgili içerikler
+              Bilgileriniz yalnızca vaka analizine erişim ve ilgili içerikler
               için kullanılacaktır.
             </p>
           </div>

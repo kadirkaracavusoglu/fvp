@@ -27,7 +27,7 @@ export default function VakaHandeTesekkurlerPage() {
             Randevun hazır. Görüşmeden önce üç şey yeterli.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Görüşmede zamanı genel konulara ayırmak yerine doğrudan senin işine
+            Görüşmede zamanı genel konulara ayırmak yerine doğrudan sizin işinize
             odaklanmak istiyorum. Aşağıdaki üç adım bunun için yeterli.
           </p>
         </div>
@@ -45,8 +45,8 @@ export default function VakaHandeTesekkurlerPage() {
                 </strong>{" "}
                 Görüşmenin saati ve bağlantısı e-posta adresine gönderildi.
                 Birkaç dakika içinde gelmediyse spam ve promosyonlar
-                klasörlerine bak. Maili bulduğunda görüşmeyi takvimine ekle;
-                o saatte aklında olsun.
+                klasörlerinize bakın. Maili bulduğunuzda görüşmeyi takviminize ekleyin;
+                o saatte aklınızda olsun.
               </span>
             </li>
             <li className="flex gap-4">
@@ -55,10 +55,10 @@ export default function VakaHandeTesekkurlerPage() {
               </span>
               <span>
                 <strong className="text-[#0d204d]">
-                  Önümüzdeki 90 günde neyi değiştirmek istediğini düşün.
+                  Önümüzdeki 90 günde neyi değiştirmek istediğinizi düşün.
                 </strong>{" "}
                 Daha fazla danışan almak, daha fazla kişiye ulaşmak, gelirini
-                artırmak veya işini daha düzenli hale getirmek olabilir. Senin
+                artırmak veya işinizi daha düzenli hale getirmek olabilir. Sizin
                 için en önemli olan şeyi netleştir.
               </span>
             </li>
@@ -71,8 +71,8 @@ export default function VakaHandeTesekkurlerPage() {
                   Bildiğin rakamları yanında bulundur.
                 </strong>{" "}
                 Son birkaç ayda yaklaşık ne kadar ciro yaptığını, kaç kişinin
-                sana ulaştığını, kaç görüşme yaptığını ve kaç satış yaptığını
-                biliyorsan not al. Hepsini bilmek zorunda değilsin.
+                size ulaştığını, kaç görüşme yaptığını ve kaç satış yaptığını
+                biliyorsanız not alın. Hepsini bilmek zorunda değilsiniz.
               </span>
             </li>
           </ul>
@@ -81,9 +81,9 @@ export default function VakaHandeTesekkurlerPage() {
         {/* 3. HANDE HATIRLATMASI — video zaten izlendi, sadece bağ kuruyoruz */}
         <div className="mt-10 rounded-2xl border border-[#e6e8ea] bg-white p-6 text-center shadow-sm sm:p-8">
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-500">
-            Az önce Hande Hoca&apos;nın sürecini izledin. Onun da başında aynı
+            Az önce Hande Hoca&apos;nın sürecini izlediniz. Onun da başında aynı
             sorular vardı: &quot;Nereden başlamalıyım, zamanım olur mu, teknik
-            kısımları kaldırabilir miyim?&quot; Görüşmede senin işine bakacağız;
+            kısımları kaldırabilir miyim?&quot; Görüşmede sizin işinize bakacağız;
             Fitsistem&apos;in hangi parçasından başlaman gerektiğini ve mükemmeli
             beklemeden nasıl ilerleyebileceğini birlikte netleştireceğiz.
           </p>

@@ -21,9 +21,9 @@ export default function VakaHandeIzlePage() {
             <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
               Önce Hande Hoca&apos;nın başlangıçtaki kafa karışıklığını, sonra
               Fitsistem&apos;i hangi sırayla kurduğumuzu ve ilk duyuruda 65
-              başvurunun nasıl geldiğini göreceksin. İzlerken kendi işinde hangi
-              parçanın eksik olduğunu not al; videonun sonunda bir sonraki
-              adımın netleşecek.
+              başvurunun nasıl geldiğini göreceksiniz. İzlerken kendi işinizde hangi
+              parçanın eksik olduğunu not alın; videonun sonunda bir sonraki
+              adımınız netleşecek.
             </p>
           </Reveal>
         </div>
@@ -40,7 +40,7 @@ export default function VakaHandeIzlePage() {
             ctaText="Başvurumu Doldur →"
             location="vaka-analizi"
             ctaAfterMinutes={10}
-            note="Sesini aç ve videoyu baştan izle. 10. dakikada bu videonun altında başvuru butonu açılacak."
+            note="Sesinizi açın ve videoyu baştan izleyin. 10. dakikada bu videonun altında başvuru butonu açılacak."
           />
         </Reveal>
       </section>

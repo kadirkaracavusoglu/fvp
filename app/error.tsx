@@ -21,7 +21,7 @@ export default function Error({
       <div className="text-sm font-semibold text-cyan">Bir şeyler ters gitti</div>
       <h1 className="mt-3 text-3xl font-bold text-navy sm:text-4xl">Bu sayfa yüklenemedi.</h1>
       <p className="mt-4 text-gray-400">
-        Geçici bir sorun olabilir. Tekrar deneyebilir ya da ana sayfaya dönebilirsin.
+        Geçici bir sorun olabilir. Tekrar deneyebilir ya da ana sayfaya dönebilirsiniz.
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <button

@@ -124,7 +124,7 @@ export default function VakaHandeBasvuruPage() {
     if (!answerValid(q)) {
       setErr(
         q.tip === "coklu"
-          ? "En az bir seçenek seç."
+          ? "En az bir seçenek seçin."
           : "Birkaç kelimeyle de olsa yazman yeterli.",
       );
       return;
@@ -140,8 +140,8 @@ export default function VakaHandeBasvuruPage() {
       router.push("/vaka-hande");
       return;
     }
-    if (phone.trim().length < 7) return setErr("Telefon numaranı gir.");
-    if (!instagram.trim()) return setErr("Instagram kullanıcı adını gir.");
+    if (phone.trim().length < 7) return setErr("Telefon numaranızı girin.");
+    if (!instagram.trim()) return setErr("Instagram kullanıcı adınızı girin.");
     setSending(true);
     try {
       captureAttribution();
@@ -195,17 +195,17 @@ export default function VakaHandeBasvuruPage() {
         {step === 0 && (
           <div className="mb-5 text-center">
             <h2 className="text-lg font-bold text-[#0d204d]">
-              Şimdi biraz senin işine bakalım.
+              Şimdi biraz sizin işinize bakalım.
             </h2>
             <p className="mx-auto mt-1 max-w-xl text-sm text-gray-400">
               Aşağıdaki sorular işinin bugün nerede olduğunu, nereye ulaşmak
-              istediğini ve sana gerçekten yardımcı olup olamayacağımızı
+              istediğinizi ve size gerçekten yardımcı olup olamayacağımızı
               anlamamız için.
             </p>
             <p className="mx-auto mt-2 max-w-xl text-sm text-gray-400">
-              Nasıl ilerleyeceksin: önce birkaç kısa soruyu cevaplıyorsun, sonra
-              iletişim bilgilerini bırakıyorsun, en son da sana uygun görüşme
-              saatini seçiyorsun. Hepsi yaklaşık 3 dakika sürüyor.
+              Nasıl ilerleyeceksiniz: önce birkaç kısa soruyu cevaplıyorsunuz, sonra
+              iletişim bilgilerini bırakıyorsunuz, en son da size uygun görüşme
+              saatini seçiyorsunuz. Hepsi yaklaşık 3 dakika sürüyor.
             </p>
           </div>
         )}
@@ -308,9 +308,9 @@ export default function VakaHandeBasvuruPage() {
               İletişim bilgilerin
             </h1>
             <p className="mt-2 text-sm text-gray-400">
-              Görüşme ve başvurunla ilgili gerektiğinde sana buradan ulaşacağız.
-              Başvurunu tamamladıktan sonra sana uygun görüşme saatini
-              seçebileceksin.
+              Görüşme ve başvurunuzla ilgili gerektiğinde size buradan ulaşacağız.
+              Başvurunuzu tamamladıktan sonra size uygun görüşme saatini
+              seçebileceksiniz.
             </p>
             <input
               type="text"

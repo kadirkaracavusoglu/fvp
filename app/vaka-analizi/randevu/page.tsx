@@ -49,7 +49,7 @@ export default function VakaHandeRandevuPage() {
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 text-center">
           <h1 className="mx-auto mt-2 max-w-3xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Başvurun tamamlandı. Şimdi sana uygun görüşme saatini seç.
+            Başvurunuz tamamlandı. Şimdi size uygun görüşme saatini seçin.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
             Bu 30 dakikalık görüşmede işinin bugün nerede olduğuna, nereye
@@ -57,13 +57,13 @@ export default function VakaHandeRandevuPage() {
             bakacağız.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Sana gerçekten yardımcı olabileceğimizi düşünürsek, Hande Hoca ile
-            kurduğumuz Fitsistem&apos;i kendi işinde hangi sırayla
-            kurabileceğini ve birlikte nasıl ilerleyebileceğimizi de
+            Size gerçekten yardımcı olabileceğimizi düşünürsek, Hande Hoca ile
+            kurduğumuz Fitsistem&apos;i kendi işinizde hangi sırayla
+            kurabileceğinizi ve birlikte nasıl ilerleyebileceğimizi de
             konuşacağız.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400">
-            Aşağıdaki takvimden gerçekten katılabileceğin bir gün ve saat seç.
+            Aşağıdaki takvimden gerçekten katılabileceğiniz bir gün ve saat seçin.
           </p>
         </div>
 

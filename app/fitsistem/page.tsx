@@ -61,9 +61,9 @@ export default function VslOptinPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    if (!firstName.trim()) return setErr("Adını gir.");
+    if (!firstName.trim()) return setErr("Adınızı girin.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return setErr("Geçerli bir e-posta gir.");
+      return setErr("Geçerli bir e-posta girin.");
     setSending(true);
     try {
       captureAttribution();
@@ -75,7 +75,7 @@ export default function VslOptinPage() {
       });
       const data = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !data.ok) {
-        setErr(data.error || "Bir sorun oluştu, tekrar dene.");
+        setErr(data.error || "Bir sorun oluştu, tekrar deneyin.");
         setSending(false);
         return;
       }
@@ -95,7 +95,7 @@ export default function VslOptinPage() {
       // Videoyu izleyeceği sayfaya gönder.
       router.push("/fitsistem/izle");
     } catch {
-      setErr("Bağlantı sorunu, tekrar dene.");
+      setErr("Bağlantı sorunu, tekrar deneyin.");
       setSending(false);
     }
   }
@@ -110,12 +110,12 @@ export default function VslOptinPage() {
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
             Bir fitness koçuyla 10 ayda 9 milyon TL ciro üretmemizi sağlayan
-            Fitsistem&apos;i ve bunu kendi online koçluk işinde nasıl
-            uygulayabileceğini gösteriyorum.
+            Fitsistem&apos;i ve bunu kendi online koçluk işinizde nasıl
+            uygulayabileceğinizi gösteriyorum.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
             Bu 27 dakikalık videoda daha fazla kişiye ulaşmak, daha fazla danışan
-            kazanmak ve online koçluk işini kendi şartlarınla büyütmek için
+            kazanmak ve online koçluk işinizi kendi şartlarınızla büyütmek için
             Fitsistem&apos;i nasıl kullandığımızı gerçek rakamlar ve yaptığımız
             çalışmalar üzerinden anlatıyorum.
           </p>
@@ -154,7 +154,7 @@ export default function VslOptinPage() {
             Fitsistem&apos;i Nasıl Uyguladığımızı İzle →
           </button>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-400">
-            Adını ve e-posta adresini bırak, video hemen açılsın.
+            Adınızı ve e-posta adresinizi bırakın, video hemen açılsın.
           </p>
         </div>
       </section>
@@ -184,7 +184,7 @@ export default function VslOptinPage() {
               Videoyu hemen izlemeye başla
             </h2>
             <p className="mt-2 text-sm text-gray-400">
-              Adını ve e-posta adresini bırak, video hemen açılsın.
+              Adınızı ve e-posta adresinizi bırakın, video hemen açılsın.
             </p>
             <form onSubmit={submit} className="mt-5 space-y-3 text-left">
               {/* honeypot */}
@@ -201,8 +201,8 @@ export default function VslOptinPage() {
               <input
                 type="text"
                 name="firstName"
-                aria-label="Adın"
-                placeholder="Adın"
+                aria-label="Adınız"
+                placeholder="Adınız"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 autoComplete="given-name"
@@ -212,8 +212,8 @@ export default function VslOptinPage() {
               <input
                 type="email"
                 name="email"
-                aria-label="E-posta adresin"
-                placeholder="E-posta adresin"
+                aria-label="E-posta adresiniz"
+                placeholder="E-posta adresiniz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -230,7 +230,7 @@ export default function VslOptinPage() {
               </button>
             </form>
             <p className="mt-3 text-xs text-gray-400">
-              Bilgilerin güvende, istediğin an çıkabilirsin.
+              Bilgileriniz güvende, istediğiniz an çıkabilirsiniz.
             </p>
           </div>
         </div>

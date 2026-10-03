@@ -52,7 +52,7 @@ export default function VslTesekkurlerPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
             Görüşmede zamanı genel şeyler konuşarak geçirmek yerine doğrudan
-            senin işine odaklanmak istiyorum. Bu yüzden görüşmeden önce iki şeyi
+            sizin işinize odaklanmak istiyorum. Bu yüzden görüşmeden önce iki şeyi
             düşünmen yeterli.
           </p>
         </div>
@@ -66,10 +66,10 @@ export default function VslTesekkurlerPage() {
               </span>
               <span>
                 <strong className="text-[#0d204d]">
-                  Önümüzdeki 90 günde neyi değiştirmek istediğini düşün.
+                  Önümüzdeki 90 günde neyi değiştirmek istediğinizi düşün.
                 </strong>{" "}
                 Daha fazla danışan almak, daha fazla kişiye ulaşmak, gelirini
-                artırmak veya işini daha düzenli hale getirmek olabilir. Senin
+                artırmak veya işinizi daha düzenli hale getirmek olabilir. Sizin
                 için en önemli olan şeyi netleştir.
               </span>
             </li>
@@ -82,8 +82,8 @@ export default function VslTesekkurlerPage() {
                   Bildiğin rakamları yanında bulundur.
                 </strong>{" "}
                 Son birkaç ayda yaklaşık ne kadar ciro yaptığını, kaç kişinin
-                sana ulaştığını, kaç görüşme yaptığını ve kaç satış yaptığını
-                biliyorsan not al. Hepsini bilmek zorunda değilsin.
+                size ulaştığını, kaç görüşme yaptığını ve kaç satış yaptığını
+                biliyorsanız not alın. Hepsini bilmek zorunda değilsiniz.
               </span>
             </li>
           </ul>

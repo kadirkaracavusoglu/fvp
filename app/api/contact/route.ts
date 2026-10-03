@@ -22,13 +22,13 @@ export async function POST(req: Request) {
     }
 
     if (!name || name.trim().length < 2) {
-      return NextResponse.json({ ok: false, error: "Lütfen adını gir." }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Lütfen adınızı girin." }, { status: 400 });
     }
     if (!email || !isValidEmail(email)) {
-      return NextResponse.json({ ok: false, error: "Geçerli bir e-posta gir." }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Geçerli bir e-posta girin." }, { status: 400 });
     }
     if (!phone || phone.replace(/\D/g, "").length < 7) {
-      return NextResponse.json({ ok: false, error: "Geçerli bir telefon numarası gir." }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Geçerli bir telefon numarası girin." }, { status: 400 });
     }
     if (!message || message.trim().length < 5) {
       return NextResponse.json({ ok: false, error: "Lütfen mesajını yaz." }, { status: 400 });

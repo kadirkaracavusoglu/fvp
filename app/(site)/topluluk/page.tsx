@@ -2,7 +2,7 @@ import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/Reveal";
 
 const faydalar = [
-  "Fitness girişimcileriyle aynı odada ol — yalnız çalışmıyorsun",
+  "Fitness girişimcileriyle aynı odada olun — yalnız çalışmıyorsunuz",
   "Soru sor, gerçek örneklerden ve sektörün nabzından öğren",
   "Yeni içerik, podcast ve fırsatlardan ilk sen haberdar ol",
 ];

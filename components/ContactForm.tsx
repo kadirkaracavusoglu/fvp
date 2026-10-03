@@ -27,7 +27,7 @@ export function ContactForm({
   defaultSubject = "Genel Soru",
   lockSubject = false,
   multi = false,
-  multiTitle = "İlgilendiğin alanlar (birden fazla seçebilirsin)",
+  multiTitle = "İlgilendiğiniz alanlar (birden fazla seçebilirsiniz)",
   multiOptions = SPONSOR_OPTIONS,
 }: {
   defaultSubject?: string;
@@ -105,7 +105,7 @@ export function ContactForm({
         <div className="text-3xl">✓</div>
         <h3 className="mt-3 text-xl font-semibold text-navy">Mesajın ulaştı!</h3>
         <p className="mt-2 text-sm text-gray-400">
-          En kısa sürede sana <strong>{form.email || "e-posta"}</strong> üzerinden dönüş yapacağız.
+          En kısa sürede size <strong>{form.email || "e-posta"}</strong> üzerinden dönüş yapacağız.
         </p>
         <button onClick={() => setStatus("idle")} className="btn-ghost mt-6 px-5 py-2 text-sm">
           Yeni mesaj gönder

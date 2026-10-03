@@ -15,15 +15,15 @@ export function OnGorusmeEgitimi({ location }: { location: string }) {
         Görüşmeye kadar izleyebileceğin ücretsiz bir eğitim
       </h2>
       <p className="mx-auto mt-2 max-w-2xl text-sm text-gray-400">
-        Online koçluk işini sıfırdan nasıl kuracağını adım adım anlattığım
+        Online koçluk işinizi sıfırdan nasıl kuracağınızı adım adım anlattığım
         yaklaşık 80 dakikalık eğitim. Görüşmeden önce izlersen temel konulara
-        zaman ayırmadan doğrudan senin işine odaklanabiliriz. Hepsini izlemek
-        zorunda değilsin; sana uygun bölümlerden başlayabilirsin.
+        zaman ayırmadan doğrudan sizin işinize odaklanabiliriz. Hepsini izlemek
+        zorunda değilsiniz; size uygun bölümlerden başlayabilirsiniz.
       </p>
       <div className="mt-6 overflow-hidden rounded-2xl border border-[#e6e8ea] bg-black shadow-2xl">
         <iframe
           src={EMBED_URL}
-          title="Fitness antrenörü olarak online koçluk işine nasıl başlarsın"
+          title="Fitness antrenörü olarak online koçluk işine nasıl başlanır"
           className="aspect-video w-full"
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

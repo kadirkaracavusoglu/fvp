@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 // JTBD — koçun gerçek acısı (status quo'nun bedeli)
 const acilar = [
   { t: "Her ay sıfırdan", d: "Geçen ayın danışanları bitince ay yeniden boş başlıyor. Gelir tahmin edilemiyor." },
-  { t: "İyi antrenör, görünmez marka", d: "İşini iyi yapıyorsun ama piyasa seni görmüyor. Kalite tek başına müşteri getirmiyor." },
+  { t: "İyi antrenör, görünmez marka", d: "İşinizi iyi yapıyorsunuz ama piyasa sizi görmüyor. Kalite tek başına müşteri getirmiyor." },
   { t: "İlgi var, satış yok", d: "Mesaj geliyor, görüşme oluyor ama iş bağlanmıyor. Gelen ilgi paraya dönmüyor." },
 ];
 
@@ -58,7 +58,7 @@ export default function DanismanlikPage() {
           <h2 className="mb-3 text-2xl font-bold sm:text-3xl">Tanıdık geldi mi?</h2>
           <p className="mb-8 max-w-2xl text-gray-400">
             Bunların ortak sebebi tek: sistem yokluğu. &quot;Böyle idare ederim&quot; demek en
-            pahalı karar — çünkü her geçen ay aynı yerde başlıyorsun.
+            pahalı karar — çünkü her geçen ay aynı yerde başlıyorsunuz.
           </p>
         </Reveal>
         <div className="grid gap-5 md:grid-cols-3">

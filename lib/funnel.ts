@@ -55,7 +55,7 @@ export type BasvuruSoru = {
 export const BASVURU_SORULARI: BasvuruSoru[] = [
   {
     key: "asama",
-    soru: "Online koçluk işinde şu an neredesin?",
+    soru: "Online koçluk işinizde şu an neredesiniz?",
     tip: "secim",
     secenekler: [
       { deger: "Henüz başlamadım" },
@@ -66,7 +66,7 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "is_modeli",
-    soru: "Şu anda koçluğu ağırlıklı olarak nasıl yürütüyorsun?",
+    soru: "Şu anda koçluğu ağırlıklı olarak nasıl yürütüyorsunuz?",
     tip: "secim",
     secenekler: [
       { deger: "Tamamen online çalışıyorum" },
@@ -90,7 +90,7 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "hedef_12_ay",
-    soru: "Önümüzdeki 90 günde işinde neyin değişmesini istiyorsun?",
+    soru: "Önümüzdeki 90 günde işinizde neyin değişmesini istiyorsunuz?",
     aciklama: "Mümkün olduğunca net yaz. Görüşmede hedefini buradan başlayarak değerlendireceğiz.",
     tip: "metin",
     placeholder:
@@ -105,7 +105,7 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "darbogazlar",
-    soru: "Şu anda işinde seni en çok zorlayan şey hangisi?",
+    soru: "Şu anda işinizde sizi en çok zorlayan şey hangisi?",
     tip: "secim",
     secenekler: [
       { deger: "Nereden başlayacağımı ve hangi sırayla ilerlemem gerektiğini bilmiyorum" },
@@ -117,8 +117,8 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "neden_simdi",
-    soru: "Neden şimdi harekete geçmek istiyorsun?",
-    aciklama: "Seni bugün bu adımı atmaya iten şeyi kendi cümlelerinle kısa şekilde anlatabilirsin.",
+    soru: "Neden şimdi harekete geçmek istiyorsunuz?",
+    aciklama: "Sizi bugün bu adımı atmaya iten şeyi kendi cümlelerinizle kısa şekilde anlatabilirsiniz.",
     tip: "metin",
     placeholder:
       "Örn: Aylardır erteliyorum ve artık başlamak istiyorum. Salondaki tempoyu uzun vadede sürdürmek istemiyorum. Danışan alıyorum ama işim istediğim kadar düzenli büyümüyor.",
@@ -131,7 +131,7 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "yatirim",
-    soru: "Fitsistem Koçluk Programı’nın yatırım bedeli 30.000 – 50.000 TL aralığındadır. Birlikte çalışmanın senin için doğru olduğuna karar verirsek bu yatırım seviyesinde ilerlemeye hazır mısın?",
+    soru: "Fitsistem Mentorluk Programı’nın yatırım bedeli 30.000 TL’dir. Birlikte çalışmanın sizin için doğru olduğuna karar verirsek bu yatırımla ilerlemeye hazır mısınız?",
     tip: "secim",
     secenekler: [
       { deger: "Evet, doğru çözüm olduğuna karar verirsem başlayabilirim" },
@@ -141,7 +141,7 @@ export const BASVURU_SORULARI: BasvuruSoru[] = [
   },
   {
     key: "karar_hizi",
-    soru: "Birlikte çalışmanın senin için doğru olduğuna karar verirsek ne zaman başlamak istersin?",
+    soru: "Birlikte çalışmanın sizin için doğru olduğuna karar verirsek ne zaman başlamak istersiniz?",
     tip: "secim",
     secenekler: [
       { deger: "Mümkünse hemen başlamak istiyorum" },

@@ -56,7 +56,7 @@ export function AcikUcluSoru({
         ref={ref}
         name={name}
         aria-label={label}
-        placeholder="Kendi cümlelerinle yaz…"
+        placeholder="Kendi cümlelerinizle yaz…"
         value={value}
         rows={4}
         onChange={(e) => onChange(e.target.value)}
@@ -96,7 +96,7 @@ export function AcikUcluSoru({
         {error
           ? error
           : valid
-            ? "✓ Teşekkürler, devam edebilirsin."
+            ? "✓ Teşekkürler, devam edebilirsiniz."
             : "Birkaç cümle yeterli; görüşmede bunun üzerinden konuşacağız."}
       </p>
 

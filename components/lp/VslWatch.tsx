@@ -113,7 +113,7 @@ export function VslWatch({
             {ctaText}
           </Link>
           <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
-            Birkaç soruyu cevapla, ardından sana uygun görüşme saatini seç.
+            Birkaç soruyu cevaplayın, ardından size uygun görüşme saatini seçin.
           </p>
         </div>
       )}
