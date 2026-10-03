@@ -160,48 +160,14 @@ export default function VakaAnaliziOptinPage() {
         </div>
       </section>
 
-      {/* Vaka analizinin içeriği — Kadir'in metni (19 Eyl 2026). */}
+      {/* Kapanış: ikinci başvuru butonu + marka satırı.
+          "Bu vaka analizinde göreceğiniz 3 şey" bölümü Kadir'in isteğiyle KALDIRILDI (4 Eki 2026). */}
       <section className="mx-auto max-w-3xl px-5 pb-14">
-        <div className="rounded-2xl border border-[#e6e8ea] bg-white/70 p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-[#0d204d] sm:text-2xl">
-            Bu vaka analizinde göreceğin 3 şey
-          </h2>
-          <ol className="mt-6 space-y-6">
-            {[
-              {
-                t: "Online koçluk işinizi hangi sırayla kurmanız gerektiğini.",
-                d: "Hande Hoca nereden başlayacağını bilmiyordu; web sitesi, funnel, satış ve pazarlama gibi birçok konu aynı anda kafasını karıştırıyordu. Videoda bütün bunları hangi sırayla ele aldığımızı ve Fitsistem’i adım adım nasıl kurduğumuzu göreceksiniz.",
-              },
-              {
-                t: "İçerik üretmekle düzenli danışan kazanmak arasındaki sistemi.",
-                d: "İnsanların sizi takip etmesi tek başına bir online koçluk işi oluşturmuyor. Hande Hoca’nın mevcut kitlesini nasıl bir hizmete, başvuru sürecine ve satışa bağladığımızı gerçek çalışma üzerinden göreceksiniz. İlk duyurusunda 65 başvuru gelmesi ve kısa süre içerisinde ilk satışların oluşması da bu sürecin sonucu oldu.",
-              },
-              {
-                t: "Her şey mükemmel olmadan da sistemi nasıl kurabileceğinizi.",
-                d: "Hande Hoca Amerika’da tam zamanlı çalışırken ve online koçluk tarafında hiç deneyimi yokken başladı. Süreci bir anda kusursuz hale getirmeye çalışmak yerine haftalık adımlarla ilerledik, eksikleri süreç içerisinde tamamladık ve işi çalışır hale getirdik.",
-              },
-            ].map((m, i) => (
-              <li key={m.t} className="flex gap-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0d204d] text-sm font-bold text-white">
-                  {i + 1}
-                </span>
-                <div>
-                  <p className="font-bold text-[#0d204d]">{m.t}</p>
-                  <p className="mt-1 text-base text-gray-500">{m.d}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-6 text-base text-gray-500">
-            Online koçluğa yeni başlıyor da olabilirsiniz, birkaç danışanınız olmasına
-            rağmen işi düzenli büyütemiyor da olabilirsiniz. Videonun sonunda kendi işinizde
-            hangi parçaların eksik olduğunu ve bir sonraki adımının ne olması
-            gerektiğini çok daha net göreceksiniz.
-          </p>
+        <div className="text-center">
           <button
             type="button"
             onClick={openModal}
-            className="btn-primary mt-6 w-full px-8 py-4 text-base sm:w-auto"
+            className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
           >
             VAKA ANALİZİNİ ÜCRETSİZ İZLE →
           </button>
