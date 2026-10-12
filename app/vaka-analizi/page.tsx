@@ -160,19 +160,11 @@ export default function VakaAnaliziOptinPage() {
         </div>
       </section>
 
-      {/* Kapanış: ikinci başvuru butonu + marka satırı.
-          "Bu vaka analizinde göreceğiniz 3 şey" bölümü Kadir'in isteğiyle KALDIRILDI (4 Eki 2026). */}
+      {/* Kapanış: marka satırı.
+          "Bu vaka analizinde göreceğiniz 3 şey" bölümü (4 Eki) ve alttaki ikinci
+          "Vaka analizini ücretsiz izle" butonu (12 Eki 2026) Kadir'in isteğiyle KALDIRILDI. */}
       <section className="mx-auto max-w-3xl px-5 pb-14">
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={openModal}
-            className="btn-primary w-full px-8 py-4 text-base sm:w-auto"
-          >
-            VAKA ANALİZİNİ ÜCRETSİZ İZLE →
-          </button>
-        </div>
-        <p className="mt-8 text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-gray-400">
           Fitness ve Pazarlama · Kadir Karaçavuşoğlu
         </p>
       </section>
