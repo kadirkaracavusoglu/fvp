@@ -1,6 +1,6 @@
 "use client";
 
-// FvP bio sayfası (fitnessvepazarlama.com/bio) — tüm platformların profilinde
+// FvP bio sayfası (kadirkaracavusoglu.com/bio) — tüm platformların profilinde
 // tek link. Amaç: gelen kişiyi doğru yere göndermek ve hangi platformdan gelip
 // nereye gittiğini ÖLÇMEK.
 //
@@ -137,7 +137,7 @@ export default function BioPage() {
             LinkedIn
           </a>
           <Link href="/" className="hover:text-white">
-            fitnessvepazarlama.com
+            {SITE.domain}
           </Link>
         </div>
       </div>

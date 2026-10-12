@@ -38,6 +38,26 @@ const nextConfig: NextConfig = {
   // VSL funnel /vsl → /fitsistem'e taşındı; eski linkler (reklam/paylaşım) kırılmasın.
   async redirects() {
     return [
+      // Alan adı taşındı (12 Eki 2026): eski adres ve www → kadirkaracavusoglu.com.
+      // Eski adresin DNS'i Vercel'e çevrilince devreye girer; o zamana kadar zararsız.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "fitnessvepazarlama.com" }],
+        destination: "https://kadirkaracavusoglu.com/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.fitnessvepazarlama.com" }],
+        destination: "https://kadirkaracavusoglu.com/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.kadirkaracavusoglu.com" }],
+        destination: "https://kadirkaracavusoglu.com/:path*",
+        permanent: true,
+      },
       { source: "/vsl/optin", destination: "/fitsistem", permanent: false },
       { source: "/vsl/basvuru", destination: "/fitsistem/basvuru", permanent: false },
       { source: "/vsl/randevu", destination: "/fitsistem/randevu", permanent: false },

@@ -12,8 +12,8 @@ import { resolveFunnelPath, resolveLeadAttribution } from "@/lib/funnel-attribut
 // Bu route, GHL'deki fırsat durumu değişince o bilgiyi panele taşır.
 //
 // Kurulum (GHL Workflow → Webhook action, POST):
-//   Ulaşıldı : https://fitnessvepazarlama.com/api/ghl/vsl-outcome?event=vsl_reached&secret=<SECRET>
-//   Satış    : https://fitnessvepazarlama.com/api/ghl/vsl-outcome?event=vsl_sale&secret=<SECRET>
+//   Ulaşıldı : https://kadirkaracavusoglu.com/api/ghl/vsl-outcome?event=vsl_reached&secret=<SECRET>
+//   Satış    : https://kadirkaracavusoglu.com/api/ghl/vsl-outcome?event=vsl_sale&secret=<SECRET>
 // Gövdeye en az e-posta veya telefon; satışta ayrıca tutar (revenue/amount/value)
 // ve varsa opportunityId/contactId gönderilmeli.
 //

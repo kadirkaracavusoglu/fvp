@@ -149,4 +149,4 @@ if (j.error) { console.error('🔴', j.error.description || j.error.message || J
 
 console.log(`${dry ? '🧪 KURU ÇALIŞTIRMA' : '✅ YAYINLANDI'} — ${title}`);
 console.log(`   blok: ${body.length} · kategori: cat-${category} · id: post-${slug}`);
-if (!dry) console.log(`   https://fitnessvepazarlama.com/yazi/${slug}`);
+if (!dry) console.log(`   https://kadirkaracavusoglu.com/yazi/${slug}`);

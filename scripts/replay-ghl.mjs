@@ -245,8 +245,8 @@ async function postWebhook(row) {
   const isApplication = row.form_type === "vsl_basvuru";
   const summary = answerSummary(answers);
   const pageUrl = isApplication
-    ? "https://fitnessvepazarlama.com/fitsistem/basvuru"
-    : "https://fitnessvepazarlama.com/fitsistem";
+    ? "https://kadirkaracavusoglu.com/fitsistem/basvuru"
+    : "https://kadirkaracavusoglu.com/fitsistem";
   const body = {
     ...(isApplication ? answers : {}),
     firstName: row.first_name || "",
