@@ -24,6 +24,7 @@ export function VslWatch({
   location = "vsl",
   note,
   ctaAfterMinutes,
+  autoplaySound,
 }: {
   videoId: string;
   unlockKey?: string;
@@ -34,6 +35,8 @@ export function VslWatch({
   location?: string;
   note?: string;
   ctaAfterMinutes?: number;
+  /** Video sesli başlamayı denesin (opt-in tıklaması sonrası geldiyse). */
+  autoplaySound?: boolean;
 }) {
   const router = useRouter();
   const [ready, setReady] = useState(false); // localStorage okundu mu (SSR flash önle)
@@ -69,6 +72,7 @@ export function VslWatch({
       <VslPlayer
         videoId={videoId}
         autoplay
+        autoplaySound={autoplaySound}
         location={location}
         onMilestone={(name) => {
           // İzleme süresini GHL kişi kartına yaz. Kimlik, opt-in anında yazılan

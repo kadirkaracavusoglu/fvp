@@ -40,6 +40,7 @@ export default function VakaHandeIzlePage() {
             ctaText="Başvurumu Doldur →"
             location="vaka-analizi"
             ctaAfterMinutes={10}
+            autoplaySound
             note="Sesinizi açın ve videoyu baştan izleyin. 10. dakikada bu videonun altında başvuru butonu açılacak."
           />
         </Reveal>

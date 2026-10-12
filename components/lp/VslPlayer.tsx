@@ -73,12 +73,16 @@ export function VslPlayer({
   videoId,
   poster,
   autoplay = true,
+  autoplaySound = false,
   onMilestone,
   location = "vsl",
 }: {
   videoId: string;
   poster?: string;
   autoplay?: boolean;
+  /** Önce SESLİ başlamayı dene (kullanıcı sitede etkileşime girdiyse). Tarayıcı engellerse sessiz
+   *  başlar + "Sesi Aç" katmanı çıkar. Varsayılan kapalı: yalnız isteyen sayfa açar. */
+  autoplaySound?: boolean;
   /** Her milestone tetiklendiğinde çağrılır (ör. "vsl_min5" → CTA aç). Bir kez/olay. */
   onMilestone?: (name: string) => void;
   /** Event etiketi — farklı funnel'larda veriyi ayırmak için (varsayılan "vsl"). */
@@ -144,6 +148,9 @@ export function VslPlayer({
     setStarted(true);
     await loadYouTubeApi();
     if (!holderRef.current || !window.YT) return;
+    // Sesli otomatik oynatma yalnız sayfa etkileşim almışsa (opt-in butonu) tarayıcıdan geçer.
+    const ua = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
+    const trySound = autoplay && autoplaySound && ua?.hasBeenActive === true;
     const el = document.createElement("div");
     holderRef.current.appendChild(el);
     playerRef.current = new window.YT.Player(el, {
@@ -152,7 +159,7 @@ export function VslPlayer({
       height: "100%",
       playerVars: {
         autoplay: 1,
-        mute: autoplay ? 1 : 0,
+        mute: autoplay && !trySound ? 1 : 0,
         controls: 0,
         modestbranding: 1,
         rel: 0,
@@ -166,6 +173,26 @@ export function VslPlayer({
         onReady: (e: { target: YTPlayer }) => {
           const p = e.target;
           setDur(p.getDuration?.() || 0);
+          if (trySound) {
+            p.unMute();
+            setMuted(false);
+            p.playVideo();
+            startPolling();
+            // Tarayıcı sesli başlatmayı engellediyse video oynamaz → sessize düş + "Sesi Aç" katmanı.
+            window.setTimeout(() => {
+              const YT = window.YT;
+              if (!YT || p.getPlayerState?.() === YT.PlayerState.PLAYING) {
+                fire("vsl_autoplay_sound");
+                fire("vsl_unmute"); // sesli izleyen, "sesi açtı" metriğine de girer
+                return;
+              }
+              p.mute();
+              setMuted(true);
+              p.playVideo();
+              fire("vsl_autoplay");
+            }, 1500);
+            return;
+          }
           if (autoplay) {
             p.mute();
             setMuted(true);
@@ -189,7 +216,7 @@ export function VslPlayer({
         },
       },
     });
-  }, [autoplay, fire, startPolling, videoId]);
+  }, [autoplay, autoplaySound, fire, startPolling, videoId]);
 
   // autoplay modunda mount'ta boş zamanda yükle (poster LCP kalsın)
   useEffect(() => {
