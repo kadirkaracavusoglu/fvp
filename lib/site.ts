@@ -5,14 +5,14 @@
 export const SITE = {
   name: "Fitness ve Pazarlama",
   short: "FvP",
-  domain: "kadirkaracavusoglu.com", // 12 Eki 2026: fitnessvepazarlama.com'dan taşındı (e-posta + bulten. alt alanı eski adreste kaldı)
+  domain: "kadirkaracavusoglu.com", // 12 Eki 2026: fitnessvepazarlama.com'dan taşındı (eski alan adının süresi bitti; bulten. alt alanı hâlâ eski adreste — Beehiiv adresi güncellenecek)
   url: "https://kadirkaracavusoglu.com",
   belief: "Fitness işi şansa değil, sisteme dayanır.",
   tagline: "Fitness sektörünün gündemini, geleceğini ve nasıl büyüdüğünü konuşan bağımsız medya.",
   titleSuffix: "Fitness işini sisteme oturt", // <title> ana sayfa eki — hero.title'dan ayrı
   description:
     "Fitness sektörünün gündemini, işini ve geleceğini konuşan bağımsız medya ve topluluk. Gerçek stratejiler, gerçek örnekler.",
-  email: "info@fitnessvepazarlama.com",
+  email: "info@kadirkaracavusoglu.com", // 12 Eki 2026: eski alan adının süresi bitti (info@fitnessvepazarlama.com ölü)
   locale: "tr_TR",
   lang: "tr",
   keywords: [
