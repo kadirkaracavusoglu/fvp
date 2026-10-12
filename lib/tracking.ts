@@ -10,9 +10,14 @@ const FB_MAP: Record<string, string> = {
   quiz_complete: "CompleteRegistration",
   contact_submit: "Contact",
   sponsorship_submit: "Contact",
-  vsl_optin_submit: "Lead",
-  vsl_basvuru_submit: "SubmitApplication",
+  // 12 Eki 2026 (Kadir): opt-in "Lead" DEĞİL; yalnız başvuru formu "Lead" sayılır.
+  // Panel de aynı tanımı kullanıyor (Opt-in kartı ≠ Lead kartı).
+  vsl_optin_submit: "OptIn",
+  vsl_basvuru_submit: "Lead",
 };
+
+// Standart olmayan Meta olayları fbq("trackCustom") ile gider.
+const FB_CUSTOM = new Set(["OptIn"]);
 
 /** GA4/GTM (dataLayer) + varsa Meta Pixel'e olay gönder */
 export function track(event: string, params: Params = {}) {
@@ -30,8 +35,9 @@ export function track(event: string, params: Params = {}) {
     w.gtag("event", event, params);
   }
   // Meta Pixel (yalnızca dönüşüm event'lerinde)
-  if (FB_MAP[event] && typeof w.fbq === "function") {
-    w.fbq("track", FB_MAP[event], params);
+  const fbEvent = FB_MAP[event];
+  if (fbEvent && typeof w.fbq === "function") {
+    w.fbq(FB_CUSTOM.has(fbEvent) ? "trackCustom" : "track", fbEvent, params);
   }
 }
 
