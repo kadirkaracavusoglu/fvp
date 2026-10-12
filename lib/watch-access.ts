@@ -32,6 +32,18 @@ export function readWatchToken(token?: string | null): string | null {
   }
 }
 
+/** Çerezin verildiği an (ms). Süre sonu = verilme + MAX_AGE olduğundan ondan türetilir. */
+export function watchTokenIssuedMs(token?: string | null): number | null {
+  if (!readWatchToken(token)) return null;
+  const expiry = Number((token as string).split(".")[1]);
+  return Number.isFinite(expiry) ? expiry - MAX_AGE_S * 1000 : null;
+}
+
+/** Dışarı verilen kimlikler (ör. GHL randevu id'si) ham gitmesin: kısa, geri çevrilemez özet. */
+export function opaqueId(value: string): string {
+  return createHmac("sha256", secret()).update(`opaque:${value}`).digest("hex").slice(0, 16);
+}
+
 export const watchCookieOptions = {
   httpOnly: true,
   secure: true,

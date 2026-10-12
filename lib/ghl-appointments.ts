@@ -114,15 +114,17 @@ export type BookingConfirmation = { booked: boolean; appointmentId?: string; boo
 
 /**
  * Bu kişinin takvimde GERÇEK bir randevusu var mı? (Meta `Schedule` olayı için kanıt.)
- * Sayfaya girmek yetmez: GHL kişisi e-posta, bulunamazsa telefonla bulunur; kişinin
- * randevuları arasında bu takvimden, iptal/geçersiz OLMAYAN ve son `maxAgeMs` içinde
- * alınmış biri aranır. Erişim yoksa/patlarsa { booked: false } — olay gönderilmez.
+ * Sayfaya girmek yetmez: GHL kişisi e-posta ve telefonla bulunur; kişinin randevuları
+ * arasında bu takvimden, iptal/geçersiz OLMAYAN, son `maxAgeMs` içinde VE `notBeforeMs`
+ * sonrasında alınmış biri aranır. Erişim yoksa/patlarsa { booked: false } — olay gönderilmez.
  */
 export async function confirmBookingFor(
   who: { email?: string; phone?: string },
-  maxAgeMs = 6 * 3600 * 1000,
+  opts: { maxAgeMs?: number; notBeforeMs?: number } = {},
   calendarId: string = DEFAULT_CALENDAR_ID,
 ): Promise<BookingConfirmation> {
+  const maxAgeMs = opts.maxAgeMs ?? 6 * 3600 * 1000;
+  const notBeforeMs = opts.notBeforeMs ?? 0;
   const no = { booked: false };
   if (!LOCATION_KEY) return no;
   const headers = { Authorization: `Bearer ${LOCATION_KEY}`, Version: "2021-07-28" };
@@ -156,6 +158,9 @@ export async function confirmBookingFor(
         if (status === "cancelled" || status === "invalid") continue;
         const booked = e.dateAdded ? new Date(e.dateAdded).getTime() : NaN;
         if (!Number.isFinite(booked) || Date.now() - booked > maxAgeMs) continue;
+        // Güvenlik: e-posta sahipliği doğrulanmıyor → çerezi VERİLMEDEN önce alınmış randevu
+        // (başkasının eski randevusu) kanıt sayılmaz. Meşru akışta randevu hep opt-in'den sonradır.
+        if (booked < notBeforeMs) continue;
         if (!best || booked > best.bookedMs) best = { id: e.id, bookedMs: booked };
       }
     }
