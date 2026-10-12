@@ -147,8 +147,6 @@ export function PanelView({
 }) {
   const active = data.range;
   const funnelLabel = PANEL_FUNNELS.find((f) => f.key === funnel)?.label ?? "Fitsistem";
-  // MACFit'te ayrı başvuru yok: salon formu hem opt-in hem lead → etiketler buna göre.
-  const isMacfit = funnel === "macfit";
   return (
     <div className="min-h-screen bg-[#f4f6f9] px-5 py-8 text-[#0d204d]">
       <div className="mx-auto max-w-6xl">
@@ -286,7 +284,7 @@ export function PanelView({
                 value={String(data.kpi.visits)}
                 cur={data.kpi.visits}
                 prev={data.prev?.visits}
-                sub={isMacfit ? "salon sayfasını gördü" : "VSL sayfasını gördü"}
+                sub="VSL sayfasını gördü"
               />
               <Kpi
                 label="Opt-in"
@@ -298,21 +296,21 @@ export function PanelView({
               <Kpi
                 label="Conv. page %"
                 value={pct(data.kpi.visitToApplicationRate)}
-                sub={isMacfit ? "ziyaret → salon formu" : "ziyaret → başvuru"}
+                sub="ziyaret → başvuru"
               />
               <Kpi
                 label="Lead"
                 value={String(data.kpi.applications)}
                 cur={data.kpi.applications}
                 prev={data.prev?.applications}
-                sub={isMacfit ? "salon formu" : "başvuru formu"}
+                sub="başvuru formu"
               />
               <Kpi
                 label="Randevu"
                 value={String(data.kpi.booked)}
                 cur={data.kpi.booked}
                 prev={data.prev?.booked}
-                sub={`${isMacfit ? "form" : "başvuru"} → randevu ${pct(data.kpi.bookedRate)}`}
+                sub={`başvuru → randevu ${pct(data.kpi.bookedRate)}`}
               />
               <Kpi
                 label="Ulaşılma oranı"
@@ -363,7 +361,7 @@ export function PanelView({
 
             <div className="mb-4 grid gap-4 lg:grid-cols-[1.25fr_1fr]">
               <FunnelCard title="Ana Huni" steps={data.funnel} />
-              <FunnelCard title={isMacfit ? "Salon Formu" : "Başvuru Formu"} steps={data.form} />
+              <FunnelCard title="Başvuru Formu" steps={data.form} />
               <FunnelCard title="Video Derinliği" steps={data.video} />
             </div>
 
@@ -378,7 +376,7 @@ export function PanelView({
                       <th className="pb-2">Kanal</th>
                       <th className="pb-2 text-right">Ziyaret</th>
                       <th className="pb-2 text-right">Opt-in</th>
-                      <th className="pb-2 text-right">{isMacfit ? "Lead" : "Başvuru"}</th>
+                      <th className="pb-2 text-right">Başvuru</th>
                       <th className="pb-2 text-right">Takvim</th>
                       <th className="pb-2 text-right">Randevu</th>
                       <th className="pb-2 text-right">Satış</th>

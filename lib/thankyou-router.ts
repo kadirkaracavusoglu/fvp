@@ -1,22 +1,17 @@
 // Ortak GHL takvimi için teşekkür sayfası yönlendiricisi (istemci tarafı).
 //
-// Neden: üç funnel (Fitsistem, Vaka-Hande, MACFit) şu an AYNI GHL takvimini
+// Neden: funnel'lar (Fitsistem, Vaka-Hande, Vaka-Analizi) AYNI GHL takvimini
 // kullanıyor ve takvimin randevu sonrası yönlendirmesi TEK adres:
-// /vsl/tesekkurler → /fitsistem/tesekkurler. Vaka-Hande'den ya da salon
-// sahiplerine yönelik MACFit'ten randevu alan kişi koçlara yazılmış Fitsistem
-// teşekkür sayfasına düşüyor ve Fitsistem panelinde sayılıyordu.
+// /vsl/tesekkurler → /fitsistem/tesekkurler. Vaka-Hande'den randevu alan kişi
+// Fitsistem teşekkür sayfasına düşüyor ve Fitsistem panelinde sayılıyordu.
 //
 // Çözüm: ziyaretçinin sitede EN SON gördüğü sayfa (captureAttribution her
 // sayfada `page_url`'i günceller; randevu sayfaları da çağırıyor) hangi
-// funnel'a aitse onun teşekkür sayfasına gönder. MACFit kendi takvimine
-// geçince bu köprü onun için gereksizleşir ama zararsızdır.
+// funnel'a aitse onun teşekkür sayfasına gönder.
 
 const ATTR_KEY = "fvp_attribution";
 
-// Sıra önemli: "/fitsistem-macfit-vaka" önce denetlenmeli.
 const ROUTES: { prefix: string; target: string }[] = [
-  { prefix: "/fitsistem-macfit-vaka", target: "/fitsistem-macfit-vaka/tesekkurler" },
-  { prefix: "/vaka-hande", target: "/vaka-hande/tesekkurler" },
   { prefix: "/vaka-analizi", target: "/vaka-analizi/tesekkurler" },
 ];
 

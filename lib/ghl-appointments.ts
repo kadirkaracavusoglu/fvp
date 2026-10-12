@@ -9,8 +9,8 @@ const GHL_BASE = "https://services.leadconnectorhq.com";
 const LOCATION_ID = process.env.GHL_LOCATION_ID || "ui4C7FNVHfgWeZk9DQpB";
 const LOCATION_KEY = process.env.GHL_LOCATION_KEY || "";
 // VSL strateji görüşmesi takvimi (funnel.ts calendarUrl ile aynı).
-// Fitsistem + Vaka-Hande bu takvimi ORTAK kullanıyor; MACFit kendi takvimini
-// geçirerek çağırır (getGhlBookings'in 3. parametresi).
+// Fitsistem + Vaka-Hande + Vaka-Analizi bu takvimi ORTAK kullanıyor
+// (getGhlBookings'in 3. parametresi ile başka takvim de verilebilir).
 const DEFAULT_CALENDAR_ID = "SSw6HZHR3j9veTWH8xTp";
 
 type ApptRaw = {

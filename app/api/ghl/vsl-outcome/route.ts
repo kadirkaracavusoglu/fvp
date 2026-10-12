@@ -135,9 +135,7 @@ export async function POST(req: Request) {
         ? "vaka-analizi"
         : path.startsWith("/vaka-hande")
         ? "vaka-hande"
-        : path.startsWith("/fitsistem-macfit-vaka")
-          ? "fitsistem-macfit-vaka"
-          : "fitsistem";
+        : "fitsistem";
       const satir = {
         event,
         ghl_opportunity_id: pickString(body, ["opportunityId", "opportunity_id"]) || null,

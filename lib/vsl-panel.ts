@@ -7,20 +7,15 @@ import {
   type GhlBooking,
 } from "@/lib/ghl-appointments";
 import { resolveFunnelPath } from "@/lib/funnel-attribution";
-import { MACFIT, MACFIT_QUESTIONS } from "@/lib/macfit-funnel";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "custom";
 
 // Funnel'lar — panelde ayrı ayrı görüntülenir (event path / lead landing path ile filtre).
-// MACFit salon SAHİPLERİNE yönelik: ayrı başvuru formu yok, opt-in formu eleme
-// sorularını da içeriyor → "lead" = MACFit formu (macfit_optin).
-export type FunnelKey = "fitsistem" | "vaka-hande" | "vaka-analizi" | "macfit";
+export type FunnelKey = "fitsistem" | "vaka-analizi";
 export const PANEL_FUNNELS: { key: FunnelKey; label: string; prefixes: string[] }[] = [
   { key: "fitsistem", label: "Fitsistem", prefixes: ["/fitsistem", "/vsl"] },
-  { key: "vaka-hande", label: "Vaka-Hande", prefixes: ["/vaka-hande"] },
   // A/B testi B varyantı (19 Eyl 2026): aynı video, yeni opt-in metni.
   { key: "vaka-analizi", label: "Hande Vaka Analizi", prefixes: ["/vaka-analizi"] },
-  { key: "macfit", label: "MACFit", prefixes: [MACFIT.path] },
 ];
 
 type EventRow = {
@@ -626,22 +621,17 @@ function ghlNameTiming(appts: GhlBooking[] | undefined, leads: LeadRow[]) {
   };
 }
 
-// Fitsistem ve Vaka-Hande AYNI GHL takvimini kullanıyor → takvimdeki randevular
+// Fitsistem ve Vaka-Analizi AYNI GHL takvimini kullanıyor → takvimdeki randevular
 // funnel'a ayrılmadan sayılırsa iki panel de ikisinin randevusunu görür.
 // Kişinin e-posta/telefonu GHL'den okunur, ilk inişi Supabase lead kaydından
-// çözülür (satış webhook'uyla aynı kural). MACFit'in kendi takvimi var, ayrılmaz.
+// çözülür (satış webhook'uyla aynı kural).
 async function bookingsForFunnel(
   appts: GhlBooking[] | undefined,
   funnelKey: FunnelKey,
 ): Promise<GhlBooking[]> {
   if (!appts?.length) return [];
-  if (funnelKey === "macfit") return appts;
   const wanted =
-    funnelKey === "vaka-hande"
-      ? "/vaka-hande"
-      : funnelKey === "vaka-analizi"
-        ? "/vaka-analizi"
-        : "/fitsistem";
+    funnelKey === "vaka-analizi" ? "/vaka-analizi" : "/fitsistem";
   const owned = await Promise.all(
     appts.map(async (a) => {
       const { email, phone } = await getGhlContactIdentity(a.contactId);
@@ -830,26 +820,7 @@ function uniqueLeadRows(rows: LeadRow[], formType: string): LeadRow[] {
   return out;
 }
 
-function answerBreakdown(rows: LeadRow[], macfit = false): AnswerBreakdown[] {
-  if (macfit) {
-    // MACFit salon formu soruları (lib/macfit-funnel.ts) — tek seçimli.
-    return MACFIT_QUESTIONS.map((q) => {
-      const counts = new Map<string, number>();
-      for (const row of rows) {
-        const v = row.cevaplar?.[q.key];
-        if (typeof v === "string" && v.trim()) counts.set(v, (counts.get(v) || 0) + 1);
-      }
-      return {
-        key: q.key,
-        label: q.label,
-        total: [...counts.values()].reduce((a, b) => a + b, 0),
-        answers: [...counts.entries()]
-          .map(([label, count]) => ({ label, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 6),
-      };
-    }).filter((row) => row.total > 0);
-  }
+function answerBreakdown(rows: LeadRow[]): AnswerBreakdown[] {
   const keys = ["asama", "gelir", "darbogazlar", "yatirim", "karar_hizi"];
   return keys
     .map((key) => {
@@ -881,7 +852,6 @@ function answerBreakdown(rows: LeadRow[], macfit = false): AnswerBreakdown[] {
 }
 
 function formLabel(type?: string | null): string {
-  if (type === MACFIT.formType) return "Salon formu";
   if (type === "vsl_basvuru") return "Başvuru";
   if (type === "vsl_randevu") return "Randevu";
   return "Opt-in";
@@ -983,33 +953,28 @@ export async function getVslPanelData(
     // Event: fired-path (/fitsistem* vs /vaka-hande*). Lead: attribution landing_path.
     // vaka-hande AÇIK path ister; fitsistem legacy/null'ı da kapsar (geçmiş veri korunur).
     const prefixes = PANEL_FUNNELS.find((f) => f.key === funnelKey)?.prefixes ?? ["/fitsistem", "/vsl"];
-    const isMacfit = funnelKey === "macfit";
     // Yolu olmayan eski kayıtlar yalnız Fitsistem'e sayılır; diğer funnel'lar AÇIK yol ister.
     const acceptsLegacy = funnelKey === "fitsistem";
     const inFunnel = (p?: string | null): boolean => {
-      // Tam sınır: "/fitsistem" öneki "/fitsistem-macfit-vaka"yı YAKALAMAMALI.
+      // Tam sınır: "/fitsistem" öneki "/fitsistem-…" ile başlayan başka yolları YAKALAMAMALI.
       if (p && prefixes.some((pre) => p === pre || p.startsWith(`${pre}/`))) return true;
       return acceptsLegacy && !p;
     };
-    // Lead türleri funnel'a göre: MACFit'te opt-in formu aynı zamanda lead (başvuru yok).
-    const OPTIN_TYPE = isMacfit ? MACFIT.formType : "vsl_optin";
-    const APPLICATION_TYPE = isMacfit ? MACFIT.formType : "vsl_basvuru";
+    const OPTIN_TYPE = "vsl_optin";
+    const APPLICATION_TYPE = "vsl_basvuru";
     const events = eventsRaw.filter((e) => inFunnel(e.path));
     const leads = leadsRaw.filter((l) => {
-      const isMacfitLead = l.form_type === MACFIT.formType || l.attribution?.funnel === "fitsistem_macfit_vaka";
-      if (isMacfit) return isMacfitLead;
-      if (isMacfitLead) return false;
+      // Kaldırılan MACFit funnel'ının eski lead'leri DB'de duruyor; panelde sayılmaz.
+      if (l.form_type === "macfit_optin" || l.attribution?.funnel === "fitsistem_macfit_vaka") return false;
       const a = (l.attribution || {}) as Record<string, unknown>;
       // funnel_override: elle düzeltilmiş kaynak (bkz. lib/funnel-attribution.ts).
       const override =
         typeof a.funnel_override === "string" && a.funnel_override
           ? a.funnel_override === "vaka-hande"
-            ? "/vaka-hande"
+            ? "/vaka-hande" // kaldırılan funnel: hiçbir panele düşmez, eski kayıt yanlışlıkla Fitsistem'e sayılmasın
             : a.funnel_override === "vaka-analizi"
             ? "/vaka-analizi"
-            : a.funnel_override === "macfit"
-              ? "/fitsistem-macfit-vaka"
-              : "/fitsistem"
+            : "/fitsistem"
           : null;
       const lp =
         override ||
@@ -1050,9 +1015,6 @@ export async function getVslPanelData(
       `vsl_basvuru_s${contactStep}`,
     ]);
     const formSubmitEvent = uniqueBy(events, "vsl_basvuru_submit");
-    // 14 Eyl'den itibaren form sırası: salon soruları → İLETİŞİM. 2. adım = iletişim ekranı.
-    // (Eski "form_macfit_step2" = salon sorularına geçti; anlamı farklı olduğu için sayılmaz.)
-    const macfitStep2 = uniqueBy(events, "form_macfit_contact");
     const calendarViews = uniqueBy(events, "vsl_calendar_view");
     const calendarLoaded = uniqueBy(events, "vsl_calendar_loaded");
     const calendarExternalClicks = uniqueBy(
@@ -1098,13 +1060,7 @@ export async function getVslPanelData(
     const leadToSale = conversionTiming(timingLeadRows, saleSignals);
     const applications = applicationRows.length;
     // Randevu: GHL takviminden (webhook'a bağımsız). TEK çağrı hem sayı hem süre için.
-    // MACFit kendi takvimi yoksa GHL'e sorulmaz: ortak takvim koç randevularını da içerir,
-    // saymak MACFit'e yanlış randevu yazar. O durumda sitedeki "randevu alındı" sinyali kullanılır.
-    const ghl = isMacfit
-      ? MACFIT.calendarId
-        ? await getGhlBookings(r.since, r.until, MACFIT.calendarId)
-        : null
-      : await getGhlBookings(r.since, r.until);
+    const ghl = await getGhlBookings(r.since, r.until);
     const funnelAppts = await bookingsForFunnel(ghl?.appts, funnelKey);
     const meetings = meetingStats(funnelAppts);
     const booked = Math.max(
@@ -1136,17 +1092,6 @@ export async function getVslPanelData(
           ) === index
         );
       }).length;
-
-    const macfitFunnel: FunnelStep[] = [
-      { key: "visit", label: "Salon sayfasını gördü", count: visits, pct: 100 },
-      { key: "popup", label: "Formu açtı", count: popupOpens, pct: pct(popupOpens, visits), pctPrev: pct(popupOpens, visits) },
-      { key: "optin", label: "Salon formunu gönderdi", count: optins, pct: pct(optins, visits), pctPrev: pct(optins, popupOpens) },
-      { key: "play", label: "Videoyu oynattı", count: plays, pct: pct(plays, visits), pctPrev: pct(plays, optins) },
-      { key: "cta", label: "Görüşme planla'ya tıkladı", count: cta, pct: pct(cta, visits), pctPrev: pct(cta, optins) },
-      { key: "calendar", label: "Takvimi gördü", count: calendarViews, pct: pct(calendarViews, visits), pctPrev: pct(calendarViews, cta) },
-      { key: "booked", label: "Randevu aldı", count: booked, pct: pct(booked, visits), pctPrev: pct(booked, calendarViews) },
-      { key: "thankyou", label: "Teşekkür sayfasını gördü", count: thankyouViews, pct: pct(thankyouViews, visits), pctPrev: pct(thankyouViews, booked) },
-    ];
 
     const vslFunnel: FunnelStep[] = [
       { key: "visit", label: "VSL sayfasını gördü", count: visits, pct: 100 },
@@ -1215,13 +1160,7 @@ export async function getVslPanelData(
       },
     ];
 
-    const funnel = isMacfit ? macfitFunnel : vslFunnel;
-
-    const macfitForm: FunnelStep[] = [
-      { key: "start", label: "Formu açtı", count: popupOpens, pct: 100 },
-      { key: "step2", label: "İletişim bilgilerine geçti", count: macfitStep2, pct: pct(macfitStep2, popupOpens), pctPrev: pct(macfitStep2, popupOpens) },
-      { key: "submit", label: "Formu gönderdi", count: optins, pct: pct(optins, popupOpens), pctPrev: pct(optins, macfitStep2) },
-    ];
+    const funnel = vslFunnel;
 
     const vslForm: FunnelStep[] = [
       { key: "start", label: "Forma girdi", count: formStart, pct: 100 },
@@ -1262,7 +1201,7 @@ export async function getVslPanelData(
       },
     ];
 
-    const form = isMacfit ? macfitForm : vslForm;
+    const form = vslForm;
 
     const video: FunnelStep[] = [
       {
@@ -1348,7 +1287,6 @@ export async function getVslPanelData(
       if (seenLead.has(id)) continue;
       seenLead.add(id);
       const key = channelKey(lead.attribution);
-      // MACFit'te tek form hem opt-in hem lead sayılır.
       if (type === OPTIN_TYPE) bump(channelMap, key, "optins");
       if (type === APPLICATION_TYPE) bump(channelMap, key, "applications");
       if (type === "vsl_randevu") bump(channelMap, key, "booked");
@@ -1387,8 +1325,8 @@ export async function getVslPanelData(
           channelKey(l.attribution),
         score: leadScore(l),
         segment: leadSegment(l),
-        goal: textAnswer(l, isMacfit ? "goal" : "hedef_12_ay"),
-        bottlenecks: textAnswer(l, isMacfit ? "problem" : "darbogazlar"),
+        goal: textAnswer(l, "hedef_12_ay"),
+        bottlenecks: textAnswer(l, "darbogazlar"),
         utmSource: l.attribution?.utm_source || "",
         utmCampaign: l.attribution?.utm_campaign || "",
         utmContent: l.attribution?.utm_content || "",
@@ -1511,7 +1449,7 @@ export async function getVslPanelData(
           b.optins - a.optins ||
           b.visits - a.visits,
       ),
-      questionBreakdown: answerBreakdown(applicationRows, isMacfit),
+      questionBreakdown: answerBreakdown(applicationRows),
       recentLeads,
       trackingHealth,
     };

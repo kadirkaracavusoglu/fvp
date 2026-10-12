@@ -44,6 +44,9 @@ const nextConfig: NextConfig = {
       { source: "/vsl/tesekkurler", destination: "/fitsistem/tesekkurler", permanent: false },
       { source: "/vsl/panel", destination: "/fitsistem/panel", permanent: false },
       { source: "/vsl", destination: "/fitsistem/izle", permanent: false },
+      // Vaka-Hande (A) kaldırıldı; GHL e-postalarındaki eski bağlantılar B varyantına düşer.
+      { source: "/vaka-hande", destination: "/vaka-analizi", permanent: false },
+      { source: "/vaka-hande/:path*", destination: "/vaka-analizi/:path*", permanent: false },
     ];
   },
 };
