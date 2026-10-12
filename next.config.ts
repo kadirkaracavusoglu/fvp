@@ -40,23 +40,24 @@ const nextConfig: NextConfig = {
     return [
       // Alan adı taşındı (12 Eki 2026): eski adres ve www → kadirkaracavusoglu.com.
       // Eski adresin DNS'i Vercel'e çevrilince devreye girer; o zamana kadar zararsız.
+      // Yalnız A/CNAME çevrilmeli: MX, mail ve bulten. kayıtlarına DOKUNULMAZ.
       {
         source: "/:path*",
         has: [{ type: "host", value: "fitnessvepazarlama.com" }],
         destination: "https://kadirkaracavusoglu.com/:path*",
-        permanent: true,
+        statusCode: 301, // Search Console "Adres değişikliği" açıkça 301 ister (permanent: true 308 verir)
       },
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.fitnessvepazarlama.com" }],
         destination: "https://kadirkaracavusoglu.com/:path*",
-        permanent: true,
+        statusCode: 301, // Search Console "Adres değişikliği" açıkça 301 ister (permanent: true 308 verir)
       },
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.kadirkaracavusoglu.com" }],
         destination: "https://kadirkaracavusoglu.com/:path*",
-        permanent: true,
+        statusCode: 301, // Search Console "Adres değişikliği" açıkça 301 ister (permanent: true 308 verir)
       },
       { source: "/vsl/optin", destination: "/fitsistem", permanent: false },
       { source: "/vsl/basvuru", destination: "/fitsistem/basvuru", permanent: false },
