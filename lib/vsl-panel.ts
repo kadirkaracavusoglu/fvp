@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase";
 import { BASVURU_SORULARI } from "@/lib/funnel";
 import { getMetaSpend } from "@/lib/meta-insights";
@@ -278,20 +279,28 @@ async function fetchAll<T extends object>(
   since: string,
   until: string,
 ): Promise<T[]> {
-  if (!supabaseAdmin) return [];
-  const all: T[] = [];
-  for (let from = 0; from < 200000; from += PAGE_SIZE) {
-    const { data, error } = await supabaseAdmin
+  const db = supabaseAdmin;
+  if (!db) return [];
+  const page = (from: number, withCount: boolean) =>
+    db
       .from(table)
-      .select(select)
+      .select(select, withCount ? { count: "exact" } : undefined)
       .gte("created_at", since)
       .lt("created_at", until)
       .order("created_at", { ascending: true })
       .range(from, from + PAGE_SIZE - 1);
-    if (error) throw new Error(`${table}: ${error.message}`);
-    if (!data?.length) break;
-    all.push(...(data as unknown as T[]));
-    if (data.length < PAGE_SIZE) break;
+  // İlk sayfa toplam satır sayısını da getirir; kalan sayfalar PARALEL iner.
+  const first = await page(0, true);
+  if (first.error) throw new Error(`${table}: ${first.error.message}`);
+  const all: T[] = [...((first.data ?? []) as unknown as T[])];
+  const total = first.count ?? all.length;
+  if (all.length < PAGE_SIZE || total <= PAGE_SIZE) return all;
+  const offsets: number[] = [];
+  for (let from = PAGE_SIZE; from < Math.min(total, 200000); from += PAGE_SIZE) offsets.push(from);
+  const rest = await Promise.all(offsets.map((from) => page(from, false)));
+  for (const res of rest) {
+    if (res.error) throw new Error(`${table}: ${res.error.message}`);
+    all.push(...((res.data ?? []) as unknown as T[]));
   }
   return all;
 }
@@ -934,6 +943,8 @@ export async function getVslPanelData(
   if (!supabaseAdmin) return { ...base, error: "Supabase env tanımlı değil." };
 
   try {
+    // Önceki dönem ana sorgularla AYNI ANDA başlar (eskiden sırayla bekliyordu).
+    const prevPromise = oncekiDonem(r.startDate, r.endDate, "vsl_optin", "vsl_basvuru");
     const [eventsRaw, leadsRaw] = await Promise.all([
       fetchAll<EventRow>(
         "events",
@@ -1035,7 +1046,7 @@ export async function getVslPanelData(
     const spend = manualSpend != null ? manualSpend : metaSpend?.ok ? metaSpend.spend : null;
 
     // Önceki eşit dönem (hafif sorgu) — KPI oklarını besler.
-    const prev = await oncekiDonem(r.startDate, r.endDate, OPTIN_TYPE, APPLICATION_TYPE);
+    const prev = await prevPromise;
 
     const optins = uniqueLeadCount(leads, OPTIN_TYPE);
     const applicationRows = uniqueLeadRows(leads, APPLICATION_TYPE);
@@ -1468,3 +1479,8 @@ export const PANEL_RANGES: { key: PanelRange; label: string }[] = [
   { key: "month", label: "Son 30 gün" },
   { key: "launch", label: "Lansmandan beri" },
 ];
+
+/** Panel verisi 60 sn önbellekte tutulur (aralık + funnel + özel tarih anahtarın parçası). */
+export const getVslPanelDataCached = unstable_cache(getVslPanelData, ["vsl-panel-v1"], {
+  revalidate: 60,
+});

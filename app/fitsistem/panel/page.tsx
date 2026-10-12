@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import {
-  getVslPanelData,
+  getVslPanelDataCached,
   PANEL_RANGES,
   PANEL_FUNNELS,
   type PanelRange,
@@ -94,7 +94,7 @@ export default async function VslPanelPage({
       ? sp.range
       : "week";
   const funnel = isFunnel(sp.funnel) ? sp.funnel : "fitsistem";
-  const data = await getVslPanelData(
+  const data = await getVslPanelDataCached(
     range,
     funnel,
     useCustom ? { from: sp.from, to: sp.to } : undefined,
