@@ -5,12 +5,14 @@
 import { useEffect } from "react";
 import { captureAttribution, track, trackServer } from "@/lib/tracking";
 import { OnGorusmeEgitimi } from "@/components/lp/OnGorusmeEgitimi";
+import { useScheduleConfirm } from "@/lib/useScheduleConfirm";
 
 // SOSYAL KANIT — gerçek içerik Kadir'den gelir (uydurma YASAK).
 // Doldurulunca aşağıdaki bölüm otomatik görünür; boşken hiç render olmaz.
 const KANITLAR: { ad: string; sonuc: string; alinti: string; detay?: string }[] = [];
 
 export default function VakaAnaliziTesekkurlerPage() {
+  useScheduleConfirm("vaka-analizi");
   useEffect(() => {
     captureAttribution();
     track("vsl_thankyou_view", { location: "vaka-analizi" });

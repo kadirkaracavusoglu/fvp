@@ -109,3 +109,58 @@ export async function getGhlContactIdentity(
     return empty;
   }
 }
+
+export type BookingConfirmation = { booked: boolean; appointmentId?: string; bookedMs?: number };
+
+/**
+ * Bu kişinin takvimde GERÇEK bir randevusu var mı? (Meta `Schedule` olayı için kanıt.)
+ * Sayfaya girmek yetmez: GHL kişisi e-posta, bulunamazsa telefonla bulunur; kişinin
+ * randevuları arasında bu takvimden, iptal/geçersiz OLMAYAN ve son `maxAgeMs` içinde
+ * alınmış biri aranır. Erişim yoksa/patlarsa { booked: false } — olay gönderilmez.
+ */
+export async function confirmBookingFor(
+  who: { email?: string; phone?: string },
+  maxAgeMs = 6 * 3600 * 1000,
+  calendarId: string = DEFAULT_CALENDAR_ID,
+): Promise<BookingConfirmation> {
+  const no = { booked: false };
+  if (!LOCATION_KEY) return no;
+  const headers = { Authorization: `Bearer ${LOCATION_KEY}`, Version: "2021-07-28" };
+  const find = async (qs: string): Promise<string> => {
+    const res = await fetch(`${GHL_BASE}/contacts/search/duplicate?locationId=${LOCATION_ID}&${qs}`, {
+      headers,
+      cache: "no-store",
+    });
+    if (!res.ok) return "";
+    const d = (await res.json()) as { contact?: { id?: string } };
+    return d.contact?.id || "";
+  };
+  try {
+    const ids = new Set<string>();
+    if (who.email) {
+      const id = await find(`email=${encodeURIComponent(who.email)}`);
+      if (id) ids.add(id);
+    }
+    if (who.phone) {
+      const id = await find(`number=${encodeURIComponent(who.phone)}`);
+      if (id) ids.add(id);
+    }
+    let best: { id: string; bookedMs: number } | null = null;
+    for (const cid of ids) {
+      const res = await fetch(`${GHL_BASE}/contacts/${cid}/appointments`, { headers, cache: "no-store" });
+      if (!res.ok) continue;
+      const data = (await res.json()) as { events?: (ApptRaw & { id?: string; calendarId?: string; deleted?: boolean })[] };
+      for (const e of data.events || []) {
+        if (e.calendarId !== calendarId || e.deleted || !e.id) continue;
+        const status = (e.appointmentStatus || "").toLowerCase();
+        if (status === "cancelled" || status === "invalid") continue;
+        const booked = e.dateAdded ? new Date(e.dateAdded).getTime() : NaN;
+        if (!Number.isFinite(booked) || Date.now() - booked > maxAgeMs) continue;
+        if (!best || booked > best.bookedMs) best = { id: e.id, bookedMs: booked };
+      }
+    }
+    return best ? { booked: true, appointmentId: best.id, bookedMs: best.bookedMs } : no;
+  } catch {
+    return no;
+  }
+}
