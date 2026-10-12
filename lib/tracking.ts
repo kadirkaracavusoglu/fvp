@@ -5,7 +5,7 @@ type Params = Record<string, unknown>;
 
 // Dönüşüm event'i → Meta Pixel standart event eşlemesi
 const FB_MAP: Record<string, string> = {
-  newsletter_signup: "Lead",
+  newsletter_signup: "Subscribe", // 12 Eki 2026: "Lead" yalnız başvuru formu; bülten kaydı Lead sayılmaz
   quiz_start: "InitiateCheckout",
   quiz_complete: "CompleteRegistration",
   contact_submit: "Contact",
