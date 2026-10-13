@@ -8,6 +8,7 @@ import {
   type GhlBooking,
 } from "@/lib/ghl-appointments";
 import { resolveFunnelPath, resolveBookingTouch } from "@/lib/funnel-attribution";
+import { dropReviewTraffic } from "@/lib/traffic-quality";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "custom";
 
@@ -263,7 +264,7 @@ async function oncekiDonem(
     ]);
     const satislar = uniqueEvents(ev, ["vsl_sale", "vsl_closed_won"]);
     return {
-      visits: uniqueBy(ev, "vsl_optin_view"),
+      visits: uniqueBy(dropReviewTraffic(ev).rows, "vsl_optin_view"),
       optins: uniqueLeadCount(ld, optinType),
       applications: uniqueLeadCount(ld, applicationType),
       booked: uniqueBy(ev, "vsl_calendar_booked"),
@@ -999,33 +1000,9 @@ export async function getVslPanelData(
     };
     const OPTIN_TYPE = "vsl_optin";
     const APPLICATION_TYPE = "vsl_basvuru";
-    // Meta inceleme/önizleme ziyaretleri (13 Eki 2026): reklam URL'si ÇİFT kodlanmış
-    // (page_url'de %2B / %25), oturumda yalnız sayfa görüntüleme var. Ziyareti şişirir,
-    // dönüşüm oranını düşürür → panelden çıkarılır. Oturumda başka olay varsa (gerçek
-    // kullanıcı olabilir) KALIR.
-    const doubleEncoded = (e: EventRow): boolean => {
-      const u = (e.attribution as Record<string, unknown> | null)?.page_url;
-      return typeof u === "string" && (u.includes("%2B") || u.includes("%25"));
-    };
-    const sessionHasAction = new Set<string>();
-    for (const e of eventsRaw) {
-      if (e.session_id && e.name !== "vsl_optin_view") sessionHasAction.add(e.session_id);
-    }
-    const botSessions = new Set<string>();
-    let botAnonymous = 0;
-    const events = eventsRaw.filter((e) => {
-      if (!inFunnel(e.path)) return false;
-      const isBot =
-        e.name === "vsl_optin_view" &&
-        doubleEncoded(e) &&
-        !(e.session_id && sessionHasAction.has(e.session_id));
-      if (isBot) {
-        if (e.session_id) botSessions.add(e.session_id);
-        else botAnonymous++;
-      }
-      return !isBot;
-    });
-    const filteredBotVisits = botSessions.size + botAnonymous;
+    // Meta inceleme/önizleme ziyaretleri sayımdan çıkarılır (kural: lib/traffic-quality.ts).
+    const funnelEvents = eventsRaw.filter((e) => inFunnel(e.path));
+    const { rows: events, removed: filteredBotVisits } = dropReviewTraffic(funnelEvents);
     const leads = leadsRaw.filter((l) => {
       // Kaldırılan MACFit funnel'ının eski lead'leri DB'de duruyor; panelde sayılmaz.
       if (l.form_type === "macfit_optin" || l.attribution?.funnel === "fitsistem_macfit_vaka") return false;
