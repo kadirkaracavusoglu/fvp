@@ -42,7 +42,8 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
 // ---- funnel eşlemesi ----
 // Hangi kampanya hangi funnel'a ait? Kampanya adı yeterli ayırt edici değilse
 // CSV'de funnel kolonunu elle doldur.
-const FUNNELS = ["fitsistem", "vaka-hande", "vaka-analizi", "macfit"];
+// "macfit" (12 Eki 2026'da kaldırıldı) yeni içe aktarmada KABUL EDİLMEZ; eski satırlar tabloda durur.
+const FUNNELS = ["fitsistem", "vaka-hande", "vaka-analizi"];
 
 /** Kreatif adından numarayı at: "ertelemek - 3" → "ertelemek".
  *  Meta'daki numaralar ile UTM'e düşen numaralar tutmuyor (url_tags reklam
@@ -150,13 +151,15 @@ async function fromMeta(since, until) {
   if (!res.ok || json.error) {
     throw new Error(`Meta API: ${json.error?.message || res.status}`);
   }
-  return (json.data || []).map((r) => {
+  return (json.data || []).flatMap((r) => {
     const leadAction = (r.actions || []).find((a) => /lead/i.test(a.action_type));
     const lpv = (r.actions || []).find((a) => /landing_page_view/i.test(a.action_type));
     // Funnel'ı kampanya adından çıkar; bulunamazsa boş bırakılır (elle düzelt).
     const camp = r.campaign_name || "";
-    const funnel = /macfit|salon/i.test(camp) ? "macfit" : /hande|vaka/i.test(camp) ? "vaka-hande" : "fitsistem";
-    return toRow({
+    // Kaldırılan Macfit/salon kampanyaları içe aktarılmaz (yanlışlıkla Fitsistem'e yazılmasın).
+    if (/macfit|salon/i.test(camp)) return [];
+    const funnel = /hande|vaka/i.test(camp) ? "vaka-analizi" : "fitsistem";
+    return [toRow({
       date: r.date_start,
       funnel,
       campaign: camp,
@@ -170,7 +173,7 @@ async function fromMeta(since, until) {
       cpm: r.cpm,
       meta_leads: leadAction?.value,
       landing_views: lpv?.value,
-    }, "meta_api");
+    }, "meta_api")];
   });
 }
 

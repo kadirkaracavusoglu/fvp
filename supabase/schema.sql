@@ -84,7 +84,7 @@ create table if not exists ad_daily (
   -- PK dışarıya hiç verilmiyor; sıralı id index yerelliği için uuid'den iyi.
   id bigint generated always as identity primary key,
   date date not null,
-  funnel text not null,                        -- fitsistem | vaka-hande | vaka-analizi | macfit
+  funnel text not null,                        -- fitsistem | vaka-analizi (vaka-hande, macfit: kaldırıldı, yalnız eski satırlar)
   campaign text not null default '',
   adset text not null default '',              -- Meta adset adı (ör. "Broad 3")
   creative text not null default '',           -- Meta reklam adı (ör. "ertelemek - 3")
