@@ -14,9 +14,7 @@ const FB_MAP: Record<string, string> = {
   // Panel de aynı tanımı kullanıyor (Opt-in kartı ≠ Lead kartı).
   vsl_optin_submit: "OptIn",
   vsl_basvuru_submit: "Lead",
-  // Randevu GERÇEKTEN alındı (sunucu GHL takviminden doğruladı) — bkz. lib/useScheduleConfirm.ts.
-  // `vsl_thankyou_view`/`vsl_calendar_booked` bilerek eşlenmedi: sayfaya girmek kanıt değil.
-  vsl_randevu_onay: "Schedule",
+  // Randevu olayı (Schedule) siteden GÖNDERİLMEZ: GHL workflow kurulacak (13 Eki 2026, Kadir kararı).
 };
 
 // Standart olmayan Meta olayları fbq("trackCustom") ile gider.

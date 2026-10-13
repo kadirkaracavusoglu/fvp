@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { captureAttribution, track, trackServer } from "@/lib/tracking";
 import { isInFrame, thankYouTargetFor } from "@/lib/thankyou-router";
-import { useScheduleConfirm } from "@/lib/useScheduleConfirm";
 
 const VIDEO_URL = "https://www.youtube.com/watch?v=L_2y4a_k5hY&t=24s";
 const EMBED_URL = "https://www.youtube.com/embed/L_2y4a_k5hY?start=24&rel=0";
@@ -16,8 +15,6 @@ const KANITLAR: { ad: string; sonuc: string; alinti: string; detay?: string }[] 
 export default function VslTesekkurlerPage() {
   // Yönlendirme kararı verilene kadar içerik gösterilmez (yanlış sayfa bir an görünmesin).
   const [ready, setReady] = useState(false);
-  // Yalnız bu sayfada KALINIRSA doğrula; başka funnel'a yönlendirilen kişi orada doğrulanır.
-  useScheduleConfirm("vsl", ready);
 
   useEffect(() => {
     // Ortak GHL takvimi herkesi buraya atıyor → kişi başka funnel'dan geldiyse oraya gönder.
