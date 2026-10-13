@@ -945,6 +945,20 @@ export async function getVslPanelData(
   try {
     // Önceki dönem ana sorgularla AYNI ANDA başlar (eskiden sırayla bekliyordu).
     const prevPromise = oncekiDonem(r.startDate, r.endDate, "vsl_optin", "vsl_basvuru");
+    // Harcama ve GHL randevuları da eş zamanlı başlar (eskiden olaylardan SONRA, sırayla).
+    // Hata olursa aşağıdaki await aynen fırlatır; .catch yalnızca "işlenmemiş reddetme"yi önler.
+    const spendPromise = (async () => {
+      const manualSpend = await getManualSpend(r.startDate, r.endDate, funnelKey);
+      const metaSpend = manualSpend == null ? await getMetaSpend(r.startDate, r.endDate) : null;
+      return { manualSpend, metaSpend };
+    })();
+    const apptsPromise = (async () => {
+      const ghl = await getGhlBookings(r.since, r.until);
+      const funnelAppts = await bookingsForFunnel(ghl?.appts, funnelKey);
+      return { ghl, funnelAppts };
+    })();
+    spendPromise.catch(() => {});
+    apptsPromise.catch(() => {});
     const [eventsRaw, leadsRaw] = await Promise.all([
       fetchAll<EventRow>(
         "events",
@@ -1041,8 +1055,7 @@ export async function getVslPanelData(
     const sales = saleRows.length;
     const revenue = saleRows.reduce((sum, row) => sum + eventRevenue(row), 0);
     // Harcama: önce manuel (Supabase ad_spend, funnel bazlı), yoksa Meta'ya düş.
-    const manualSpend = await getManualSpend(r.startDate, r.endDate, funnelKey);
-    const metaSpend = manualSpend == null ? await getMetaSpend(r.startDate, r.endDate) : null;
+    const { manualSpend, metaSpend } = await spendPromise;
     const spend = manualSpend != null ? manualSpend : metaSpend?.ok ? metaSpend.spend : null;
 
     // Önceki eşit dönem (hafif sorgu) — KPI oklarını besler.
@@ -1071,8 +1084,7 @@ export async function getVslPanelData(
     const leadToSale = conversionTiming(timingLeadRows, saleSignals);
     const applications = applicationRows.length;
     // Randevu: GHL takviminden (webhook'a bağımsız). TEK çağrı hem sayı hem süre için.
-    const ghl = await getGhlBookings(r.since, r.until);
-    const funnelAppts = await bookingsForFunnel(ghl?.appts, funnelKey);
+    const { ghl, funnelAppts } = await apptsPromise;
     const meetings = meetingStats(funnelAppts);
     const booked = Math.max(
       uniqueLeadCount(leads, "vsl_randevu"),
