@@ -242,6 +242,13 @@ export function PanelView({
               Önce para (harcama · ciro · verim), sonra huni ve dönüşüm
               sırasıyla okunur.
             </p>
+            {data.filteredBotVisits > 0 && (
+              <p className="mb-3 text-xs text-amber-600">
+                {data.filteredBotVisits} Meta inceleme/önizleme ziyareti
+                sayımdan çıkarıldı (çift kodlu reklam adresi, yalnız sayfa
+                görüntüleme).
+              </p>
+            )}
             {/* Para & verim — en üstte */}
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Kpi label="Harcama" value={money(data.kpi.spend)} sub="günlük (Supabase)" />

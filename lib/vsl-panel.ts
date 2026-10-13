@@ -159,6 +159,8 @@ export type VslPanelData = {
   questionBreakdown: AnswerBreakdown[];
   recentLeads: RecentLead[];
   trackingHealth: { label: string; value: string; state: "ok" | "warn" }[];
+  /** Meta inceleme/önizleme ziyareti olarak sayımdan çıkarılan oturum sayısı. */
+  filteredBotVisits: number;
 };
 
 const LAUNCH_DATE = "2026-08-14";
@@ -947,6 +949,7 @@ export async function getVslPanelData(
     questionBreakdown: [],
     recentLeads: [],
     trackingHealth: [],
+    filteredBotVisits: 0,
   };
 
   if (!supabaseAdmin) return { ...base, error: "Supabase env tanımlı değil." };
@@ -1008,15 +1011,21 @@ export async function getVslPanelData(
     for (const e of eventsRaw) {
       if (e.session_id && e.name !== "vsl_optin_view") sessionHasAction.add(e.session_id);
     }
-    const events = eventsRaw.filter(
-      (e) =>
-        inFunnel(e.path) &&
-        !(
-          e.name === "vsl_optin_view" &&
-          doubleEncoded(e) &&
-          !(e.session_id && sessionHasAction.has(e.session_id))
-        ),
-    );
+    const botSessions = new Set<string>();
+    let botAnonymous = 0;
+    const events = eventsRaw.filter((e) => {
+      if (!inFunnel(e.path)) return false;
+      const isBot =
+        e.name === "vsl_optin_view" &&
+        doubleEncoded(e) &&
+        !(e.session_id && sessionHasAction.has(e.session_id));
+      if (isBot) {
+        if (e.session_id) botSessions.add(e.session_id);
+        else botAnonymous++;
+      }
+      return !isBot;
+    });
+    const filteredBotVisits = botSessions.size + botAnonymous;
     const leads = leadsRaw.filter((l) => {
       // Kaldırılan MACFit funnel'ının eski lead'leri DB'de duruyor; panelde sayılmaz.
       if (l.form_type === "macfit_optin" || l.attribution?.funnel === "fitsistem_macfit_vaka") return false;
@@ -1511,6 +1520,7 @@ export async function getVslPanelData(
       questionBreakdown: answerBreakdown(applicationRows),
       recentLeads,
       trackingHealth,
+      filteredBotVisits,
     };
   } catch (e) {
     return {
