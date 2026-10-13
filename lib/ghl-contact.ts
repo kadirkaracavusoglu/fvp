@@ -46,6 +46,13 @@ const CF = {
   fbclid: "Gfe910Gcfwv5TRx0ctW6",
   fbc: "fkHWghZeXsNFdmDIkhUY",
   fbp: "4hlnHoPbtYHWRt87O8Ze",
+  // İLK dokunuş (ilk kampanyalı ziyaret; sonrakiler ezemez) — GHL kişi geçmişinde kaynak için.
+  first_utm_source: "DPO7S5lq7kVqxRtI2tNA",
+  first_utm_medium: "UqSvPpC0OWY77baxAyd6",
+  first_utm_campaign: "gq3ndbtPWCt7sDW1QLjQ",
+  first_utm_content: "svXbmvPTetFYRet5oT0r",
+  first_utm_term: "iIYtQavSIiFSzxFFDQTE",
+  first_fbclid: "vWTR2lXxPOFNbn1zoRXR",
 } as const;
 
 type CustomField = { id: string; value: string | number };
@@ -163,6 +170,12 @@ export async function upsertGhlContact(input: GhlUpsertInput): Promise<GhlStepRe
   push(CF.fbclid, attr.fbclid);
   push(CF.fbc, attr.fbc);
   push(CF.fbp, attr.fbp);
+  push(CF.first_utm_source, attr.first_utm_source);
+  push(CF.first_utm_medium, attr.first_utm_medium);
+  push(CF.first_utm_campaign, attr.first_utm_campaign);
+  push(CF.first_utm_content, attr.first_utm_content);
+  push(CF.first_utm_term, attr.first_utm_term);
+  push(CF.first_fbclid, attr.first_fbclid);
 
   const body = {
     locationId: LOCATION_ID,
