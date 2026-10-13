@@ -25,14 +25,14 @@ export default function VakaAnaliziTesekkurlerPage() {
         {/* 1. ONAY */}
         <div className="text-center">
           <span className="chip inline-block px-4 py-1 text-xs" data-active="true">
-            Randevun oluşturuldu
+            Randevunuz oluşturuldu
           </span>
           <h1 className="mx-auto mt-5 max-w-2xl text-balance text-3xl font-bold leading-tight text-[#0d204d] sm:text-5xl">
-            Randevun hazır. Görüşmeden önce üç şey yeterli.
+            Randevunuz hazır. Görüşmeden önce üç şey yeterli.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-400 sm:text-lg">
-            Görüşmede zamanı genel konulara ayırmak yerine doğrudan sizin işinize
-            odaklanmak istiyorum. Aşağıdaki üç adım bunun için yeterli.
+            Görüşmede genel konulara zaman harcamak yerine doğrudan sizin işinize
+            bakmak istiyorum. Bunun için aşağıdaki üç adım yeterli.
           </p>
         </div>
 
@@ -45,12 +45,12 @@ export default function VakaAnaliziTesekkurlerPage() {
               </span>
               <span>
                 <strong className="text-[#0d204d]">
-                  E-posta kutunu kontrol et.
+                  E-posta kutunuzu kontrol edin.
                 </strong>{" "}
-                Görüşmenin saati ve bağlantısı e-posta adresine gönderildi.
-                Birkaç dakika içinde gelmediyse spam ve promosyonlar
-                klasörlerinize bakın. Maili bulduğunuzda görüşmeyi takviminize ekleyin;
-                o saatte aklınızda olsun.
+                Görüşmenin saati ve bağlantısı e-posta adresinize gönderildi.
+                Birkaç dakikada gelmezse spam ve promosyonlar klasörüne bakın.
+                Maili bulunca görüşmeyi takviminize ekleyin; saat geldiğinde
+                aklınızda olsun.
               </span>
             </li>
             <li className="flex gap-4">
@@ -59,11 +59,11 @@ export default function VakaAnaliziTesekkurlerPage() {
               </span>
               <span>
                 <strong className="text-[#0d204d]">
-                  Önümüzdeki 90 günde neyi değiştirmek istediğinizi düşün.
+                  Önümüzdeki 90 günde neyi değiştirmek istediğinizi düşünün.
                 </strong>{" "}
-                Daha fazla danışan almak, daha fazla kişiye ulaşmak, gelirini
-                artırmak veya işinizi daha düzenli hale getirmek olabilir. Sizin
-                için en önemli olan şeyi netleştir.
+                Daha fazla danışan almak, daha fazla kişiye ulaşmak, gelirinizi
+                artırmak ya da işinizi düzene sokmak olabilir. Sizin için en
+                önemli olanı netleştirin.
               </span>
             </li>
             <li className="flex gap-4">
@@ -72,11 +72,11 @@ export default function VakaAnaliziTesekkurlerPage() {
               </span>
               <span>
                 <strong className="text-[#0d204d]">
-                  Bildiğin rakamları yanında bulundur.
+                  Bildiğiniz rakamları yanınızda bulundurun.
                 </strong>{" "}
-                Son birkaç ayda yaklaşık ne kadar ciro yaptığını, kaç kişinin
-                size ulaştığını, kaç görüşme yaptığını ve kaç satış yaptığını
-                biliyorsanız not alın. Hepsini bilmek zorunda değilsiniz.
+                Son aylarda aşağı yukarı ne kadar ciro yaptığınızı, kaç kişinin
+                size ulaştığını, kaç görüşme ve kaç satış yaptığınızı not alın.
+                Hepsini bilmeniz şart değil.
               </span>
             </li>
           </ul>
@@ -87,14 +87,22 @@ export default function VakaAnaliziTesekkurlerPage() {
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-500">
             Az önce Hande Hoca&apos;nın vaka analizini izlediniz. Onun da başında aynı
             sorular vardı: &quot;Nereden başlamalıyım, zamanım olur mu, teknik
-            kısımları kaldırabilir miyim?&quot; Görüşmede sizin işinize bakacağız;
-            Fitsistem&apos;in hangi parçasından başlaman gerektiğini ve mükemmeli
-            beklemeden nasıl ilerleyebileceğini birlikte netleştireceğiz.
+            kısımları kaldırabilir miyim?&quot; Görüşmede sizin işinize bakacağız.
+            Fitsistem&apos;in hangi parçasından başlamanız gerektiğini ve
+            mükemmelini beklemeden nasıl ilerleyeceğinizi birlikte
+            netleştireceğiz.
           </p>
         </div>
 
         {/* 4. GÖRÜŞME ÖNCESİ EĞİTİM — sayfa boş kalmasın, görüşmeye hazırlıklı gelsin */}
-        <OnGorusmeEgitimi location="vaka-analizi" />
+        <OnGorusmeEgitimi
+          location="vaka-analizi"
+          videoId="Nqq7-YbvEhE"
+          heading="Görüşmeye kadar izleyebileceğiniz kısa bir video"
+          description="Salonu arkada bırakıp online koçluk işimizi nasıl kurduğumuzu, bir danışanımla antrenman yaparken anlattığım yaklaşık 32 dakikalık video. Görüşmeden önce izlerseniz temel konulara zaman ayırmadan doğrudan sizin işinize odaklanabiliriz. Hepsini izlemeniz şart değil."
+          iframeTitle="Online fitness koçluk işini nasıl kurduk"
+          buttonLabel="Videoyu YouTube'da İzle →"
+        />
 
         {/* 5. SOSYAL KANIT — yalnızca gerçek içerik girilince görünür */}
         {KANITLAR.length > 0 && (
