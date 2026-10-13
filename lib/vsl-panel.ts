@@ -7,7 +7,7 @@ import {
   getGhlContactIdentity,
   type GhlBooking,
 } from "@/lib/ghl-appointments";
-import { resolveFunnelPath } from "@/lib/funnel-attribution";
+import { resolveFunnelPath, resolveBookingTouch } from "@/lib/funnel-attribution";
 
 export type PanelRange = "today" | "yesterday" | "week" | "month" | "launch" | "custom";
 
@@ -634,21 +634,30 @@ function ghlNameTiming(appts: GhlBooking[] | undefined, leads: LeadRow[]) {
 // funnel'a ayrılmadan sayılırsa iki panel de ikisinin randevusunu görür.
 // Kişinin e-posta/telefonu GHL'den okunur, ilk inişi Supabase lead kaydından
 // çözülür (satış webhook'uyla aynı kural).
+type FunnelBooking = GhlBooking & { attribution: Record<string, string> | null };
+
+// Randevu, kişinin EN SON lead kaydındaki funnel'a yazılır (son dokunuş); kayıt yoksa Fitsistem.
 async function bookingsForFunnel(
   appts: GhlBooking[] | undefined,
   funnelKey: FunnelKey,
-): Promise<GhlBooking[]> {
+): Promise<FunnelBooking[]> {
   if (!appts?.length) return [];
   const wanted =
     funnelKey === "vaka-analizi" ? "/vaka-analizi" : "/fitsistem";
-  const owned = await Promise.all(
+  const resolved = await Promise.all(
     appts.map(async (a) => {
       const { email, phone } = await getGhlContactIdentity(a.contactId);
-      const path = await resolveFunnelPath(email, phone, "");
-      return path === wanted;
+      const touch = await resolveBookingTouch(email, phone);
+      const p = touch.path;
+      const path =
+        !p ? "/fitsistem"
+        : p === "/vaka-analizi" || p.startsWith("/vaka-analizi/") ? "/vaka-analizi"
+        : p === "/fitsistem" || p.startsWith("/fitsistem/") || p.startsWith("/vsl") ? "/fitsistem"
+        : p; // kaldırılan funnel'lar hiçbir panele düşmez
+      return { appt: { ...a, attribution: touch.attribution }, path };
     }),
   );
-  return appts.filter((_, i) => owned[i]);
+  return resolved.filter((r) => r.path === wanted).map((r) => r.appt);
 }
 
 // Görüşme katılımı GHL randevu durumundan okunur (görüşmeyi yapan işaretler).
@@ -1313,6 +1322,13 @@ export async function getVslPanelData(
       if (type === OPTIN_TYPE) bump(channelMap, key, "optins");
       if (type === APPLICATION_TYPE) bump(channelMap, key, "applications");
       if (type === "vsl_randevu") bump(channelMap, key, "booked");
+    }
+
+    // Randevu kanal kırılımı GHL takviminden (eski `vsl_randevu` olayı siteden kalktı).
+    // GHL randevusu varsa kanal sayısı yalnız ondan; yoksa yukarıdaki eski sinyal kalır.
+    if (funnelAppts.length > 0) {
+      for (const row of channelMap.values()) row.booked = 0;
+      for (const a of funnelAppts) bump(channelMap, channelKey(a.attribution), "booked");
     }
 
     // 💰 Satış + ciro kanal bazında (16 Eyl 2026 — Mert panelinden taşındı).

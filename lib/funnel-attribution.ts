@@ -88,6 +88,51 @@ export async function resolveFunnelPath(
   }
 }
 
+/**
+ * Randevunun hangi funnel'dan alındığını çözer: kişinin EN SON lead kaydı esas alınır
+ * (randevu en son dokunuştan sonra alınır; eski bir funnel'daki ilk kayıt randevuyu
+ * yanlış funnel'a yazıyordu). Elle `funnel_override` yine her şeyi ezer.
+ * Kayıt yoksa path=null → çağıran varsayılana düşer.
+ */
+export async function resolveBookingTouch(
+  email: string,
+  phone: string,
+): Promise<{ path: string | null; attribution: Record<string, string> | null }> {
+  const none = { path: null, attribution: null };
+  if (!supabaseAdmin) return none;
+  const cleanEmail = (email || "").toLowerCase().trim();
+  const digits = (phone || "").replace(/\D/g, "");
+  const tail = digits.length >= 9 ? digits.slice(-9) : "";
+  if (!cleanEmail && !tail) return none;
+  try {
+    const filters: string[] = [];
+    if (cleanEmail) filters.push(`email.eq.${cleanEmail}`);
+    if (tail) filters.push(`phone.like.*${tail}`);
+    const { data, error } = await supabaseAdmin
+      .from("leads")
+      .select("attribution,created_at")
+      .or(filters.join(","))
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error || !data?.length) return none;
+    const rows = data as LeadAttrRow[];
+    const overridden = rows.find(
+      (r) => typeof (r.attribution || {}).funnel_override === "string",
+    );
+    for (const row of overridden ? [overridden] : rows) {
+      const a = (row.attribution || {}) as Record<string, unknown>;
+      const ov = typeof a.funnel_override === "string" && a.funnel_override;
+      const last = typeof a.landing_path === "string" && a.landing_path ? a.landing_path : null;
+      const path = ov ? landingPath(row) : last || landingPath(row);
+      if (!path) continue;
+      return { path, attribution: row.attribution as Record<string, string> | null };
+    }
+    return none;
+  } catch {
+    return none;
+  }
+}
+
 /** Kişinin İLK lead kaydındaki attribution'ı döndürür (first-touch kaynak).
  *  🔴 16 Eyl 2026: GHL sonuç webhook'u satış event'ini `attribution: null` ile
  *  yazıyordu → panelin kanal kırılımında her satış "organik" görünüyordu.
