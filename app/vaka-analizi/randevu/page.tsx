@@ -12,6 +12,7 @@ import {
   trackServer,
 } from "@/lib/tracking";
 import { useBookingRedirect } from "@/lib/useBookingRedirect";
+import { useScheduleConfirm } from "@/lib/useScheduleConfirm";
 
 const CALENDAR_UTM_FIELDS = [
   "utm_source",
@@ -29,6 +30,8 @@ export default function VakaHandeRandevuPage() {
 
   // Randevu alınınca funnel'ın KENDİ teşekkür sayfasına yönlendir (ortak takvim düzeltmesi).
   useBookingRedirect("vaka-analizi", "/vaka-analizi/tesekkurler");
+  // Randevu GHL'de alındı mı? Teşekkür sayfasına ulaşılmasa da doğrulanır (Schedule, bir kez).
+  useScheduleConfirm("vaka-analizi", true, { watchMs: 20 * 60 * 1000 });
 
   useEffect(() => {
     captureAttribution();

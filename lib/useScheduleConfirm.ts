@@ -9,7 +9,18 @@ import { track, trackServer } from "@/lib/tracking";
 // Aynı randevu için tek sefer (localStorage, randevu kimliğiyle).
 const WAITS_MS = [0, 3000, 6000, 10000, 15000];
 
-export function useScheduleConfirm(location: string, enabled = true) {
+// Takvim sayfasında (/randevu) "izleme" modu: kişi randevuyu alınca GHL'nin yönlendirmesi
+// teşekkür sayfasına ULAŞMAYABİLİR (Instagram içi tarayıcı, iframe, bağlantı kopması).
+// Bu yüzden takvim açıkken belirli aralıkla doğrulanır; bulunca Schedule gider.
+// Aynı localStorage anahtarı → teşekkür sayfasında tekrar gönderilmez.
+const WATCH_EVERY_MS = 6000;
+
+export function useScheduleConfirm(
+  location: string,
+  enabled = true,
+  opts: { watchMs?: number } = {},
+) {
+  const watchMs = opts.watchMs ?? 0;
   useEffect(() => {
     if (!enabled) return;
     let stopped = false;
@@ -33,12 +44,26 @@ export function useScheduleConfirm(location: string, enabled = true) {
       }
     }
 
-    WAITS_MS.forEach((ms) => {
-      timers.push(window.setTimeout(() => void (!stopped && attempt()), ms));
-    });
+    if (watchMs > 0) {
+      // İzleme: sekme görünürken her 6 sn'de; randevu bulunca (stopped) durur.
+      const started = Date.now();
+      const id = window.setInterval(() => {
+        if (stopped || Date.now() - started > watchMs) {
+          clearInterval(id);
+          return;
+        }
+        if (typeof document !== "undefined" && document.hidden) return;
+        void attempt();
+      }, WATCH_EVERY_MS);
+      timers.push(id);
+    } else {
+      WAITS_MS.forEach((ms) => {
+        timers.push(window.setTimeout(() => void (!stopped && attempt()), ms));
+      });
+    }
     return () => {
       stopped = true;
       timers.forEach((t) => clearTimeout(t));
     };
-  }, [location, enabled]);
+  }, [location, enabled, watchMs]);
 }
