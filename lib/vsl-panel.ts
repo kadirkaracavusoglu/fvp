@@ -996,7 +996,27 @@ export async function getVslPanelData(
     };
     const OPTIN_TYPE = "vsl_optin";
     const APPLICATION_TYPE = "vsl_basvuru";
-    const events = eventsRaw.filter((e) => inFunnel(e.path));
+    // Meta inceleme/önizleme ziyaretleri (13 Eki 2026): reklam URL'si ÇİFT kodlanmış
+    // (page_url'de %2B / %25), oturumda yalnız sayfa görüntüleme var. Ziyareti şişirir,
+    // dönüşüm oranını düşürür → panelden çıkarılır. Oturumda başka olay varsa (gerçek
+    // kullanıcı olabilir) KALIR.
+    const doubleEncoded = (e: EventRow): boolean => {
+      const u = (e.attribution as Record<string, unknown> | null)?.page_url;
+      return typeof u === "string" && (u.includes("%2B") || u.includes("%25"));
+    };
+    const sessionHasAction = new Set<string>();
+    for (const e of eventsRaw) {
+      if (e.session_id && e.name !== "vsl_optin_view") sessionHasAction.add(e.session_id);
+    }
+    const events = eventsRaw.filter(
+      (e) =>
+        inFunnel(e.path) &&
+        !(
+          e.name === "vsl_optin_view" &&
+          doubleEncoded(e) &&
+          !(e.session_id && sessionHasAction.has(e.session_id))
+        ),
+    );
     const leads = leadsRaw.filter((l) => {
       // Kaldırılan MACFit funnel'ının eski lead'leri DB'de duruyor; panelde sayılmaz.
       if (l.form_type === "macfit_optin" || l.attribution?.funnel === "fitsistem_macfit_vaka") return false;
