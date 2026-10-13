@@ -49,7 +49,8 @@ export async function resolveFunnelPath(
   if (!supabaseAdmin) return fallback;
 
   const cleanEmail = (email || "").toLowerCase().trim();
-  // Telefon formatları tutarsız (+90, boşluk, tire) → son 9 haneyi ara.
+  // Telefon formatları tutarsız (+90, boşluk, tire, parantez) → son 9 haneyi, aralarda
+  // joker bırakarak ara (kayıtta "(531) 024 57 74" gibi biçimli olabilir).
   const digits = (phone || "").replace(/\D/g, "");
   const tail = digits.length >= 9 ? digits.slice(-9) : "";
   if (!cleanEmail && !tail) return fallback;
@@ -57,7 +58,7 @@ export async function resolveFunnelPath(
   try {
     const filters: string[] = [];
     if (cleanEmail) filters.push(`email.eq.${cleanEmail}`);
-    if (tail) filters.push(`phone.like.*${tail}`);
+    if (tail) filters.push(`phone.like.*${tail.split("").join("*")}*`);
 
     const { data, error } = await supabaseAdmin
       .from("leads")
@@ -107,7 +108,7 @@ export async function resolveBookingTouch(
   try {
     const filters: string[] = [];
     if (cleanEmail) filters.push(`email.eq.${cleanEmail}`);
-    if (tail) filters.push(`phone.like.*${tail}`);
+    if (tail) filters.push(`phone.like.*${tail.split("").join("*")}*`);
     const { data, error } = await supabaseAdmin
       .from("leads")
       .select("attribution,created_at")
@@ -149,7 +150,7 @@ export async function resolveLeadAttribution(
   try {
     const filters: string[] = [];
     if (cleanEmail) filters.push(`email.eq.${cleanEmail}`);
-    if (tail) filters.push(`phone.like.*${tail}`);
+    if (tail) filters.push(`phone.like.*${tail.split("").join("*")}*`);
     const { data, error } = await supabaseAdmin
       .from("leads")
       .select("attribution,created_at")
