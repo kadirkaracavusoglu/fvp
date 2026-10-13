@@ -42,6 +42,10 @@ const CF = {
   funnel_stage: "WtECgb4zZB3QV5h89nNF",
   instagram: "XcU7bUnQZIEVYpvafllT",
   neden_simdi: "JvY4PT39cqTpC9VyXb6M", // VSL Neden Şimdi (19 Eyl 2026)
+  // Meta eşleşme kimlikleri (13 Eki 2026) — GHL "Meta Conversion API" workflow'u (Schedule) için.
+  fbclid: "Gfe910Gcfwv5TRx0ctW6",
+  fbc: "fkHWghZeXsNFdmDIkhUY",
+  fbp: "4hlnHoPbtYHWRt87O8Ze",
 } as const;
 
 type CustomField = { id: string; value: string | number };
@@ -156,6 +160,9 @@ export async function upsertGhlContact(input: GhlUpsertInput): Promise<GhlStepRe
   push(CF.utm_source, attr.utm_source);
   push(CF.utm_campaign, attr.utm_campaign);
   push(CF.utm_content, attr.utm_content);
+  push(CF.fbclid, attr.fbclid);
+  push(CF.fbc, attr.fbc);
+  push(CF.fbp, attr.fbp);
 
   const body = {
     locationId: LOCATION_ID,
