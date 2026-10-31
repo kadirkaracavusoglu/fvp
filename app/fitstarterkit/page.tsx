@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StarterKitCta, StarterKitView } from "./StarterKitCta";
 
 // kadirkaracavusoglu.com/fitstarterkit — sade sayfa: başlık, alt metin, buton. Ödeme Stripe'ta.
 // Header/footer YOK (vaka-analizi gibi). Renkler globals.css'ten gelir.
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
 export default function FitStarterKitPage() {
   return (
     <main id="main" className="glow-bg flex min-h-screen flex-1 items-center">
+      <StarterKitView />
       <div className="mx-auto max-w-3xl px-5 py-16 text-center">
         <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
           Fit Starter Kit ile online koçluk işini Fitsistem yapısı ile kurmaya başla ve 21 günde
@@ -27,9 +29,9 @@ export default function FitStarterKitPage() {
           Fitsistem&apos;i adım adım kurmayı, ilk 21 günde ne yapacağını ve bunu kendi işine nasıl
           uygulayacağını bu kit ile öğrenirsin.
         </p>
-        <a href={STRIPE_URL} className="btn-primary mt-8 inline-block w-full px-8 py-4 text-base sm:w-auto">
+        <StarterKitCta href={STRIPE_URL} className="btn-primary mt-8 inline-block w-full px-8 py-4 text-base sm:w-auto">
           FİT STARTER KİT&apos;İ AL →
-        </a>
+        </StarterKitCta>
       </div>
     </main>
   );

@@ -14,6 +14,9 @@ const FB_MAP: Record<string, string> = {
   // Panel de aynı tanımı kullanıyor (Opt-in kartı ≠ Lead kartı).
   vsl_optin_submit: "OptIn",
   vsl_basvuru_submit: "Lead",
+  // Fit Starter Kit (31 Eki 2026): buton = ödemeye geçiş, teşekkür sayfası = satın alma.
+  cta_starterkit_click: "InitiateCheckout",
+  page_starterkit_thanks: "Purchase",
   // Randevu olayı (Schedule) siteden GÖNDERİLMEZ: GHL workflow kurulacak (13 Eki 2026, Kadir kararı).
 };
 
