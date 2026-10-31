@@ -11,7 +11,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 // ⚠️ Serverless: yanıt dönmeden önce insert await edilir (yoksa kayıt kaybolur); en fazla 800 ms beklenir.
 
 const HEDEF =
-  "https://ytbe.app/nvSf1ATN?utm_source=ig&utm_medium=social&utm_content=bio_youtube";
+  "https://ytbe.app/uDMmiPSb?utm_source=ig&utm_medium=social&utm_content=bio_youtube";
 const BOT = /bot|crawl|spider|preview|facebookexternalhit|whatsapp|telegram|slackbot|embedly|headless|curl|wget/i;
 
 export const dynamic = "force-dynamic";
