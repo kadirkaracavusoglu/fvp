@@ -4,7 +4,7 @@ import { VslWatch } from "@/components/lp/VslWatch";
 import { VAKA_HANDE } from "@/lib/funnel";
 
 // VSL İZLEME sayfası (Hande vakası) — opt-in SONRASI. Guard opt-in'siz gireni
-// /vaka-analizi'ye yollar. CTA yalnız 10 dk izlenince açılır.
+// /vaka-analizi'ye yollar. CTA baştan görünür (süre kapısı 28 Eki 2026'da kaldırıldı).
 
 export default function VakaHandeIzlePage() {
   return (
@@ -39,9 +39,8 @@ export default function VakaHandeIzlePage() {
             basvuruHref="/vaka-analizi/basvuru"
             ctaText="Başvurumu Doldur →"
             location="vaka-analizi"
-            ctaAfterMinutes={10}
             autoplaySound
-            note="Sesinizi açın ve videoyu baştan izleyin. 10. dakikada bu videonun altında başvuru butonu açılacak."
+            note="Sesinizi açın ve videoyu baştan izleyin. Başvuru butonu bu videonun altında."
           />
         </Reveal>
       </section>

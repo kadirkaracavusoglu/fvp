@@ -4,7 +4,8 @@
 // Guard: opt-in vermemişse /fitsistem'e geri yollar.
 // Başvuru butonu varsayılan olarak sayfa açılınca görünür (22 Eyl 2026 kararı).
 // ctaAfterMinutes verilirse buton o dakika izlenene kadar gizlenir — 29 Eyl 2026'da
-// yalnız /vaka-analizi için geri açıldı; Fitsistem ve Vaka-Hande kapısız kalır.
+// yalnız /vaka-analizi için geri açılmıştı, 28 Eki 2026'da o da kaldırıldı; şu an
+// hiçbir sayfa kullanmıyor (prop ileride gerekirse diye duruyor).
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
